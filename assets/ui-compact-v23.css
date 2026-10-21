@@ -36,3 +36,28 @@
 
 /* Keep rows with date controls stacked even after JS wraps the native input. */
 @media(max-width:640px){.row:has(> div > .date-control),.v21-grid:has(> div > .date-control){grid-template-columns:minmax(0,1fr)!important;gap:10px}}
+
+
+/* v24: compact home; settings is the only visible backup destination */
+#homePanel #homeBackupAlert,#homePanel #homeBackupAlert[hidden],
+#homePanel #homeBackup{display:none!important}
+#homePanel .mini-panel[hidden]{display:none!important}
+#homePanel .home-intro{margin-bottom:10px}
+#homePanel .home-stats{gap:9px}
+#homePanel .home-stat{padding:12px}
+#homePanel .home-stat .value{margin:6px 0}
+#homePanel .mini-panel{margin-top:10px;padding:11px}
+#homePanel .home-actions{margin:0;gap:8px}
+#homePanel .home-actions button{min-height:43px;padding:9px 10px}
+#homePanel .tracker-pair{gap:9px;margin-top:10px!important}
+#homePanel .tracker{padding:12px}
+#homePanel .home-extra-details{margin-top:9px;min-width:0}
+#homePanel .home-extra-details>summary{list-style:none;cursor:pointer;color:var(--muted);font-size:.82rem;padding:7px 1px;line-height:1.4}
+#homePanel .home-extra-details>summary::-webkit-details-marker{display:none}
+#homePanel .home-extra-details>summary:before{content:'▸';display:inline-block;margin-right:7px}
+#homePanel .home-extra-details[open]>summary:before{content:'▾'}
+#homePanel .home-extra-details>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#homePanel .home-extra-details>.daily-steps{margin-top:4px}
+#homePanel .home-extra-details>.goalfield{margin-top:6px}
+#homePanel .home-extra-details>input{width:100%;max-width:100%;box-sizing:border-box}
+@media(max-width:420px){#homePanel .home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}#homePanel .home-actions button{font-size:.83rem}}
