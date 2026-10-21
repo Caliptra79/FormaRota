@@ -1,6 +1,6 @@
 /* FormaRota Solo v22: resilient offline shell and optional GIF cache. */
-const CACHE='formarota-solo-v23-shell';
-const GIF_CACHE='formarota-solo-v23-gifs';
+const CACHE='formarota-solo-v24-shell';
+const GIF_CACHE='formarota-solo-v24-gifs';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/ui-compact-v23.css','./assets/ui-compact-v23.js'];
 const GIFS=['calf','dumbbell-row','extension','incline-fly','incline','lat','lateral','legcurl','legpress','overhead','pec','push','rear','row','zottman'].map(name=>'./assets/'+name+'.gif');
 self.addEventListener('install',event=>event.waitUntil((async()=>{
