@@ -1,0 +1,21 @@
+/* v25: progress folds (no storage or calculation changes) */
+[data-view="progress"] .progress-fold,[data-view="insights"] .progress-fold{margin:0;min-width:0}
+.progress-fold>summary{list-style:none;cursor:pointer;padding:13px 15px;min-height:49px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:750;font-size:.94rem;border-radius:12px}
+.progress-fold>summary::-webkit-details-marker{display:none}
+.progress-fold>summary::after{content:'⌄';color:var(--muted);flex:0 0 auto;font-size:1.3rem;line-height:1}
+.progress-fold[open]>summary::after{content:'⌃'}
+.progress-fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.progress-fold-body{min-width:0;padding:5px 12px 14px}
+#trendPanel,#weeklyPanel{padding:7px!important}
+#trendPanel .progress-fold>summary,#weeklyPanel .progress-fold>summary{padding:14px}
+#profilePanel .progress-preferences,#profilePanel .progress-history{margin:9px 0;background:var(--panel2);border:1px solid var(--border);border-radius:12px}
+#profilePanel .progress-preferences>.progress-fold-body,#profilePanel .progress-history>.progress-fold-body{padding:8px 13px 14px}
+#profilePanel .progress-secondary-note{font-size:.8rem;line-height:1.4;margin-bottom:0}
+#profilePanel .stats{margin-top:10px!important;gap:8px}
+#profilePanel .stat{min-width:0;padding:12px}
+section.panel[data-view="insights"]{padding:5px 8px!important}
+section.panel[data-view="insights"]>.progress-fold>summary{padding:15px 12px}
+section.panel[data-view="insights"]>.progress-fold>.progress-fold-body{padding:4px 10px 15px}
+section.panel[data-view="insights"] .progress-fold-body>h2{display:none}
+#trendPanel .progress-fold-body>div,#weeklyPanel .progress-fold-body>div{max-width:100%;min-width:0}
+@media(max-width:420px){#profilePanel .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.progress-fold-body{padding-inline:8px}}
