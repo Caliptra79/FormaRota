@@ -105,6 +105,39 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 
 /* FormaRota Solo v21 */
 .v21-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v21-box{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:14px;min-width:0}.v21-box strong{font-size:1.26rem}.v21-box small{color:var(--muted)}.v21-actions{display:flex;gap:8px;flex-wrap:wrap}.v21-actions button{width:auto}.v21-list{display:grid;gap:8px}.v21-list button{width:100%;text-align:left;display:flex;justify-content:space-between;gap:10px;align-items:center}.v21-row{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--border);padding:9px 0}.v21-spark{width:100%;height:180px;display:block;overflow:visible}.v21-spark polyline{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.v21-spark .gridline{stroke:var(--border);stroke-width:1}.v21-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.v21-day{border:1px solid var(--border);border-radius:9px;text-align:center;min-height:52px;padding:6px 1px;background:var(--panel2);font-size:.76rem}.v21-day.on{border-color:var(--accent)}.v21-dots{font-size:.64rem;line-height:1.3}.v21-pills{display:flex;gap:7px;flex-wrap:wrap}.v21-pills button{width:auto;padding:8px 11px;font-size:.8rem}.v21-section{margin-top:14px}.v21-section select,.v21-section input{min-width:0;max-width:100%}#v21TimerClock{font-variant-numeric:tabular-nums;font-size:2.4rem;font-weight:800}#v21Previous{margin:12px 0}.v21-mini{font-size:.82rem;color:var(--muted)}@media(max-width:600px){.v21-grid{grid-template-columns:1fr}.v21-day{min-height:47px;font-size:.68rem}.v21-pills button{flex:1}}
+
+/* v22 iOS compact forms: keep native date controls from overlapping adjacent fields */
+#nutritionTop > .row,
+.row:has(> div > input[type="date"]) {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+#nutritionTop > .row > div,
+.row:has(> div > input[type="date"]) > div {
+  min-width:0;max-width:100%;overflow:visible;
+}
+#nutritionTop > .row input,
+#nutritionTop > .row select,
+.row:has(> div > input[type="date"]) input {
+  display:block;width:100%;max-width:100%;min-width:0;
+  box-sizing:border-box;
+}
+@media(max-width:640px) {
+  #nutritionTop > .row,
+  .row:has(> div > input[type="date"]) {
+    grid-template-columns:minmax(0,1fr);
+    gap:12px;
+  }
+  #nutritionTop > .row > div,
+  .row:has(> div > input[type="date"]) > div {width:100%;min-width:0;}
+  #nutritionTop input[type="date"],#nutritionTop #meal,
+  .row input[type="date"] {
+    -webkit-appearance:auto;
+    min-height:44px;
+    font-size:16px;
+    padding-inline:10px;
+  }
+}
+
 </style><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="default" name="apple-mobile-web-app-status-bar-style"/></head>
 <body><header><div class="brandbar"><div class="brand-lockup"><img alt="FormaRota simgesi" src="./icon-192.png"/><div><h1>FORMAROTA</h1><div class="muted">Beslenme · Antrenman · Gelişim</div></div></div></div></header>
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
