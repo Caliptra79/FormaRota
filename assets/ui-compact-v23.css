@@ -33,3 +33,6 @@
 #nutritionTop .macro-more .stat{min-width:0}
 @media(max-width:500px){#homePanel .home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:360px){#nutritionTop .stats{gap:7px}#nutritionTop .stat{padding:10px}}
+
+/* Keep rows with date controls stacked even after JS wraps the native input. */
+@media(max-width:640px){.row:has(> div > .date-control),.v21-grid:has(> div > .date-control){grid-template-columns:minmax(0,1fr)!important;gap:10px}}
