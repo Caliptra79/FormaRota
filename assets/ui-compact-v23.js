@@ -71,3 +71,54 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installCompactLayout,{once:true});
  else installCompactLayout();
 })();
+
+
+/* v24: declutter the home screen without changing data or removing used element IDs */
+(function(){
+ function simplifyHome(){
+  const home=document.getElementById('homePanel');
+  if(!home||home.dataset.simplifiedHome==='24')return;
+  home.dataset.simplifiedHome='24';
+  const backupNotice=document.getElementById('homeBackupAlert');
+  if(backupNotice){backupNotice.hidden=true;backupNotice.setAttribute('aria-hidden','true');}
+  const redundant=document.getElementById('homeBackup')?.closest('.mini-panel');
+  if(redundant){redundant.hidden=true;redundant.setAttribute('aria-hidden','true');}
+  const checklist=document.getElementById('homeChecklist');
+  if(checklist&&!checklist.closest('details')){
+   const panel=checklist.closest('.mini-panel');
+   const heading=panel?.querySelector('.subheading');
+   const details=document.createElement('details');
+   details.className='home-extra-details';
+   const summary=document.createElement('summary');
+   summary.textContent='Günlük kontrol listesini göster';
+   checklist.parentNode.insertBefore(details,checklist);
+   details.append(summary,checklist);
+   if(heading)heading.hidden=true;
+  }
+  const waterGoal=document.getElementById('waterGoal');
+  if(waterGoal){
+   const goalField=waterGoal.closest('.goalfield');
+   if(goalField&&!goalField.closest('details')){
+    const details=document.createElement('details');
+    details.className='home-extra-details';
+    const summary=document.createElement('summary');
+    summary.textContent='Su hedefini değiştir';
+    goalField.parentNode.insertBefore(details,goalField);
+    details.append(summary,goalField);
+   }
+  }
+  const walkKm=document.getElementById('walkKm');
+  if(walkKm&&!walkKm.closest('details')){
+   const manualLabel=walkKm.previousElementSibling;
+   const details=document.createElement('details');
+   details.className='home-extra-details';
+   const summary=document.createElement('summary');
+   summary.textContent='Farklı mesafe gir';
+   walkKm.parentNode.insertBefore(details,walkKm);
+   if(manualLabel&&manualLabel.classList.contains('muted'))manualLabel.hidden=true;
+   details.append(summary,walkKm);
+  }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',simplifyHome,{once:true});
+ else simplifyHome();
+})();
