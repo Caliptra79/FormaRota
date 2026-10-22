@@ -140,3 +140,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 /* Monochrome line icons in the permanent app navigation. */
 .mobile-tabbar .ni{display:flex;align-items:center;justify-content:center;min-height:23px}
 .mobile-tabbar .ni svg{display:block;width:23px;height:23px;flex:none}
+
+/* v27 — user-provided GIFs visible; media controls stay removed. */
+#fitnessRoot .fit-card{display:grid!important;grid-template-columns:138px minmax(0,1fr)!important;align-items:start;gap:14px}
+#fitnessRoot .fit-card .fit-gif-preview{display:grid!important;aspect-ratio:1/1;width:138px;height:138px;min-height:0;max-width:100%;border:1px solid var(--border);border-radius:12px;overflow:hidden;place-items:center;background:var(--panel2)}
+#fitnessRoot .fit-card .fit-gif-preview img{display:block!important;width:100%;height:100%;aspect-ratio:1/1;object-fit:contain;border-radius:0}
+#fitnessRoot.focus-mode .fit-card.current{grid-template-columns:138px minmax(0,1fr)!important}
+#fitnessRoot.focus-mode .fit-card:not(.current){display:none!important}
+@media(max-width:620px){
+ #fitnessRoot .fit-card,#fitnessRoot.focus-mode .fit-card.current{grid-template-columns:minmax(0,1fr)!important;gap:10px}
+ #fitnessRoot .fit-card .fit-gif-preview{width:min(100%,240px);height:auto;aspect-ratio:1/1;margin:0 auto}
+ #fitnessRoot .fit-card .fit-gif-preview img{width:100%;height:100%;aspect-ratio:1/1}
+}
