@@ -1,22 +1,27 @@
-# FormaRota Solo v22 — PWA bakım ve güvenilirlik
+# FormaRota Solo v26 — sade arayüz, set odaklı fitness
 
-Bu sürüm v21'in **beslenme, antrenman, gelişim, yerel kayıt ve 15 hareket GIF'i** özelliklerini korur.
+Kişisel kullanıma yönelik, GitHub Pages üzerinde çalışan, hesap veya Firebase gerektirmeyen beslenme ve antrenman takip PWA'sı.
 
-## Sayfa yapısı
-- Ana Sayfa: günlük özet ve hızlı işlemler
-- Beslenme: günlük öğün kayıtları, akşam planı, tarifler
-- Fitness: antrenman, hareket GIF'leri, set geçmişi ve zamanlayıcı
-- Gelişim: kilo, takvim, analizler, uyku, vücut ölçüleri, raporlar
-- Ayarlar: hedefler, görünüm ve JSON yedekleme
+## Ekranlar
+- **Ana sayfa**: günlük kalori/protein, öğün kısayolları, su ve yürüyüş.
+- **Beslenme**: öğün kayıtları, kalan hedef, akşam planı ve tarifler.
+- **Fitness**: 13 ana hareket (2 alternatif seçeneği), 3 set, tekrar, ağırlık ve dinlenme sayaçları. Hareket adları büyütüldü. Görsel yükleme, GIF önizlemesi ve kaynak GIF düğmeleri arayüzden kaldırıldı.
+- **Gelişim**: kilo, ölçüler, grafikler, alışkanlık takvimi ve haftalık rapor; isteğe bağlı açılır alanlar.
+- **Ayarlar**: görünüm, hedefler ve JSON yedekleme.
 
-## v22 bakım düzeltmeleri
-- Service worker'da temel HTML önbelleği zorunlu; GIF ve ikon önbelleği hata toleranslı.
-- Tek GIF yükleme hatası artık tüm çevrimdışı kurulumu bozmaz.
-- Eski PWA önbellekleri güncellemede temizlenir.
-- HTML uygulama sürümü güncellendi.
+## v26 tasarım değişiklikleri
+- Gece, Okyanus, Açık ve Kum temaları korundu; renkler sakinleştirildi ve kontrast yükseltildi.
+- En önemli sayılar ve hareket isimleri büyütüldü; kartlar ve alt menü sadeleştirildi.
+- Alt menü ikonları renkli emoji yerine tek renk çizgi ikonlarla değiştirildi.
+- Fitness görünümünden GIF yükleme, silme, gösterim ve harici GIF bağlantıları kaldırıldı. Antrenman alternatifleri, set/tekrar/ağırlık kayıtları ve zamanlayıcılar korunuyor.
+- Fitness ana akışında sayaç ve hareket kartları ön planda; haftalık plan, önceki kayıtlar ve harekete özel sayaç ayarları açılır bölümlere alındı.
+- PWA çevrimdışı önbelleği artık 15 GIF dosyasını indirmiyor. Önceki `assets/*.gif` dosyaları depoda **geri dönüş amacıyla korunmuştur**; bu sürümde kullanılmaz.
 
-## Veri güvenliği
-Tüm kayıtlar cihazın tarayıcı depolamasındadır. Site verilerini silmeden veya iPhone ana ekran uygulamasını kaldırmadan önce **Ayarlar → JSON yedeği** alın. GitHub Pages sitesi herkes tarafından ziyaret edilebilir; kişisel kayıtlar depoya yüklenmez. iOS Safari çevrimdışı davranışı gerçek cihazda ayrıca doğrulanmalıdır.
+## Kayıt güvenliği
+Kayıtlar cihazdaki yerel depoda tutulur; Firebase veya hesap senkronizasyonu yoktur. v21–v25 besin, antrenman ve diğer kayıt anahtarları değiştirilmemiştir. Veri kaybına karşı güncellemeden önce **Ayarlar → JSON yedeği** alın. Kişisel GIF'lerin eski IndexedDB depolaması otomatik silinmez, ancak v26 tarafından gösterilmez veya kullanılmaz.
 
 ## GitHub Pages
-Ana dal `main`, yayın klasörü depo kökü `/` olacak şekilde Pages ayarlanmalıdır. `assets/` klasöründeki 15 GIF'in isimleri korunmalıdır.
+`main` dalı, depo kökü (`/`) yayın kaynağı olmalı. Manifest, Service Worker, ikonlar, ana HTML, `assets/ui-compact-v23.*`, `assets/progress-compact-v25.*` ve `assets/*-v26.*` dosyaları birlikte yayınlanmalıdır.
+
+## Doğrulama
+Kod bütünlüğü, responsive fitness set yerleşimi, set kaydı, dinlenme başlatma ve odak modu Chromium ortamında kontrol edilmiştir. Gerçek iPhone Safari'de görünüm ve arka planda çalışan ses/titreşim ayrıca kullanıcı tarafından doğrulanmalıdır.
