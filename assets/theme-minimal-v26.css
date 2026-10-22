@@ -133,3 +133,6 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
  .fit-set button{font-size:.7rem}
 }
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* A focused session always displays only the selected exercise. */
+#fitnessRoot.focus-mode .fit-card:not(.current){display:none!important}
