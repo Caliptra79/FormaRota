@@ -136,3 +136,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 
 /* A focused session always displays only the selected exercise. */
 #fitnessRoot.focus-mode .fit-card:not(.current){display:none!important}
+
+/* Monochrome line icons in the permanent app navigation. */
+.mobile-tabbar .ni{display:flex;align-items:center;justify-content:center;min-height:23px}
+.mobile-tabbar .ni svg{display:block;width:23px;height:23px;flex:none}
