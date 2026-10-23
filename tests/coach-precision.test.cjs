@@ -151,3 +151,15 @@ test('existing data and PWA branding remain unchanged',()=>{
  assert.ok(html.includes('const FIT_MOVES=['));
  assert.ok(html.includes('./assets/coach-engine-v35.js'));
 });
+
+test('volume analysis uses two distinct days, not repeated workouts on a single date',()=>{
+ const first=session('2026-10-19',{kg:30,reps:12});
+ const morning=session('2026-10-22',{kg:30,reps:10,time:'08:00:00'});
+ const evening=session('2026-10-22',{kg:30,reps:11,time:'20:00:00'});
+ const out=E.analysis(MOVE,MOVE.name,[morning,evening,first],2.5);
+ assert.equal(out.completed,2);
+ assert.equal(out.volume,990);
+ assert.equal(out.volumeChange,-90);
+ assert.equal(out.basis.previous.date,'2026-10-19');
+ assert.equal(out.basis.latest.date,'2026-10-22');
+});
