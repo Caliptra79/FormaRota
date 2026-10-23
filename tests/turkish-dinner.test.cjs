@@ -72,7 +72,7 @@ test('when daily limit is nearly reached, no full dinner is suggested',()=>{
  assert.equal(res.options.length,0);
  assert.match(res.reason,/az yer kaldı/);
 });
-test('no past or future-day records are used as today's consumption',()=>{
+test('past and future-day records are excluded from current-day consumption',()=>{
  const records=[{date:'2026-10-23',meal:'Öğle yemeği',kcal:1400,protein:35},
   {date:'2026-10-25',meal:'Öğle yemeği',kcal:1400,protein:35}];
  assert.equal(run({logs:records}).context.eatenKcal,0);
