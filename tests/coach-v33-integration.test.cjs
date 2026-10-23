@@ -44,7 +44,7 @@ test('legacy report fallback and modern coach agree on full/partial records',()=
 test('reason descriptions are computed from real stored sets, not a placeholder mock',()=>{
  assert.match(ui,/result\.basis\?\.previous/);
  assert.match(ui,/result\.basis\?\.latest/);
- assert.match(ui,/E\.assess\(move,selectedName\(move\),readHistory\(\),getStep\(\)/);
+ assert.match(ui,/E\.assess\(move,selectedName\(move\),readHistory\(\),getStep\(\),/);
  assert.match(ui,/Bu öneri neden verildi\?/);
  assert.match(css,/\.coach-reason>summary/);
 });
