@@ -55,3 +55,6 @@
  .coach-overview .coach-top h2{font-size:1.19rem}
 }
 @media(min-width:760px){.coach-overview{padding:18px}.coach-day{max-width:110px}}
+
+.coach-reschedule{background:var(--panel2);border:1px dashed var(--border);border-radius:9px;margin:0;padding:9px 11px;color:var(--text);font-size:.81rem;line-height:1.5}
+.coach-reschedule[hidden]{display:none!important}
