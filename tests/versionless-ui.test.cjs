@@ -45,7 +45,7 @@ test('backup schema version 7 remains for safe old and new imports',()=>{
  assert.ok(html.includes("id=\"confirmImport\""));
 });
 test('service worker refreshes PWA manifest and retains GIF precache',()=>{
- assert.ok(shell.includes('formarota-solo-v34-shell'));
+ assert.match(shell,/formarota-solo-v\d+-shell/);
  assert.ok(shell.includes("'./manifest.webmanifest'"));
  const gifs=shell.match(/const GIFS=\[([^\]]+)\]/)?.[1];
  assert.ok(gifs);
