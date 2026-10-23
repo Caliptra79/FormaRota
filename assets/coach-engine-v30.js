@@ -85,7 +85,7 @@ function weekly(history,weekDate,frequency,selected){
  return {start,days,finished:finished.length,sets:countSets,target,planned:plan,custom:selectedDates.length>0,perDay};
 }
 function reschedule(w,todayDate){
- if(!w||!validDate(todayDate)||!w.days.includes(todayDate))return {missed:[],replacement:null};
+ if(!w||!w.custom||!validDate(todayDate)||!w.days.includes(todayDate))return {missed:[],replacement:null};
  const missed=w.planned.filter(date=>date<todayDate&&!w.perDay[date]);
  if(!missed.length)return {missed:[],replacement:null};
  const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.perDay).filter(d=>w.perDay[d]>0),w.days[2]];
