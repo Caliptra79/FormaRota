@@ -1,0 +1,42 @@
+/* FormaRota v33 — explainable, compact coaching; inherits all seven palettes. */
+#fitnessRoot .coach-inline-tip{
+ display:flex;flex-wrap:wrap;gap:7px 8px;align-items:flex-start;
+ overflow-wrap:anywhere;
+}
+#fitnessRoot .coach-inline-tip>.coach-inline-value{
+ flex:1 1 180px;min-width:0;font-weight:650;line-height:1.48
+}
+#fitnessRoot .coach-inline-tip>.coach-tip-dot{flex:0 0 12px}
+.coach-reason{flex:1 1 100%;min-width:0;border-top:1px solid var(--border);margin-top:3px}
+.coach-reason>summary{
+ display:flex;align-items:center;list-style:none;
+ font-size:.82rem;font-weight:730;color:var(--accent);min-height:44px;
+ cursor:pointer;gap:7px;line-height:1.3;user-select:none
+}
+.coach-reason>summary::-webkit-details-marker{display:none}
+.coach-reason>summary::before{
+ content:'▸';color:var(--accent);font-size:.92rem
+}
+.coach-reason[open]>summary::before{content:'▾'}
+.coach-reason>summary:focus-visible{
+ outline:2px solid var(--accent);outline-offset:2px;border-radius:6px
+}
+.coach-reason-body{display:grid;gap:7px;padding:0 1px 12px;min-width:0}
+.coach-reason-body p{
+ margin:0!important;font-size:.82rem!important;line-height:1.5!important;
+ overflow-wrap:anywhere;white-space:normal
+}
+.coach-reason-body .coach-reason-meta{color:var(--accent);font-weight:780}
+.coach-reason-body .coach-reason-detail{color:var(--text)}
+.coach-reason-body .coach-reason-disclaimer{color:var(--muted);font-size:.77rem!important}
+.coach-analysis .coach-reason{margin-top:10px}
+.coach-report-summary{font-variant-numeric:tabular-nums}
+#coachWeekSummary{font-variant-numeric:tabular-nums}
+@media(max-width:390px){
+ #fitnessRoot .coach-inline-tip{padding:9px}
+ .coach-reason-body p{font-size:.8rem!important}
+ #fitnessRoot .coach-week-info span{line-height:1.5}
+}
+@media(prefers-reduced-motion:reduce){
+ .coach-reason *{transition:none!important}
+}
