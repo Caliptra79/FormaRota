@@ -142,9 +142,11 @@ test('blank bodyweight calf kg remains permitted and stores 0 kg',()=>{
  assert.equal(f.curr.items.calf[0].reps,20);
  assert.equal(f.curr.items.calf[0].done,true);
 });
-test('existing data and PWA branding remain unchanged',()=>{
+test('existing personal data and PWA installation identity remain unchanged',()=>{
  const html=read('index.html'),manifest=JSON.parse(read('manifest.webmanifest'));
- assert.equal(manifest.name,'FormaRota Solo');
+ assert.equal(manifest.name,'FormaRota');
+ assert.equal(manifest.id,'./index.html');
+ assert.equal(manifest.start_url,'./index.html#/anasayfa');
  assert.doesNotMatch(html,/name="application-version"/);
  assert.ok(html.includes("function collectBackup(){return{version:7"));
  assert.ok(html.includes('figure.append(picture)'));
