@@ -31,8 +31,8 @@ test('two matching completed sessions give an optional, not automatic, increment
 test('short reps, stopped sessions and partial sessions do not trigger an increase',()=>{
  const ok=session('2026-10-01',lat,30,[12,12,12]);
  assert.equal(coach.assess(lat,lat.name,[ok,session('2026-10-08',lat,30,[7,10,10])],2.5).status,'hold');
- assert.equal(coach.assess(lat,lat.name,[ok,session('2026-10-08',lat,30,[12,12,12],lat.name,'stopped')],2.5).status,'collect');
- assert.equal(coach.assess(lat,lat.name,[ok,session('2026-10-08',lat,30,[12,12,12],lat.name,'finished',2)],2.5).status,'collect');
+ assert.equal(coach.assess(lat,lat.name,[ok,session('2026-10-08',lat,30,[12,12,12],lat.name,'stopped')],2.5).status,'caution');
+ assert.equal(coach.assess(lat,lat.name,[ok,session('2026-10-08',lat,30,[12,12,12],lat.name,'finished',2)],2.5).status,'caution');
 });
 test('machine and dumbbell row history remain separate',()=>{
  const history=[
@@ -61,13 +61,14 @@ test('historical reports do not use future training sessions',()=>{
  assert.equal(report.finished,0);
  assert.equal(report.messages.length,1);
 });
-test('weekly report counts only finished sessions and their completed sets',()=>{
+test('weekly report separates full sessions from partial and stopped sessions',()=>{
  const history=[
   session('2026-10-19',lat,30,[10,10,10]),
   session('2026-10-21',lat,30,[10,10,10],lat.name,'stopped'),
   session('2026-10-23',lat,30,[10,10,10],lat.name,'finished',2)
  ];
  const report=coach.report(history,[lat],'2026-10-21',2,{},2.5);
- assert.equal(report.finished,2);
- assert.equal(report.sets,5);
+ assert.equal(report.finished,0);
+ assert.equal(report.partial,3);
+ assert.equal(report.sets,8);
 });
