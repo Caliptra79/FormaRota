@@ -1,8 +1,8 @@
 /* FormaRota Solo v27: offline shell and independent optional exercise GIF cache. */
-const CACHE='formarota-solo-v28-shell';
-const GIF_CACHE='formarota-solo-v28-gifs';
+const CACHE='formarota-solo-v29-shell';
+const GIF_CACHE='formarota-solo-v29-gifs';
 const GIFS=['calf','dumbbell-row','extension','incline-fly','incline','lat','lateral','legcurl','legpress','overhead','pec','push','rear','row','zottman'].map(name=>'./assets/'+name+'.gif');
-const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/ui-compact-v23.css','./assets/ui-compact-v23.js','./assets/progress-compact-v25.css','./assets/progress-compact-v25.js','./assets/theme-minimal-v26.css','./assets/fitness-simple-v26.js'];
+const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/ui-compact-v23.css','./assets/ui-compact-v23.js','./assets/progress-compact-v25.css','./assets/progress-compact-v25.js','./assets/theme-minimal-v26.css','./assets/fitness-simple-v26.js','./assets/hype-themes-v29.css'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const shell=await caches.open(CACHE);
  const response=await fetch('./index.html',{cache:'reload'});
