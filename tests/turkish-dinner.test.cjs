@@ -115,3 +115,24 @@ test('three dinner recommendation views share one engine and correctly filter me
  assert.ok(legacyUI.includes('frDinnerPreference'));
  assert.ok(html.includes('id="frDinnerPreference"'));
 });
+
+test('the selected dinner option persists its exact scaled ingredients, with provenance',()=>{
+ const source=html.slice(html.indexOf('function selectDinnerMenu(menu,date){'),html.indexOf('function dinnerItemTotals(',html.indexOf('function selectDinnerMenu(menu,date){')));
+ assert.ok(source.startsWith('function selectDinnerMenu('));
+ const storage={};let renders=0;
+ const env={getDinnerPlans:()=>({...storage}),confirm:()=>true,alert:()=>{},
+  foodById:lookup,write:(key,val)=>{Object.assign(storage,val)},renderDinnerPlan:()=>{renders++},
+  DINNER_PLAN_KEY:'dinner'};
+ vm.runInNewContext(source+';this.pick=selectDinnerMenu;',env);
+ const recommendation=run().options[0],selected=env.pick(recommendation,'2026-10-24');
+ assert.equal(selected,true);assert.equal(renders,1);
+ assert.equal(storage['2026-10-24'].name,recommendation.name);
+ assert.equal(storage['2026-10-24'].items[0].amount,recommendation.items[0][1]);
+ assert.ok(storage['2026-10-24'].estimateNote.includes('Yaklaşık'));
+});
+test('the overview choice saves the recommended dinner rather than only scrolling to a different menu',()=>{
+ const overview=html.slice(html.indexOf('function v21SmartDinner(){'),html.indexOf('function v21Svg('));
+ assert.ok(overview.includes('selectDinnerMenu(option,dt)'));
+ const detailed=html.slice(html.indexOf('function renderDinnerRecommendations(){'),html.indexOf('function renderResults('));
+ assert.ok(detailed.includes('selectDinnerMenu(menu,date)'));
+});
