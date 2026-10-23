@@ -1,6 +1,28 @@
-# FormaRota Solo v32 — Personal Trainer + tasarım inceliği
+# FormaRota Solo v33 — Personal Trainer güvenilirliği + sade tasarım
 
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
+
+## v33 · Temkinli ve açıklanabilir Personal Trainer
+
+Bu sürüm, kullanıcının onayladığı altı kalite iyileştirmesini uygular; 13 hareket, 15 GIF, yedi tema, beslenme/fitness verileri, JSON yedek sistemi ve Full Body programı değiştirilmez.
+
+1. **Haftalık rapor tutarlılığı:** Hem eski genel rapor, hem Personal Trainer raporu aynı tam Full Body doğrulamasını kullanır. Tam Full Body için 13 hareket × 3 geçerli set gerekir. Haftalık 2 veya 3 *gün* hedefi, farklı tamamlanmış takvim günlerinden hesaplanır. Aynı gün iki seans kaydı ayrı tutulur ama hedefe yalnızca bir gün olarak katkı yapar.
+2. **Temkinli güncellik:** Aynı hareket alternatifi için iki tam, karşılaştırılabilir kaydın en fazla 28 gün arayla yapılmış olması; son tamamlanmış kaydın değerlendirme tarihine göre en fazla 28 günlük olması gerekir. Daha eski verilerden artış üretilmez, güncel yeniden değerlendirme önerilir. Geçmiş haftalık raporlar seçilen haftanın sonuna kadar olan kayıtları kullanır.
+3. **Veri doğrulaması:** Boş, uygunsuz veya sınır dışı kilogram/tekrar kayıtları otomatik 0 kg sayılmaz. Kullanıcının geçmiş kaydı değiştirilmez ve geçersiz son denemeden ağırlık artırma önerisi verilmez. Atlanmış hareket, başarısız hareket olarak değerlendirilmez.
+4. **Haftalık plan:** Hedef 2 veya 3 günün tamamı seçilmeden plan `hazır` değildir; eksik plandan “antrenman kaçırıldı” uyarısı türetilmez. Çarşamba basketbol günü korunur. Telafi tarihleri otomatik uygulanmaz.
+5. **Açıklanabilir öneriler:** Hareket kartlarındaki “Bu öneri neden verildi?” açılır alanı iki karşılaştırılabilir seansın tarih, ağırlık ve tekrarlarını; veri durumunu ve sınırları gösterir. Koç teknik, ağrı ve gerçek zorlanmayı ölçemez; hiçbir ağırlığı kendiliğinden değiştirmez.
+6. **Alternatifler ve rapor:** Cable/Dumbbell Row ve Pec/Incline Dumbbell Fly geçmişleri ayrı değerlendirilir. Haftalık koç notları yalnızca rapor haftasında gerçekten çalışılmış hareketlerin alternatifi üzerinden oluşturulur.
+
+### v33 doğrulama
+
+```bash
+node --test tests/coach-v33.test.cjs tests/coach-v33-ui.test.cjs tests/coach-v33-integration.test.cjs
+node --test tests/coach-v30.test.cjs tests/coach-v31.test.cjs tests/refinement-v32.test.cjs tests/refinement-v32-dom.test.cjs
+```
+
+Yeni v33 testleri: 23 motor senaryosu, 4 UI davranışı, 7 kaynak/rapor/PWA entegrasyonu. Geçmiş sürümlerin 24 regresyon testi ayrıca çalıştırılır. Gerçek iPhone Safari görüntüsü ve dokunmatik kullanım bu ortamdan doğrulanamaz, cihazda kontrol gerekir.
+
+v33 dosyaları: `assets/coach-engine-v33.js`, `assets/coach-ui-v33.js`, `assets/coach-quality-v33.css`. PWA çevrimdışı shell + GIF cache sürümü v33'e yükseltildi. Önceki koç motoru, tarihsel testler için repoda tutulur.
 
 ## v32 · Tasarım ve sadelik
 
