@@ -77,7 +77,7 @@ function refreshOverview(){
  }
  if(tip){
   const suggestions=moves.map(m=>assessMove(m));
-  const caution=suggestions.find(x=>['invalid','caution','reassess'].includes(x.status));
+  const caution=suggestions.find(x=>['invalid','caution','reassess','step_large'].includes(x.status));
   const low=suggestions.find(x=>x.status==='hold'&&x.detail.includes('alt sınırının'));
   const increase=suggestions.find(x=>x.status==='increase');
   const one=suggestions.find(x=>x.status==='collect');
