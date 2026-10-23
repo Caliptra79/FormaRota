@@ -8,3 +8,12 @@
 .fr-nutrition-edit-actions button{width:auto;min-height:44px}
 .fr-nutrition-editor :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @media(max-width:420px){.fr-nutrition-actions{flex-direction:column}.fr-nutrition-edit-actions button{flex:1 1 120px}}
+
+.fr-dinner-pref{display:grid;grid-template-columns:minmax(125px,1fr) minmax(0,2fr);gap:8px;align-items:end;margin:8px 0 14px}
+.fr-dinner-pref label{margin:0;padding-bottom:9px}
+.fr-dinner-pref select{width:100%;min-height:44px}
+.fr-dinner-choice{align-items:flex-start}
+.fr-dinner-choice>div{min-width:0;flex:1}
+.fr-dinner-choice button{width:auto;min-height:44px;flex-shrink:0}
+.fr-dinner-why{font-size:.84rem;line-height:1.45;opacity:.88}
+@media(max-width:450px){.fr-dinner-pref{grid-template-columns:1fr}.fr-dinner-choice{flex-wrap:wrap}.fr-dinner-choice button{width:100%}}
