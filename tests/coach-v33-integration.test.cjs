@@ -2,13 +2,13 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const load=name=>fs.readFileSync(path.join(__dirname,'..',name),'utf8');
-const html=load('index.html'),sw=load('sw.js'),ui=load('assets/coach-ui-v33.js'),engine=load('assets/coach-engine-v33.js'),css=load('assets/coach-quality-v33.css');
+const html=load('index.html'),sw=load('sw.js'),ui=load('assets/coach-ui-v33.js'),engine=load('assets/coach-engine-v35.js'),css=load('assets/coach-quality-v33.css');
 const context={window:{}};vm.runInNewContext(engine,context);const E=context.window.FormaRotaCoachEngine;
 const ALL=['lat','row','incline','pec','lateral','rear','push','overhead','zottman','legpress','extension','legcurl','calf'];
 const fixture=(date,bad=false)=>({date,status:'finished',items:Object.fromEntries(ALL.map(id=>[id,Array.from({length:3},(_,i)=>({done:true,reps:12,weight:bad&&id==='lat'&&i===0?'':30}))]))});
 test('main v33 app loads engine, interface, style and offline cache',()=>{
  assert.doesNotMatch(html,/name="application-version"/);
- for(const name of ['coach-engine-v33.js','coach-ui-v33.js','coach-quality-v33.css']){
+ for(const name of ['coach-engine-v35.js','coach-ui-v33.js','coach-quality-v33.css']){
   assert.ok(html.includes('./assets/'+name),name);
   assert.ok(sw.includes('./assets/'+name),name);
  }
