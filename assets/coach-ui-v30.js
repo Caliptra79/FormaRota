@@ -1,0 +1,203 @@
+/* FormaRota v30 · balanced Personal Trainer interface and event integration. */
+(function(){
+'use strict';
+const KEY='formarota-coach-increment-v1';
+const E=window.FormaRotaCoachEngine;
+if(!E)return;
+const byId=id=>document.getElementById(id);
+const tips={
+ lat:['Gövdeni sabit tut, barı kontrollü şekilde üst göğse doğru çek.','Omuzlarını kulaklarına doğru kaldırmadan kürek kemiklerini çalıştır.','Ağrısız hareket açıklığında ve savurmadan tekrarla.'],
+ row:['Gövdeni ileri geri savurmadan çekiş yap.','Sırtını nötr tut; kolların yanında kürek kemiklerini de hareket ettir.'],
+ incline:['Sırtın ve kalçan sehpaya temas etsin.','Ağırlığı kontrollü indir; omuzunu rahatsız eden açıda zorlamadan çalış.'],
+ pec:['Omuzlarını rahat tutup kolları kontrollü kapat.','Dirsek açını sabit tut; gereğinden fazla geriye açılma.'],
+ lateral:['Omuzlarını yukarı çekmeden kolları yana doğru kaldır.','Gövdeni sallama; yavaş kontrollü tekrar yap.'],
+ rear:['Omuzlarını gevşek tut, kürek kemiklerini kontrollü kullan.','Kolları savurmadan hareketi tamamla.'],
+ push:['Dirseklerini gövdene yakın tut.','Omuzları değil dirsek eklemini hareket ettir; ağırlığı savurma.'],
+ overhead:['Gövdeni sabit tut; belini gereğinden fazla kavislendirme.','Dirseklerini kontrollü hareket ettir, ağrıya zorlamadan bitir.'],
+ zottman:['Dirseklerini gövdene yakın tut.','Dambılı indirirken ön kol dönüşünü kontrollü yap.'],
+ legpress:['Belini ve kalçanı mindere sabitle.','Dizlerin ayak yönünü takip etsin; dizleri sertçe kilitleme.'],
+ extension:['Dizi kontrollü açıp indir; ağırlığı savurma.','Eklemde ağrı olursa hareketi zorlamadan durdur.'],
+ legcurl:['Kalçanı makinede sabit tut.','Topukları kontrollü çekip yavaş geri bırak.'],
+ calf:['Ayak bileğinde kontrollü yüksel ve in.','Hareketi zıplatmadan, dengeni koruyarak yap.']
+};
+const alternatives={
+ 'Dumbbell Row':['Destek aldığın el ve diz ile gövdeni sabitle.','Dambılı kalçana doğru çek; gövdeni döndürme.'],
+ 'Incline Dumbbell Fly':['Dirseklerini hafif bükülü tut.','Dambılları kontrollü indir, omuzda rahatsızlık oluşan açıyı zorlama.']
+};
+const readHistory=()=>{try{return typeof fitGetHist==='function'?fitGetHist():[]}catch{return []}};
+const readMoves=()=>{try{return typeof FIT_MOVES!=='undefined'?FIT_MOVES:[]}catch{return []}};
+const getVariants=()=>{try{return typeof read==='function'?read('kocluk-fitness-variants-v1',{}):{}}catch{return {}}};
+const getStep=()=>{try{const n=Number(localStorage.getItem(KEY));return [1,2.5,5].includes(n)?n:2.5}catch{return 2.5}};
+function selectedName(move){
+ const variants={...getVariants()};
+ try{if(typeof fitCurrent!=='undefined'&&fitCurrent?.variants)Object.assign(variants,fitCurrent.variants)}catch{}
+ return E.chosenVariant(move,variants);
+}
+function assessMove(move){return E.assess(move,selectedName(move),readHistory(),getStep())}
+function text(tag,className,value){
+ const el=document.createElement(tag);if(className)el.className=className;
+ if(value!=null)el.textContent=value;return el;
+}
+function coachWeek(){
+ const d=typeof today==='function'?today():new Date().toISOString().slice(0,10);
+ const cfg=typeof fitConf==='function'?fitConf():{frequency:2};
+ let selected=[];
+ try{const key=E.weekStart(d);selected=read('kocluk-fitness-weeks-v1',{})[key]||[]}catch{}
+ return E.weekly(readHistory(),d,cfg.frequency,selected);
+}
+function refreshOverview(){
+ const card=byId('coachOverview');
+ if(!card)return;
+ const w=coachWeek(),moves=readMoves();
+ const summary=byId('coachWeekSummary'),tip=byId('coachMainTip'),strip=byId('coachWeekStrip');
+ if(summary)summary.textContent=w.finished+' / '+w.target+' Full Body tamamlandı · '+w.sets+' set kaydedildi';
+ if(strip){
+  strip.replaceChildren();
+  const names=['Pt','Sa','Ça','Pe','Cu','Ct','Pa'];
+  w.days.forEach((date,i)=>{
+   const done=w.perDay[date]>0;
+   const type=i===2?'ball':done?'done':w.planned.includes(date)?'planned':'rest';
+   const el=text('div','coach-day coach-'+type);
+   el.title=date+' · '+(i===2?'Basketbol':done?'Antrenman tamamlandı':type==='planned'?'Planlanan antrenman':'Dinlenme');
+   el.append(text('span','coach-day-label',names[i]),text('span','coach-day-icon',i===2?'🏀':done?'✓':type==='planned'?'●':'·'));
+   strip.append(el);
+  });
+ }
+ if(tip){
+  const suggestions=moves.map(m=>assessMove(m));
+  const increase=suggestions.find(x=>x.status==='increase');
+  const low=suggestions.find(x=>x.status==='hold'&&x.detail.includes('alt sınırının'));
+  const one=suggestions.find(x=>x.status==='collect');
+  tip.textContent=increase
+   ?increase.variant+': '+increase.short
+   :low?low.variant+': '+low.short
+   :one?'Kayıtların oluşuyor. Aynı hareket için bir tamamlanmış seans daha kaydet.'
+   :'Hareketlerini ve setlerini kaydettikçe kişisel ağırlık önerilerin burada görünecek.';
+ }
+}
+function showPlan(){
+ const panel=byId('fitSchedulePanel');if(!panel)return;
+ const details=panel.querySelector('details.fit-fold');
+ if(details)details.open=true;
+ panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function setupOverview(){
+ const root=byId('fitnessRoot'),timer=byId('fitSessionPanel');
+ if(!root||!timer||byId('coachOverview'))return;
+ const card=text('section','panel coach-overview');
+ card.id='coachOverview';card.dataset.fitPage='workout';
+ const top=text('div','coach-top');
+ const group=text('div');group.append(text('h2','', 'Antrenörün'),text('p','muted','Personal Trainer · Kişisel, otomatik uygulanmayan öneriler'));
+ top.append(group,text('span','coach-label','v30'));
+ const stats=text('div','coach-week-info');
+ stats.append(text('strong','', 'Bu haftaki programın'),text('span','', ''));
+ stats.lastChild.id='coachWeekSummary';
+ const strip=text('div','coach-week-strip');strip.id='coachWeekStrip';
+ const tipBox=text('div','coach-main-tip');
+ tipBox.append(text('strong','','Antrenör önerisi'),text('p','', 'Kayıtların değerlendiriliyor.'));
+ tipBox.lastChild.id='coachMainTip';
+ const foot=text('div','coach-actions');
+ const planBtn=text('button','secondary','Haftalık planı düzenle');planBtn.type='button';planBtn.addEventListener('click',showPlan);foot.append(planBtn);
+ const details=text('details','coach-options');
+ const summary=text('summary','', 'Ağırlık önerisi ayarı');details.append(summary);
+ const optionWrap=text('div','coach-options-body');
+ const lbl=text('label','','Öneride kullanılacak en küçük artış');
+ lbl.htmlFor='coachIncrement';
+ const sel=document.createElement('select');sel.id='coachIncrement';
+ for(const step of [1,2.5,5]){const option=document.createElement('option');option.value=step;option.textContent=E.labelKg(step);sel.add(option)}
+ sel.value=String(getStep());sel.addEventListener('change',()=>{
+  try{localStorage.setItem(KEY,sel.value)}catch{}
+  refreshOverview();augmentExercises();refreshAnalysis();refreshReport();
+ });
+ optionWrap.append(lbl,sel,text('p','muted','Yalnızca öneri miktarını değiştirir. Setlerine yazılan ağırlık değişmez.'));
+ details.append(optionWrap);
+ const disclaimer=text('p','coach-disclaimer','Öneriler yalnızca kayıtlarına dayanır. Ağrı, zorlanma veya teknik bozulması varsa ağırlık artırma.');
+ card.append(top,stats,strip,tipBox,foot,details,disclaimer);
+ timer.before(card);
+ refreshOverview();
+}
+function augmentExercises(){
+ const root=byId('fitExerciseList');if(!root)return;
+ const moves=readMoves();
+ root.querySelectorAll('.fit-card').forEach(card=>{
+  const move=moves.find(x=>x.id===card.dataset.move);
+  if(!move||card.querySelector('.coach-technique'))return;
+  const body=card.querySelector('.fit-nametop')?.parentElement;
+  if(!body)return;
+  const result=assessMove(move);
+  if(result.records>0){
+   const hint=text('div','coach-inline-tip');
+   hint.append(text('span','coach-tip-dot','↗'),text('span','',result.short));
+   const table=body.querySelector('.fit-settable');
+   if(table)body.insertBefore(hint,table);else body.append(hint);
+  }
+  const instructions=alternatives[selectedName(move)]||tips[move.id]||[];
+  const detail=text('details','coach-technique');
+  detail.append(text('summary','', 'Teknik ipuçları'));
+  const list=text('ul');
+  instructions.forEach(line=>list.append(text('li','',line)));
+  detail.append(list);body.append(detail);
+ });
+}
+function ensureAnalysis(){
+ const previous=byId('v21ExercisePrevious');
+ if(!previous)return null;
+ let el=byId('coachAnalysis');
+ if(!el){el=text('div','coach-analysis');el.id='coachAnalysis';previous.after(el)}
+ return el;
+}
+function refreshAnalysis(){
+ const root=ensureAnalysis();
+ const select=byId('v21Exercise');
+ if(!root||!select)return;
+ const move=readMoves().find(x=>x.id===select.value);
+ if(!move)return;
+ const data=E.analysis(move,selectedName(move),readHistory(),getStep());
+ root.replaceChildren();
+ root.append(text('strong','', 'Antrenör analizi · '+data.variant));
+ const records=text('p','muted', data.completed+' tamamlanmış karşılaştırılabilir antrenman');
+ root.append(records);
+ if(data.lastWeight!=null){
+  const line=data.volume!=null?'Son üst ağırlık: '+E.labelKg(data.lastWeight)+' · Son hacim: '+Math.round(data.volume)+' kg×tekrar':'';
+  root.append(text('p','',line));
+  if(data.volumeChange!==null)root.append(text('p','muted','Önceki antrenmana göre hacim: '+(data.volumeChange>0?'+':'')+Math.round(data.volumeChange)+' kg×tekrar'));
+ }
+ root.append(text('p','coach-analysis-note',data.short));
+ if(move.options)root.append(text('p','muted','Alternatif makineler/dambıllar koçluk hesabında ayrı değerlendirilir. Üstteki eski grafik alternatifleri birlikte gösterebilir.'));
+}
+function reportDate(){
+ try{const monday=E.weekStart(today());return E.shift(monday,(typeof v21ReportOffset==='number'?v21ReportOffset:0)*7)}catch{return new Date().toISOString().slice(0,10)}
+}
+function refreshReport(){
+ const original=byId('v21Report');if(!original)return;
+ let box=byId('coachReport');
+ if(!box){box=text('div','coach-report');box.id='coachReport';original.before(box)}
+ const moves=readMoves(),w=E.report(readHistory(),moves,reportDate(),typeof fitConf==='function'?fitConf().frequency:2,getVariants(),getStep());
+ box.replaceChildren();
+ box.append(text('h3','', 'Antrenörün haftalık değerlendirmesi'));
+ box.append(text('p','coach-report-summary', w.finished+' / '+w.target+' Full Body · '+w.sets+' tamamlanan set'));
+ const list=text('ul');
+ w.messages.forEach(message=>list.append(text('li','',message)));
+ box.append(list);
+}
+function hook(name,after){
+ const original=window[name];if(typeof original!=='function'||original.__coachWrapped)return;
+ const wrapped=function(...args){const result=original.apply(this,args);after();return result};
+ wrapped.__coachWrapped=true;window[name]=wrapped;
+}
+function init(){
+ setupOverview();
+ augmentExercises();refreshAnalysis();refreshReport();
+ hook('fitDrawExercises',()=>{augmentExercises();refreshOverview()});
+ hook('fitDrawWeek',refreshOverview);
+ hook('fitDrawHistory',()=>{refreshOverview();refreshReport()});
+ hook('v21ExerciseGraph',refreshAnalysis);
+ hook('v21Report',refreshReport);
+ hook('v21RenderInsights',()=>{refreshAnalysis();refreshReport()});
+ hook('showView',()=>{refreshOverview();refreshAnalysis()});
+ byId('v21Exercise')?.addEventListener('change',refreshAnalysis);
+ byId('confirmImport')?.addEventListener('click',()=>{queueMicrotask(()=>{byId('coachIncrement')&&(byId('coachIncrement').value=String(getStep()));refreshOverview();augmentExercises();refreshAnalysis();refreshReport()})});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});
+else init();
+})();
