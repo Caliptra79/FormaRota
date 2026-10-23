@@ -47,6 +47,7 @@ button.smallbtn{min-height:44px}
 
 /* Home: key values and the three frequent actions form the visual anchor. */
 #homePanel .home-intro{gap:10px;align-items:flex-start}
+#homePanel .home-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 #homePanel .home-intro h2{font-size:clamp(1.55rem,5.4vw,1.9rem)}
 #homePanel .home-stat{padding:14px;border:1px solid var(--border)}
 #homePanel .home-stat .value{font-size:clamp(1.6rem,5.5vw,2rem);font-variant-numeric:tabular-nums;line-height:1.2}
@@ -71,7 +72,7 @@ button.smallbtn{min-height:44px}
 /* Nutrition: consumed and remaining goals on one visual surface. */
 #nutritionTop{display:grid;gap:11px}
 #nutritionTop>.row:first-child{margin:0}
-#nutritionTop .stats{margin-top:0!important;gap:9px}
+#nutritionTop .stats{margin-top:0!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 #nutritionTop .stats>.stat{padding:12px;border-radius:var(--fr32-inner-radius)}
 #nutritionTop .stats>.stat strong{font-size:clamp(1.5rem,5vw,1.85rem);line-height:1.2;letter-spacing:-.045em}
 #nutritionTop .stats>.stat .progress{height:7px;margin-top:7px}
@@ -122,6 +123,7 @@ button.smallbtn{min-height:44px}
 #fitnessRoot .fit-card .fit-nametop .tag{max-width:100%}
 #fitnessRoot .fit-card .coach-inline-tip{padding:10px;margin:9px 0 2px;font-size:.83rem}
 #fitnessRoot .fit-card .coach-technique>summary{min-height:44px;display:flex;align-items:center}
+#fitnessRoot .coach-options>summary{min-height:44px;display:flex;align-items:center}
 #fitnessRoot .fit-settable{margin-top:11px}
 #fitnessRoot .fit-set-head{font-size:.77rem}
 #fitnessRoot .fit-set input{font-variant-numeric:tabular-nums}
