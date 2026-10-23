@@ -1,0 +1,33 @@
+name: Build FormaRota icons
+on:
+  push:
+    branches:
+      - fix/theme-readability-and-layout
+    paths:
+      - assets/formarota-icon.svg
+      - scripts/build_icons.py
+      - .github/workflows/build-branding.yml
+permissions:
+  contents: write
+jobs:
+  generate-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'cairosvg==2.7.1' 'pillow==11.3.0'
+      - name: Generate PWA and Apple touch icons
+        run: python scripts/build_icons.py
+      - name: Commit generated icons
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add icon-192.png icon-512.png apple-touch-icon.png
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(icon): update PWA and iPhone icons from FormaRota vector"
+            git push origin HEAD:fix/theme-readability-and-layout
+          fi
