@@ -1,0 +1,7 @@
+/* Collapsible app information in Settings only. */
+.app-information summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:8px 2px;font-weight:700;color:var(--text)}
+.app-information summary::-webkit-details-marker{display:none}
+.app-information summary::after{content:"+";font-size:1.3rem;color:var(--accent)}
+.app-information[open] summary::after{content:"−"}
+.app-information summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
+.app-information p{margin:9px 0 3px;color:var(--muted);line-height:1.55}
