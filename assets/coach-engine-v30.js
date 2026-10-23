@@ -84,6 +84,18 @@ function weekly(history,weekDate,frequency,selected){
  const plan=selectedDates.length?selectedDates:suggested;
  return {start,days,finished:finished.length,sets:countSets,target,planned:plan,custom:selectedDates.length>0,perDay};
 }
+function reschedule(w,todayDate){
+ if(!w||!validDate(todayDate)||!w.days.includes(todayDate))return {missed:[],replacement:null};
+ const missed=w.planned.filter(date=>date<todayDate&&!w.perDay[date]);
+ if(!missed.length)return {missed:[],replacement:null};
+ const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.perDay).filter(d=>w.perDay[d]>0),w.days[2]];
+ const candidate=w.days.find(date=>{
+  if(date<todayDate||date===w.days[2]||w.planned.includes(date)||w.perDay[date])return false;
+  const t=new Date(date+'T12:00:00').getTime();
+  return used.every(other=>Math.abs(t-new Date(other+'T12:00:00').getTime())>=2*86400000);
+ });
+ return {missed,replacement:candidate||null};
+}
 function analysis(move,variant,history,increment){
  const assessment=assess(move,variant,history,increment);
  const entries=records(history,move,variant).filter(x=>x.full);
@@ -99,12 +111,13 @@ function report(history,moves,weekDate,frequency,variants,increment,selected){
  if(w.finished===0)messages.push('Bu hafta tamamlanmış Full Body kaydı yok. İlk seansını kaydettiğinde değerlendirme başlayacak.');
  else if(w.finished<w.target)messages.push(w.finished+'/'+w.target+' Full Body tamamlandı. Uygun bir sonraki haftada planına yeniden devam edebilirsin.');
  else messages.push('Bu haftaki '+w.target+' Full Body hedefini tamamladın.');
- const eligible=safeArray(moves).map(move=>assess(move,chosenVariant(move,variants),history,increment));
+ const historyThroughWeek=safeArray(history).filter(session=>validDate(session?.date)&&session.date<=w.days[6]);
+ const eligible=w.finished>0?safeArray(moves).map(move=>assess(move,chosenVariant(move,variants),historyThroughWeek,increment)):[];
  const rising=eligible.find(x=>x.status==='increase'),caution=eligible.find(x=>x.status==='hold'&&x.detail.includes('alt sınırının'));
  if(rising)messages.push(rising.variant+': '+rising.short);
  if(caution)messages.push(caution.variant+': tekrar hedefinin altında kalan setlere odaklan.');
  if(messages.length<3&&w.finished>0)messages.push('Bu hafta '+w.sets+' tamamlanmış set kaydettin. Öneriler yalnızca kayıtlı setlere dayanır.');
  return {...w,messages:messages.slice(0,3)};
 }
-global.FormaRotaCoachEngine={range,chosenVariant,records,assess,analysis,weekly,report,weekStart,shift,labelKg};
+global.FormaRotaCoachEngine={range,chosenVariant,records,assess,analysis,weekly,reschedule,report,weekStart,shift,labelKg};
 })(window);
