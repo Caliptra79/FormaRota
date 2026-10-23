@@ -38,7 +38,9 @@ test('no public app version meta is embedded in rendered index page',()=>{
 });
 test('backup schema version 7 remains for safe old and new imports',()=>{
  assert.ok(html.includes("function collectBackup(){return{version:7"));
- assert.ok(html.includes('data.version'));
+ assert.ok(html.includes('pendingImportData=data'));
+ assert.ok(html.includes('importSafetyReady'));
+ assert.doesNotMatch(html,/Sürüm:\s*\$\{data\.version/);
  assert.ok(html.includes("function closeImportPreview()"));
  assert.ok(html.includes("id=\"confirmImport\""));
 });
