@@ -2,6 +2,10 @@
 
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
 
+## Uygulamada sürüm etiketi yok
+
+FormaRota'nın kullanıcıya görünen web başlığı ve telefona kurulum adı sürüm numarası taşımaz: **FormaRota Solo** / **FormaRota**. JSON yedeğini içe aktarma ekranındaki teknik şema sürümü kullanıcıya gösterilmez; yedek dosyasındaki `version` alanı ve eski yedek uyumluluğu korunur. Teknik yayın sürümleri ve PWA önbellek etiketleri yalnızca kaynak kodu/GitHub takibi içindir.
+
 ## v33 · Temkinli ve açıklanabilir Personal Trainer
 
 Bu sürüm, kullanıcının onayladığı altı kalite iyileştirmesini uygular; 13 hareket, 15 GIF, yedi tema, beslenme/fitness verileri, JSON yedek sistemi ve Full Body programı değiştirilmez.
