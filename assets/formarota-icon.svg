@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="iconTitle">
+<title id="iconTitle">FormaRota – pusula ve yükselen rota simgesi</title>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123A42"/><stop offset=".52" stop-color="#0D252D"/><stop offset="1" stop-color="#071821"/></linearGradient>
+<linearGradient id="ring" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#43C5CB"/><stop offset=".54" stop-color="#77E7C4"/><stop offset="1" stop-color="#A2F7D2"/></linearGradient>
+<linearGradient id="route" x1=".1" y1="1" x2=".9" y2="0"><stop stop-color="#F0FFF8"/><stop offset=".6" stop-color="#C5FFF0"/><stop offset="1" stop-color="#96F5C9"/></linearGradient>
+<radialGradient id="glow" cx="50%" cy="44%" r="72%"><stop stop-color="#1E7B74" stop-opacity=".34"/><stop offset="1" stop-color="#0A1F29" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="512" height="512" fill="url(#bg)"/>
+<rect width="512" height="512" fill="url(#glow)"/>
+<circle cx="256" cy="256" r="179" fill="none" stroke="#74D9C1" stroke-opacity=".15" stroke-width="26"/>
+<circle cx="256" cy="256" r="179" fill="none" stroke="url(#ring)" stroke-width="20" stroke-linecap="round" stroke-dasharray="1040 90" transform="rotate(-39 256 256)"/>
+<g fill="#A6F9DE">
+<path d="M256 47 245 88 267 88Z"/>
+<path d="M465 256 424 245 424 267Z" opacity=".75"/>
+<path d="M256 465 245 424 267 424Z" opacity=".65"/>
+<path d="M47 256 88 245 88 267Z" opacity=".65"/>
+</g>
+<path d="M159 344 C184 315 211 324 233 300 C261 271 263 235 301 215 L344 179" fill="none" stroke="#071E24" stroke-width="37" stroke-linecap="round" stroke-linejoin="round" opacity=".36"/>
+<path d="M159 344 C184 315 211 324 233 300 C261 271 263 235 301 215 L344 179" fill="none" stroke="url(#route)" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M309 172 L364 162 L354 217" fill="none" stroke="#B2FFDC" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="155" cy="348" r="16" fill="#65D9CB" stroke="#E7FFF4" stroke-width="7"/>
+<circle cx="254" cy="264" r="5.5" fill="#071E24" opacity=".5"/>
+</svg>
