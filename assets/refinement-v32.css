@@ -1,0 +1,171 @@
+/* FormaRota Solo v32 — unified spacing, typography and responsive visual polish.
+ * Big GIFs are deliberate: 138px at wider widths, up to 240px on phones.
+ * All seven pre-existing theme palettes remain unchanged.
+ */
+:root{
+ --fr32-radius:14px;
+ --fr32-inner-radius:11px;
+ --fr32-gap:12px;
+ --fr32-content-gap:10px;
+}
+html{scroll-padding-bottom:calc(94px + env(safe-area-inset-bottom,0px))}
+body{overflow-wrap:break-word}
+main{row-gap:12px;padding-bottom:calc(106px + env(safe-area-inset-bottom,0px))}
+main>.panel,.fitness-root>.panel{border-radius:var(--fr32-radius)}
+.panel,.fit-card,.stat,.home-stat,.tracker,.v21-box,.meal-card{min-width:0}
+.route-heading h2{font-weight:820;line-height:1.12;letter-spacing:-.04em}
+.route-heading p{max-width:55ch}
+.panel h2{letter-spacing:-.025em}
+.panel .muted{overflow-wrap:anywhere}
+button,select,summary,.meal-card{touch-action:manipulation}
+main button,main select,header select{min-height:44px}
+main input[type="number"]:not(.inlinegoal),main input[type="date"],main input[type="text"],main input[type="search"]{min-height:44px}
+main .fit-set button,main .fit-set input{min-height:44px}
+button:not(.secondary):not(.danger):not([data-tab]):not(.top-settings){color:var(--onaccent)}
+button:disabled{cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,
+[role="button"]:focus-visible,.meal-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mobile-tabbar{z-index:60}
+.mobile-tabbar button{min-height:56px;gap:3px;font-weight:730}
+.mobile-tabbar .ni svg{width:23px;height:23px}
+.tag{line-height:1.4}
+button.smallbtn{min-height:44px}
+@media(max-width:640px){
+ main{padding-inline:11px}
+ input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+ select,textarea{font-size:max(16px,1rem)}
+ .route-heading{padding-top:8px}
+ .route-heading p{font-size:.86rem}
+ .panel{padding:13px}
+ .mobile-tabbar{padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:350px){
+ main{padding-inline:9px}
+ .panel{padding:11px}
+ .mobile-tabbar button{font-size:.67rem}
+}
+
+/* Home: key values and the three frequent actions form the visual anchor. */
+#homePanel .home-intro{gap:10px;align-items:flex-start}
+#homePanel .home-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+#homePanel .home-intro h2{font-size:clamp(1.55rem,5.4vw,1.9rem)}
+#homePanel .home-stat{padding:14px;border:1px solid var(--border)}
+#homePanel .home-stat .value{font-size:clamp(1.6rem,5.5vw,2rem);font-variant-numeric:tabular-nums;line-height:1.2}
+#homePanel .home-stat .value small{font-size:.75rem;font-weight:650;white-space:normal}
+#homePanel .home-stat .progress{height:7px;margin-top:10px}
+#homePanel .tracker-pair{margin-top:11px!important}
+#homePanel .tracker{border:1px solid var(--border);padding:13px}
+#homePanel .tracker .count{font-size:1.47rem;font-weight:820;line-height:1.27;display:block;margin:5px 0 9px}
+#homePanel .mini-panel:not([hidden]){border-radius:var(--fr32-inner-radius)}
+#homePanel .home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#homePanel .home-actions button{min-height:50px;font-weight:750;line-height:1.25;white-space:normal}
+#homePanel .tracker .buttons{display:flex;gap:8px;flex-wrap:wrap}
+#homePanel .tracker .buttons button{min-height:44px}
+#homePanel .home-extra-details>summary{min-height:44px;display:flex;align-items:center}
+@media(max-width:390px){
+ #homePanel .home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #homePanel #homeDinner{grid-column:1/-1}
+ #homePanel .home-stat{padding:12px}
+ #homePanel .tracker-pair{grid-template-columns:minmax(0,1fr)}
+}
+
+/* Nutrition: consumed and remaining goals on one visual surface. */
+#nutritionTop{display:grid;gap:11px}
+#nutritionTop>.row:first-child{margin:0}
+#nutritionTop .stats{margin-top:0!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#nutritionTop .stats>.stat{padding:12px;border-radius:var(--fr32-inner-radius)}
+#nutritionTop .stats>.stat strong{font-size:clamp(1.5rem,5vw,1.85rem);line-height:1.2;letter-spacing:-.045em}
+#nutritionTop .stats>.stat .progress{height:7px;margin-top:7px}
+#nutritionTop .macro-more{margin-top:0}
+#nutritionTop .macro-more>summary{min-height:44px;display:flex;align-items:center}
+#nutritionTop #v21Budget.fr32-goal-summary{
+ display:block;grid-column:1/-1;margin:0;padding:12px 0 0;border:0;
+ border-top:1px solid var(--border);border-radius:0;box-shadow:none;background:transparent
+}
+#nutritionTop #v21Budget h2,#nutritionTop #v21Budget .v21-mini{display:none}
+#nutritionTop #v21Budget .v21-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#nutritionTop #v21Budget .v21-box{padding:10px 12px;border-radius:var(--fr32-inner-radius);background:var(--panel2)}
+#nutritionTop #v21Budget .v21-box small{font-size:.77rem}
+#nutritionTop #v21Budget .v21-box div{font-size:.82rem;line-height:1.4}
+#nutritionTop #v21Budget .v21-box strong{font-size:1.24rem;font-variant-numeric:tabular-nums}
+#breakfastPanel{grid-column:1/-1}
+#breakfastPanel h2{margin-bottom:6px}
+#breakfastPanel .fr32-breakfast-presets{color:var(--muted);font-size:.9rem;margin:0 0 11px}
+#breakfastPanel #breakfastStatus{padding:11px 12px;margin-bottom:10px}
+#breakfastPanel #breakfastToggle{margin-top:0!important;min-height:48px}
+#breakfastPanel .fr32-breakfast-details{margin-top:11px;border-top:1px solid var(--border)}
+#breakfastPanel .fr32-breakfast-details>summary{
+ padding:10px 2px;min-height:44px;display:flex;align-items:center;color:var(--muted);font-size:.83rem;font-weight:700;cursor:pointer;list-style:none
+}
+#breakfastPanel .fr32-breakfast-details>summary::-webkit-details-marker{display:none}
+#breakfastPanel .fr32-breakfast-details>summary:before{content:'▸';margin-right:8px}
+#breakfastPanel .fr32-breakfast-details[open]>summary:before{content:'▾'}
+#breakfastPanel .fr32-breakfast-details p{font-size:.85rem;margin:8px 0;line-height:1.5}
+#mealQuickPanel{padding-block:14px}
+#mealQuickPanel .split .muted{display:none}
+#mealQuickPanel .meal-cards{margin-top:10px;gap:9px}
+#mealQuickPanel .meal-card{border-radius:var(--fr32-inner-radius);min-height:76px;padding:13px}
+#mealQuickPanel .meal-description small{line-height:1.35}
+#v21Recents .optional-details>summary{min-height:50px}
+
+/* Fitness: keep original big GIF presentation, tighten surrounding chrome. */
+#fitnessRoot .coach-overview{gap:10px}
+#fitnessRoot .coach-top h2{font-size:1.26rem}
+#fitnessRoot .coach-main-tip{border-radius:var(--fr32-inner-radius)}
+#fitnessRoot #fitSchedulePanel.fit-optional>details>summary{min-height:48px}
+#fitnessRoot #fitExercisePanel .fit-headline{align-items:center;gap:10px}
+#fitnessRoot #fitExercisePanel .fit-headline h2{font-size:1.19rem}
+#fitnessRoot #fitCompletedText{font-size:.79rem;font-weight:800;white-space:nowrap}
+#fitnessRoot .fit-card{gap:12px;border-radius:var(--fr32-radius);padding:14px}
+#fitnessRoot .fit-card .fit-gif-preview{border-radius:var(--fr32-inner-radius)}
+#fitnessRoot .fit-card .fit-nametop{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+#fitnessRoot .fit-card .fit-nametop strong{line-height:1.2;font-size:clamp(1.15rem,3.5vw,1.38rem)}
+#fitnessRoot .fit-card .fit-nametop .tag{max-width:100%}
+#fitnessRoot .fit-card .coach-inline-tip{padding:10px;margin:9px 0 2px;font-size:.83rem}
+#fitnessRoot .fit-card .coach-technique>summary{min-height:44px;display:flex;align-items:center}
+#fitnessRoot .coach-options>summary{min-height:44px;display:flex;align-items:center}
+#fitnessRoot .fit-settable{margin-top:11px}
+#fitnessRoot .fit-set-head{font-size:.77rem}
+#fitnessRoot .fit-set input{font-variant-numeric:tabular-nums}
+#fitnessRoot #fitSessionPanel .fit-clock{font-variant-numeric:tabular-nums}
+#fitnessRoot #fitSessionPanel .fit-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#fitnessRoot #fitSessionPanel .fit-toolbar button{width:100%;min-width:0;min-height:46px;padding:9px 8px;white-space:normal}
+#fitnessRoot #fitSessionPanel #fitStart,#fitnessRoot #fitSessionPanel #fitFinish{grid-column:1/-1}
+#fitnessRoot .fit-optional .fit-fold>summary{min-height:49px}
+@media(max-width:620px){
+ #fitnessRoot .fit-card{gap:10px}
+ /* DO NOT shrink the user's large exercise GIFs. Existing 240px cap is preserved. */
+ #fitnessRoot .fit-card .fit-gif-preview{width:min(100%,240px);aspect-ratio:1/1;height:auto;margin:0 auto}
+ #fitnessRoot .fit-card .fit-gif-preview img{object-fit:contain;width:100%;height:100%;aspect-ratio:1/1}
+ #fitnessRoot .fit-card .fit-nametop strong{font-size:1.22rem}
+ #fitnessRoot .fit-set-head,#fitnessRoot .fit-set{gap:5px}
+}
+@media(max-width:350px){
+ #fitnessRoot .fit-set-head,#fitnessRoot .fit-set{grid-template-columns:38px minmax(0,1fr) minmax(0,1fr) minmax(62px,.95fr)}
+ #fitnessRoot .fit-set button{font-size:.72rem;padding:7px 2px}
+}
+
+/* Progress: core weight figures first; detailed panels stay optional. */
+#profilePanel>.stats{margin:9px 0 13px!important;gap:9px}
+#profilePanel>.stats>.stat{background:var(--panel2);border-radius:var(--fr32-inner-radius);padding:12px}
+#profilePanel>.stats>.stat strong{font-size:clamp(1.12rem,3.6vw,1.45rem);font-variant-numeric:tabular-nums}
+#profilePanel .row:has(#weightDate){margin-top:6px}
+#profilePanel .progress-preferences{margin:12px 0}
+#profilePanel .progress-history{margin-top:11px}
+#profilePanel .progress-secondary-note{margin-top:12px}
+#personalRecordsPanel .pr-grid{min-width:0}
+#trendPanel .progress-fold>summary,#weeklyPanel .progress-fold>summary{min-height:50px}
+#v21InsightsEntry button{min-height:46px}
+section.panel[data-view="insights"] .progress-fold>summary{min-height:50px}
+.coach-analysis,.coach-report{border-radius:var(--fr32-inner-radius)}
+@media(max-width:430px){
+ #profilePanel>.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #profilePanel>.stats>.stat{padding:10px}
+}
+/* Semantic consistency for the seven established themes. No palette changes. */
+html[data-theme="light"],html[data-theme="sand"]{color-scheme:light}
+html[data-theme="night"],html[data-theme="ocean"],
+html[data-theme="neon"],html[data-theme="volt"],html[data-theme="sunset"]{color-scheme:dark}
+@media(prefers-reduced-motion:reduce){
+ .progress span,.bartrack span,button,.coach-day{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}

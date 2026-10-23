@@ -1,6 +1,28 @@
-# FormaRota Solo v31 — Personal Trainer
+# FormaRota Solo v32 — Personal Trainer + tasarım inceliği
 
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
+
+## v32 · Tasarım ve sadelik
+
+Kullanıcının özellikle istediği gibi **GIF'ler büyük kalır**: telefonlarda kare görsel en fazla 240 px, daha geniş ekranda 138 px. Hiçbir hareket veya GIF kaldırılmaz.
+
+- **Fitness:** Görsel boyutları aynı; set/dinlenme kontrolleri ve tipografi daha tutarlı. Haftalık planın açılır alanı, koç özetiyle yan yana sıralamaya alınır; düğmeye basınca 13 hareketin sonuna atlamaz.
+- **Beslenme:** Tüketilen ve kalan kalori/protein aynı panelde. Planlı kahvaltı ve öğün kısayolları yukarıda, uzun kahvaltı açıklamaları açılır alanda. Mevcut arama/öğün kayıtları korunur.
+- **Ana ekran:** Kalori/protein bir bakışta öne çıkar, su/yürüyüş izleyicileri ve üç sık kullanılan öğün düğmesi daha belirgindir.
+- **Gelişim:** Kilo/hedef/değişim sayıları üstte; veri girişi ve isteğe bağlı profil alanları altta. Grafikler ve raporlar kaldırılmadı.
+- **7 tema:** Gece, Okyanus, Gün Işığı, Kum, Neon Mor, Volt, Sunset korunur. Ortak köşe, boşluk, erişilebilir odak ve düğme stili güncellendi. Temel renkler değiştirilmedi.
+- **Altyapı:** Eski, kullanılmayan odak-modu CSS ve genel GIF gizleme kuralı kaldırıldı. Yeni düzenleme yalnızca DOM yerleşimi ve stil içerir; veri anahtarları ve hesaplamalar değişmez.
+
+Çevrimdışı önbellek **v32** olarak yenilendi. Yeni dosyalar: `assets/refinement-v32.css`, `assets/refinement-v32.js`.
+
+## v32 testleri
+
+```bash
+node --test tests/refinement-v32.test.cjs
+node --test tests/coach-v30.test.cjs tests/coach-v31.test.cjs
+```
+
+Yerleşim kodu için DOM simülasyonu: Beslenme hedefi, kahvaltı katlama, kilo istatistikleri ve Fitness planı yerleşimi kontrolleri. Ayrıca 7 temanın metin/düğme kontrastı ve 320/350/375/390/430/620/640/768/1024 px hedefli CSS kuralları denetlenir. **Gerçek iPhone Safari ve gerçek tarayıcı ekran görüntüsü** ek ayrıca test gerektirir; mevcut ortamda otomatik son kullanıcı Safari oturumu kullanılamaz.
 
 ## v31 · Koçluk güvenilirliği ve arayüz düzeltmeleri
 
