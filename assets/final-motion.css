@@ -1,0 +1,78 @@
+/* FormaRota — balanced final motion.
+   Theme-aware, transform/opacity-first, nonblocking, and OS reduce-motion safe. */
+:root{
+ --motion-fast:140ms;
+ --motion-base:210ms;
+ --motion-slow:340ms;
+ --motion-progress:580ms;
+ --motion-ease:cubic-bezier(.2,.78,.2,1);
+ --motion-glow:color-mix(in srgb,var(--accent) 8%,transparent);
+}
+html[data-theme="neon"],html[data-theme="volt"]{
+ --motion-glow:color-mix(in srgb,var(--accent) 14%,transparent);
+}
+button,.navbtn,.context-links button,.mobile-tabbar button{
+ transition:background-color var(--motion-base) var(--motion-ease),
+  color var(--motion-base) var(--motion-ease),border-color var(--motion-base) var(--motion-ease),
+  box-shadow var(--motion-base) var(--motion-ease),transform var(--motion-fast) var(--motion-ease);
+}
+@media(hover:hover) and (pointer:fine){
+ button:not(:disabled):hover{filter:brightness(1.045)}
+ .panel,.fit-card,.home-stat,.stat,.v21-box,.result,.entry{
+  transition:border-color var(--motion-base) var(--motion-ease),
+  background-color var(--motion-base) var(--motion-ease),
+  box-shadow var(--motion-base) var(--motion-ease);
+ }
+}
+@media(pointer:fine){
+ button:not(:disabled):active{transform:scale(.985)}
+}
+@media(pointer:coarse){
+ button:not(:disabled):active{transform:scale(.985)}
+}
+.mobile-tabbar button.active,.context-links button.active,.navbtn.active{
+ box-shadow:inset 0 0 0 1px var(--motion-glow);
+}
+html[data-theme="neon"] .mobile-tabbar button.active,
+html[data-theme="volt"] .mobile-tabbar button.active{
+ box-shadow:inset 0 0 0 1px var(--motion-glow),0 0 11px var(--motion-glow);
+}
+.progress span,.bartrack span,.fit-progress span{
+ transition:width var(--motion-progress) var(--motion-ease);
+}
+.fit-set,.fit-set button{
+ transition:background-color var(--motion-base) var(--motion-ease),
+  color var(--motion-base) var(--motion-ease),
+  border-color var(--motion-base) var(--motion-ease),
+  opacity var(--motion-base) var(--motion-ease);
+}
+@keyframes fr-enter{
+ from{opacity:.72;transform:translateY(6px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@keyframes fr-set-confirm{
+ from{box-shadow:inset 0 0 0 0 transparent}
+ 50%{box-shadow:inset 0 0 0 1px var(--motion-glow)}
+ to{box-shadow:inset 0 0 0 0 transparent}
+}
+@media(prefers-reduced-motion:no-preference){
+ main>section.fr-motion-enter:not(.hidden){
+  animation:fr-enter var(--motion-base) var(--motion-ease) both;
+ }
+ .fit-set.fr-set-confirm{
+  animation:fr-set-confirm 270ms var(--motion-ease) both;
+ }
+ details.app-information[open]>p,
+ details.fr-record-move[open]>:not(summary),
+ details.coach-reason[open]>:not(summary){
+  animation:fr-enter var(--motion-base) var(--motion-ease) both;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{
+  animation-duration:.01ms!important;
+  animation-iteration-count:1!important;
+  transition-duration:.01ms!important;
+  scroll-behavior:auto!important;
+ }
+}

@@ -143,7 +143,8 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/nutrition-quality.css"/>
 <link rel="stylesheet" href="./assets/readability-layout.css"/>
 <link rel="stylesheet" href="./assets/compact-shell.css"/>
-<link rel="stylesheet" href="./assets/settings-disclosure.css"/></head>
+<link rel="stylesheet" href="./assets/settings-disclosure.css"/>
+<link rel="stylesheet" href="./assets/final-motion.css"/></head>
 <body class="compact-app-shell">
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
 <div class="context-links" id="nutritionLinks">
@@ -608,7 +609,7 @@ function fitDrawExercises(){const root=$('fitExerciseList');root.innerHTML='';FI
  const btn=document.createElement('button');btn.type='button';btn.className=saved.done?'secondary':'smallbtn';btn.textContent=saved.done?(editing?'Düzeltmeyi kaydet':'Düzelt'):'Kaydet';btn.disabled=!fitCurrent;btn.addEventListener('click',()=>{if(saved.done&&!editing){fitEditingSetKey=move.id+':'+n;fitDrawExercises();return}if(saved.done&&editing){fitCorrectCurrentSet(move.id,n);return}fitMarkSet(move.id,n)});line.append(num,kg,reps,btn);grid.append(line)}body.append(grid);card.append(figure,body);root.append(card)});
  fitSyncClock();
 }
-function fitMarkSet(id,i){if(!fitCurrent)return;const move=FIT_MOVES.find(x=>x.id===id);const rawKg=$(`fit-${id}-${i}-kg`).value;const blankKg=rawKg==null||String(rawKg).trim()==='';if(blankKg&&id!=='calf'){alert('Ağırlık (kg) alanını doldur. Makinede gerçekten 0 kg çalıştıysan 0 yaz.');return}const kg=blankKg?0:Number(rawKg),reps=Number($(`fit-${id}-${i}-reps`).value);if(!Number.isFinite(kg)||kg<0||kg>1500||!Number.isInteger(reps)||reps<1||reps>100){alert('Geçerli bir ağırlık (kg) ve tekrar sayısı gir.');return}if(fitCurrent.items[id]?.[i]?.done)return;fitCurrent.items[id][i]={done:true,weight:kg,reps,doneAt:new Date().toISOString(),name:fitActiveVariant(move).name};fitCurrent.activeExercise=FIT_MOVES.findIndex(x=>(fitCurrent.items[x.id]||[]).some(v=>!v.done));if(fitRepsCompleted()<39)fitStartPhase('rest');else fitStopPhase();fitSaveCurrent();fitDrawExercises();fitSyncClock();if(window.formarotaReady){fitRenderFocus();renderPRs();renderHome()}}
+function fitMarkSet(id,i){if(!fitCurrent)return;const move=FIT_MOVES.find(x=>x.id===id);const rawKg=$(`fit-${id}-${i}-kg`).value;const blankKg=rawKg==null||String(rawKg).trim()==='';if(blankKg&&id!=='calf'){alert('Ağırlık (kg) alanını doldur. Makinede gerçekten 0 kg çalıştıysan 0 yaz.');return}const kg=blankKg?0:Number(rawKg),reps=Number($(`fit-${id}-${i}-reps`).value);if(!Number.isFinite(kg)||kg<0||kg>1500||!Number.isInteger(reps)||reps<1||reps>100){alert('Geçerli bir ağırlık (kg) ve tekrar sayısı gir.');return}if(fitCurrent.items[id]?.[i]?.done)return;fitCurrent.items[id][i]={done:true,weight:kg,reps,doneAt:new Date().toISOString(),name:fitActiveVariant(move).name};fitCurrent.activeExercise=FIT_MOVES.findIndex(x=>(fitCurrent.items[x.id]||[]).some(v=>!v.done));if(fitRepsCompleted()<39)fitStartPhase('rest');else fitStopPhase();fitSaveCurrent();fitDrawExercises();if(window.matchMedia?.('(prefers-reduced-motion: no-preference)').matches){const card=[...document.querySelectorAll('#fitExerciseList .fit-card')].find(x=>x.dataset.move===id);const row=card?.querySelectorAll('.fit-set')[i];row?.classList.add('fr-set-confirm')}fitSyncClock();if(window.formarotaReady){fitRenderFocus();renderPRs();renderHome()}}
 function fitStartPhase(kind){if(!fitCurrent)return;const cfg=fitConf(),durationSec=kind==='work'?cfg.workSeconds:cfg.restSeconds;fitCurrent.phase={kind,durationSec,elapsedMs:0,runningSince:fitCurrent.status==='running'?Date.now():null};fitSaveCurrent();fitSyncClock()}
 function fitStartSession(){if(fitCurrent)return;if(new Date().getDay()===3){alert('Çarşamba fitness yerine Basketball + Abs günün.');return}const cfg=fitSaveConf(),variants=read('kocluk-fitness-variants-v1',{});fitCurrent={id:makeId(),date:today(),startedAt:new Date().toISOString(),status:'running',runningSince:Date.now(),elapsedMs:0,durationSec:cfg.durationMin*60,phase:null,variants,activeExercise:0,items:Object.fromEntries(FIT_MOVES.map(x=>[x.id,Array.from({length:3},()=>({done:false,weight:'',reps:x.initial}))]))};fitSaveCurrent();fitDrawExercises();fitSyncClock();if(window.formarotaReady){fitSetFocus(true);renderHome();$('fitExercisePanel').scrollIntoView({behavior:'smooth',block:'start'})}}
 function fitTogglePause(){if(!fitCurrent)return;if(fitCurrent.status==='running'){fitFreezeClock()}else{fitCurrent.status='running';fitCurrent.runningSince=Date.now();if(fitCurrent.phase)fitCurrent.phase.runningSince=Date.now();fitSaveCurrent()}fitSyncClock()}
@@ -631,6 +632,7 @@ const VIEW_TITLES={home:'Ana Sayfa',nutrition:'Günlük Beslenme',dinner:'Akşam
 let currentView='home', focusMode=false, phaseAlarmKey='';
 function routeFromHash(){const raw=decodeURIComponent(location.hash.replace(/^#\/?/,''));return (raw==='beslenme/besinler'?'nutrition':Object.keys(VIEW_PATHS).find(key=>VIEW_PATHS[key]===raw))||null}
 function showView(view,scroll=true,updateURL=true){
+ const motionViewChanged=currentView!==view;
  if(view==='foods')view='nutrition';
  if(!Object.hasOwn(VIEW_PATHS,view))view='home';
  currentView=view;
@@ -638,6 +640,8 @@ function showView(view,scroll=true,updateURL=true){
  document.querySelectorAll('main > section[data-view]').forEach(section=>{
   const match=(section.dataset.view===view && !(section.id==='searchPanel' && section.classList.contains('meal-editor-closed')))||(fitnessPage&&section.id==='fitnessRoot');
   section.classList.toggle('hidden',!match);
+  section.classList.remove('fr-motion-enter');
+  if(match&&motionViewChanged&&window.matchMedia?.('(prefers-reduced-motion: no-preference)').matches)section.classList.add('fr-motion-enter');
  });
  document.querySelectorAll('#fitnessRoot>[data-fit-page]').forEach(section=>section.classList.toggle('hidden',section.dataset.fitPage!==(view==='fitness-history'?'history':'workout')));
  const nutritionPage=['nutrition','dinner','recipes'].includes(view);
