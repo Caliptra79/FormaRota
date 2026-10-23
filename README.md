@@ -1,5 +1,17 @@
 # FormaRota Solo v33 — Personal Trainer güvenilirliği + sade tasarım
 
+## Geliştirme dalında: Türk yemekleri ve kişisel akşam önerileri
+
+- **84 yeni Türk yemeği** `assets/turkish-foods.js` içinde, 100 g pişmiş/servis edilmiş yemek için **tahmini** kcal/protein/karbonhidrat/yağ içerir. Bunlar TürKomp'tan kopyalanmış veya laboratuvarda doğrulanmış veriler değildir. Tarif, yağ miktarı ve pişirme yöntemi sonucu değiştirebilir.
+- Mevcut yerel arama, kişisel tarifler, kahvaltı, kayıtlar ve Open Food Facts ayrı kalır. Yeni kayıtlar `tr-*` kimlikleri ile eklenir. Önceki veriler dönüştürülmez veya otomatik değiştirilmez.
+- Akşam menüleri 5'ten 20'ye çıkarıldı. `assets/dinner-coach.js` bugünün kaydedilmiş bütün öğünlerini ve kalan kalori/protein hedeflerini kullanır. Porsiyonları temkinli şekilde ölçekler, son 7 gündeki benzer akşam yemeklerine öncelik düşürür ve neden seçtiğini kısa metinle açıklar.
+- İsteğe bağlı **et ve balık içermeyen menüler** tercihi vardır. Bu, alerjen/cross-contact garantisi değildir.
+- Hızlı üç öneriden seçilen menü **aynı porsiyonuyla** akşam planına yazılır; kullanıcı gramajı yeniden değiştirebilir. Planlanmış yemek, `Yedim` onayından önce günlük toplamda sayılmaz.
+- Akşam için çok az kalori hedefi kaldığında uygulama gereksiz tam menü önermemeyi tercih eder; bu bir tıbbi beslenme kararı değildir.
+- Eski program, tüm GIF'ler, temalar, mevcut kayıt biçimi ve teknik sürüm etiketlerini kullanıcıdan gizleme kararı korunur.
+
+Test: `node --test tests/*.test.cjs`. Otomatik testler gerçek iPhone Safari dokunma/önbellek doğrulamasının yerini tutmaz. Kullanıcı verileri telefondadır; mevcut uygulamayı kaldırmadan veya site verilerini temizlemeden önce JSON yedeği alın.
+
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
 
 ## Koçluk önerilerinde yeni doğruluk kontrolleri
