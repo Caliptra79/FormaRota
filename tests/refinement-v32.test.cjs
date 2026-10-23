@@ -13,12 +13,12 @@ const js=file('assets/refinement-v32.js');
 const sw=file('sw.js');
 
 test('v32 loads its style and layout modules, including in offline shell',()=>{
- assert.match(html,/application-version" content="(?:32|33)"/);
+ assert.doesNotMatch(html,/name="application-version"/);
  for(const file of ['refinement-v32.css','refinement-v32.js']){
   assert.ok(html.includes('./assets/'+file));
   assert.ok(sw.includes('./assets/'+file));
  }
- assert.match(sw,/formarota-solo-v(?:32|33)-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
 });
 test('original fitness program, exercise GIFs and records remain',()=>{
  const start=html.indexOf('const FIT_MOVES=[');
