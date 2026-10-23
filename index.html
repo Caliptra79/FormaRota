@@ -649,7 +649,19 @@ function v21MoveData(moveId,variantName=null){
   }
   return perDay;
  }
- return [];
+ const previous=[];
+ const sessions=fitGetHist();
+ for(let i=0;i<sessions.length;i++){
+  const session=sessions[i],sets=session?.items?.[moveId],date=session?.date;
+  if(session?.status!=='finished'||!/^\d{4}-\d{2}-\d{2}$/.test(date||'')||date>today()||!Array.isArray(sets)||sets.length!==3)continue;
+  const ok=sets.every(x=>x?.done===true&&(x.name||move.name)===variant&&x.weight!=null&&String(x.weight).trim()!==''&&Number.isFinite(Number(x.weight))&&Number(x.weight)>=0&&Number(x.weight)<=1500&&Number.isInteger(Number(x.reps))&&Number(x.reps)>=1&&Number(x.reps)<=100);
+  if(!ok)continue;
+  previous.push({d:date,v:Math.max(...sets.map(x=>Number(x.weight))),sets,order:(session.endedAt||session.startedAt||'')+'-'+String(i).padStart(6,'0')});
+ }
+ previous.sort((a,b)=>(a.d+'|'+a.order).localeCompare(b.d+'|'+b.order));
+ const perDay=[];
+ for(const row of previous){if(perDay.length&&perDay[perDay.length-1].d===row.d)perDay[perDay.length-1]=row;else perDay.push(row)}
+ return perDay;
 }
 function v21MoveOptions(){for(const id of ['v21Exercise','v21WorkoutMove','v21TimerMove']){const el=$(id);const previous=el.value;el.replaceChildren();for(const move of FIT_MOVES){const op=document.createElement('option');op.value=move.id;op.textContent=move.name;el.append(op)}if(FIT_MOVES.some(m=>m.id===previous))el.value=previous}}
 function v21ExerciseGraph(){const id=$('v21Exercise').value;const move=FIT_MOVES.find(m=>m.id===id);const variant=window.formaRotaCoachGraphVariant?.[id]||((move?.options||[])[Number(read('kocluk-fitness-variants-v1',{})[id]||0)]?.name||move?.name);const rows=v21MoveData(id,variant);$('v21ExerciseChart').innerHTML=v21Svg(rows.map(x=>({d:x.d,v:x.v})));$('v21ExercisePrevious').textContent=rows.length?`Son antrenman: ${v21DateFmt(rows.at(-1).d)} · ${fmt(rows.at(-1).v)} kg · ${rows.at(-1).sets.length} set` :'Bu alternatif için 3 geçerli setle tamamlanan seans yok.'}
