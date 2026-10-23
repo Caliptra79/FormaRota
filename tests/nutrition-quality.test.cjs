@@ -31,7 +31,7 @@ test('manual food logging rejects incomplete macros and saves missing optional m
  const nodes={amount:{value:'125'},date:{value:'2026-10-24'},meal:{value:'Öğle yemeği'},status:{textContent:''}};
  const env={
   $:x=>nodes[x],nutritionMacrosValid:f=>f.kcal!=null&&f.protein!=null,
-  getLogs:()=>map,write:(key,val)=>{map.length=0;map.push(...val)},logKey:'logs',fmt:x=>String(x),renderTotals:()=>{},
+  getLogs:()=>map.slice(),write:(key,val)=>{map.length=0;map.push(...val)},logKey:'logs',fmt:x=>String(x),renderTotals:()=>{},
   crypto:{randomUUID:()=>'test-id'}
  };
  vm.runInNewContext(fn+';this.add=addFood;',env);
