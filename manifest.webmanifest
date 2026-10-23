@@ -1,5 +1,5 @@
 {
-  "name": "FormaRota Solo",
+  "name": "FormaRota",
   "short_name": "FormaRota",
   "description": "Çok ekranlı, cihazında saklanan kişisel beslenme, antrenman ve gelişim günlüğü",
   "start_url": "./index.html#/anasayfa",

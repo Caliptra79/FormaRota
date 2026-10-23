@@ -1,0 +1,84 @@
+/* FormaRota: mobile-friendly readability and balanced hierarchy.
+ * Deliberately leave forms, long explanations, lists and exercise set rows left-aligned.
+ * No existing theme palette, exercise GIF, app data or saved settings changed.
+ */
+html[data-theme="night"],html[data-theme="ocean"],
+html[data-theme="neon"],html[data-theme="volt"],html[data-theme="sunset"]{
+ color-scheme:dark;
+}
+html[data-theme="light"],html[data-theme="sand"]{color-scheme:light}
+body,.panel,.result,.entry,.v21-box,.fit-card,.home-stat,.tracker,
+.fr-record-panel,.fr-nutrition-editor{color:var(--text)}
+/* iOS dark-mode form controls: avoid system-default black lettering on dark custom controls. */
+input:not([type="checkbox"]):not([type="radio"]),
+select,textarea{
+ background:var(--control)!important;
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text);
+ border-color:var(--border)!important;
+}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
+select option{background:var(--control);color:var(--text)}
+input[type="date"]::-webkit-datetime-edit,
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input[type="date"]::-webkit-datetime-edit-text,
+input[type="date"]::-webkit-datetime-edit-month-field,
+input[type="date"]::-webkit-datetime-edit-day-field,
+input[type="date"]::-webkit-datetime-edit-year-field{
+ color:var(--text);
+}
+html[data-theme="night"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="ocean"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="neon"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="volt"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="sunset"] input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1)}
+html[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="sand"] input[type="date"]::-webkit-calendar-picker-indicator{filter:none}
+/* Override a legacy broad primary-button rule that colors nav text dark. */
+html[data-theme] .mobile-tabbar button:not(.active),
+html[data-theme] .context-links button:not(.active),
+html[data-theme] .appnav .navbtn:not(.active){color:var(--muted)!important}
+html[data-theme] .mobile-tabbar button.active{color:var(--accent)!important}
+html[data-theme] .context-links button.active,
+html[data-theme] .appnav .navbtn.active{color:var(--onaccent)!important}
+html[data-theme] button.secondary:not(.active),
+html[data-theme] .fr-record-panel button.secondary,
+html[data-theme] .fr-nutrition-actions button.secondary{color:var(--text)!important}
+html[data-theme] button.danger{color:var(--danger)!important}
+html[data-theme] .fit-card .fit-set.done button{color:var(--accent)!important}
+html[data-theme] .weeknav button.secondary{color:var(--text)!important}
+html[data-theme] .notice{background:var(--info-bg);color:var(--info-fg);border-color:var(--info-border)}
+html[data-theme] .warning{background:var(--warning-bg);color:var(--warn);border-color:var(--warning-border)}
+/* Center short headings and dashboard metrics, without centering running text or form fields. */
+main>.route-heading{text-align:center;justify-self:center;width:100%;padding-inline:12px}
+main>.route-heading p{margin-inline:auto}
+#homePanel .home-intro{justify-content:center;align-items:center;flex-wrap:wrap;gap:12px}
+#homePanel .home-intro>div{text-align:center;flex:1 1 210px;min-width:0}
+#homePanel #homeSessionTag{margin-inline:auto;align-self:center}
+#homePanel .home-stats .home-stat,
+#nutritionTop .stats>.stat,
+#profilePanel .stats>.stat,
+#homePanel .tracker .count,
+#v21Budget .v21-box,
+.weekstats>.weekstat{text-align:center}
+#homePanel .home-stats .home-stat .progress,
+#nutritionTop .stat .progress{margin-inline:auto}
+#homePanel .mini-panel>.subheading{text-align:center}
+#homePanel .tracker>.muted:first-child{text-align:center}
+#mealQuickPanel>h2,#v21Recents>h2,#v21SmartDinner>h2,#dinnerPanel>h2,
+#breakfastPanel>h2,#nutritionTop>h2,#v21Budget>h2{text-align:center}
+#v21SmartDinner>.v21-mini,#dinnerPanel>.muted:first-of-type{max-width:60ch;margin-inline:auto;text-align:center}
+#v21TimerClock,.fit-timerbox .fit-clock{text-align:center}
+#fitnessRoot .coach-top h2{text-align:center}
+/* Improve symmetric panel composition while preserving readable left-aligned content. */
+#dinnerSuggestions .fr-dinner-choice{gap:14px}
+#dinnerSuggestions .fr-dinner-choice>div{min-width:0}
+#dinnerSuggestions .fr-dinner-choice .fr-dinner-why{line-height:1.5}
+@media(max-width:520px){
+ main>.route-heading{padding-inline:10px}
+ #homePanel .home-intro{gap:7px}
+ #homePanel .home-intro>div{flex-basis:100%}
+ #homePanel .home-intro .tag{margin:0 auto}
+ #dinnerSuggestions .fr-dinner-choice{justify-content:center}
+}
+/* Respect both OS and user themes; do not override theme choice by system mode. */

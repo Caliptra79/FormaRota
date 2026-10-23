@@ -9,7 +9,7 @@ const html=root('index.html');
 const manifest=JSON.parse(root('manifest.webmanifest'));
 const shell=root('sw.js');
 test('PWA home-screen names show no build version',()=>{
- assert.equal(manifest.name,'FormaRota Solo');
+ assert.equal(manifest.name,'FormaRota');
  assert.equal(manifest.short_name,'FormaRota');
  assert.doesNotMatch(manifest.name,/\bv\d+(?:\.\d+)*\b/i);
  assert.doesNotMatch(manifest.short_name,/\bv\d+(?:\.\d+)*\b/i);
@@ -33,8 +33,8 @@ test('settings import preview contains useful counts, not a backup format versio
 });
 test('no public app version meta is embedded in rendered index page',()=>{
  assert.doesNotMatch(html,/name=['"]application-version['"]/i);
- assert.match(html,/<h1>FORMAROTA<\/h1>/);
- assert.match(html,/<title>FormaRota Solo \| Ana Sayfa<\/title>/);
+ assert.match(html,/<h1>FormaRota<\/h1>/);
+ assert.match(html,/<title>FormaRota \| Ana Sayfa<\/title>/);
 });
 test('backup schema version 7 remains for safe old and new imports',()=>{
  assert.ok(html.includes("function collectBackup(){return{version:7"));
