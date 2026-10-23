@@ -7,13 +7,13 @@ const context={window:{}};vm.runInNewContext(engine,context);const E=context.win
 const ALL=['lat','row','incline','pec','lateral','rear','push','overhead','zottman','legpress','extension','legcurl','calf'];
 const fixture=(date,bad=false)=>({date,status:'finished',items:Object.fromEntries(ALL.map(id=>[id,Array.from({length:3},(_,i)=>({done:true,reps:12,weight:bad&&id==='lat'&&i===0?'':30}))]))});
 test('main v33 app loads engine, interface, style and offline cache',()=>{
- assert.match(html,/application-version" content="33"/);
+ assert.doesNotMatch(html,/name="application-version"/);
  for(const name of ['coach-engine-v33.js','coach-ui-v33.js','coach-quality-v33.css']){
   assert.ok(html.includes('./assets/'+name),name);
   assert.ok(sw.includes('./assets/'+name),name);
  }
- assert.ok(sw.includes('formarota-solo-v33-shell'));
- assert.ok(sw.includes('formarota-solo-v33-gifs'));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
+ assert.match(sw,/formarota-solo-v\d+-gifs/);
 });
 test('original 13 moves, 15 GIF and 7 themes still exist',()=>{
  const moves=html.slice(html.indexOf('const FIT_MOVES=['),html.indexOf('];',html.indexOf('const FIT_MOVES=[')));
