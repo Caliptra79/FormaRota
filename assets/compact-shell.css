@@ -33,7 +33,7 @@ body.compact-app-shell .context-links button{
  border-radius:12px;
  padding:9px 13px;
 }
-body.compact-app-shell:has(.context-nav:not(.hidden)) main{
+body.compact-app-shell.has-subnav main{
  padding-top:5px;
 }
 body.compact-app-shell #homePanel{
@@ -111,7 +111,7 @@ body.compact-app-shell .mobile-tabbar{
  body.compact-app-shell .context-nav{
   padding-top:max(10px,env(safe-area-inset-top,0px));
  }
- body.compact-app-shell:has(.context-nav:not(.hidden)) main{
+ body.compact-app-shell.has-subnav main{
   padding-top:4px;
  }
  body.compact-app-shell #homePanel{
