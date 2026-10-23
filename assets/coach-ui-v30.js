@@ -50,7 +50,16 @@ function refreshOverview(){
  if(!card)return;
  const w=coachWeek(),moves=readMoves();
  const summary=byId('coachWeekSummary'),tip=byId('coachMainTip'),strip=byId('coachWeekStrip');
- if(summary)summary.textContent=w.finished+' / '+w.target+' Full Body tamamlandı · '+w.sets+' set kaydedildi';
+ if(summary)summary.textContent=w.finished+' / '+w.target+' Full Body tamamlandı · '+w.sets+' set'+(w.custom?'':' · Örnek günler');
+ const planTip=byId('coachPlanTip');
+ if(planTip){
+  const now=typeof today==='function'?today():new Date().toISOString().slice(0,10);
+  const missed=E.reschedule(w,now);
+  planTip.hidden=missed.missed.length===0;
+  if(missed.missed.length)planTip.textContent=missed.replacement
+   ?'Kaçırılan bir antrenman var. '+new Date(missed.replacement+'T12:00:00').toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})+' gününü alternatif olarak düşünebilirsin; takvim değişmedi.'
+   :'Kaçırılan bir antrenman var. Bu hafta uygun bir boş gün bulunamadı; bir sonraki haftanın planını gözden geçir.';
+ }
  if(strip){
   strip.replaceChildren();
   const names=['Pt','Sa','Ça','Pe','Cu','Ct','Pa'];
@@ -93,6 +102,7 @@ function setupOverview(){
  stats.append(text('strong','', 'Bu haftaki programın'),text('span','', ''));
  stats.lastChild.id='coachWeekSummary';
  const strip=text('div','coach-week-strip');strip.id='coachWeekStrip';
+ const reschedule=text('p','coach-reschedule');reschedule.id='coachPlanTip';reschedule.hidden=true;
  const tipBox=text('div','coach-main-tip');
  tipBox.append(text('strong','','Antrenör önerisi'),text('p','', 'Kayıtların değerlendiriliyor.'));
  tipBox.lastChild.id='coachMainTip';
@@ -112,7 +122,7 @@ function setupOverview(){
  optionWrap.append(lbl,sel,text('p','muted','Yalnızca öneri miktarını değiştirir. Setlerine yazılan ağırlık değişmez.'));
  details.append(optionWrap);
  const disclaimer=text('p','coach-disclaimer','Öneriler yalnızca kayıtlarına dayanır. Ağrı, zorlanma veya teknik bozulması varsa ağırlık artırma.');
- card.append(top,stats,strip,tipBox,foot,details,disclaimer);
+ card.append(top,stats,strip,reschedule,tipBox,foot,details,disclaimer);
  timer.before(card);
  refreshOverview();
 }
