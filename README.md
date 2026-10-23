@@ -2,6 +2,21 @@
 
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
 
+## Koçluk önerilerinde yeni doğruluk kontrolleri
+
+- Aynı gün içinde iki tam hareket seansı kaydedilse bile artış hesabı **iki ayrı antrenman günü** bekler. Aynı tarihteki birden fazla tam kayıttan sonuncusu seçilir.
+- İki farklı günde aynı ağırlıkla tüm setlerde üst tekrar sınırına ulaşmak hâlâ yalnızca **isteğe bağlı** artış değerlendirmesi üretir.
+- Seçilen 1 / 2,5 / 5 kg artış kademesi mevcut çalışma ağırlığının **%10'undan büyükse**, koç artışı önermek yerine bu kademenin çok büyük olduğunu belirtir. %10 burada uygulamanın temkinli kuralıdır; kişiye özel klinik sınır veya ekipman uygunluğu garantisi değildir. Artış büyüklüğü sessizce değiştirilmez.
+- Fitness set kayıtlarında **boş kg** alanı makine/dambıl hareketi için kaydedilmez; önce açıkça kg girilmesi istenir. Gerçekten 0 kg ise kullanıcı **0** yazabilir. Vücut ağırlığı calf raise için boş kg, önceden olduğu gibi 0 olarak kaydedilebilir.
+- Eski antrenman verileri, hareketler, görseller, temalar, yemekler ve JSON yedekleri **değiştirilmez**. Personal Trainer'ın mevcut 28 günlük veri güncelliği, hareket alternatifi ayrımı ve açıklanabilir öneri alanı korunur.
+- Yeni koç motoru: `assets/coach-engine-v35.js`; uygulama kullanıcı arayüzünde sürüm gösterilmez.
+
+Tekrarlanabilir test: `node --test tests/coach-precision.test.cjs`. Diğer koçluk / arayüz / yedekleme regresyonları dahil toplam **78** test kontrolü.
+
+### Gerçek geçmişe göre kişiselleştirme
+
+İleri kişisel kalibrasyon için telefondaki yalnızca `fitness.history` kayıtlarının ayrıca incelenmesi gerekir. Uygulama bu yerel verilere uzaktan erişmez; beslenme veya kilo bilgilerini göndermek gerekmez. Koçluk motoru teknik, ağrı ve RPE/RIR ölçümü yapmaz.
+
 ## Uygulamada sürüm etiketi yok
 
 FormaRota'nın kullanıcıya görünen web başlığı ve telefona kurulum adı sürüm numarası taşımaz: **FormaRota Solo** / **FormaRota**. JSON yedeğini içe aktarma ekranındaki teknik şema sürümü kullanıcıya gösterilmez; yedek dosyasındaki `version` alanı ve eski yedek uyumluluğu korunur. Teknik yayın sürümleri ve PWA önbellek etiketleri yalnızca kaynak kodu/GitHub takibi içindir.
