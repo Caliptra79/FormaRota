@@ -60,7 +60,7 @@ test('app and home screen branding say FormaRota, while installation identity is
  assert.equal(manifest.start_url,'./index.html#/anasayfa');
  assert.match(html,/<title>FormaRota \| Ana Sayfa<\/title>/);
  assert.ok(html.includes('name="apple-mobile-web-app-title" content="FormaRota"'));
- assert.ok(html.includes('src="./assets/formarota-icon.svg"'));
+ assert.ok(html.includes('href="./assets/formarota-icon.svg"'));
  assert.ok(html.includes('<h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1>'));
  assert.doesNotMatch(html,/<header(?:\s|>)/i);
  assert.doesNotMatch(html,/name=["']application-version["']/);
