@@ -1,0 +1,57 @@
+/* FormaRota v30 · coach layer. Inherits all 7 existing theme palettes. */
+.coach-overview{grid-column:1/-1;display:grid;gap:10px;min-width:0}
+.coach-overview .coach-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.coach-overview .coach-top h2{font-size:1.26rem;letter-spacing:-.035em;margin:0 0 3px;font-weight:830}
+.coach-overview .coach-top p{font-size:.79rem;margin:0;color:var(--muted)}
+.coach-label{border:1px solid var(--border);border-radius:8px;color:var(--accent);font-size:.7rem;font-weight:800;padding:4px 8px}
+.coach-week-info{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.coach-week-info strong{font-size:.9rem}
+.coach-week-info span{font-size:.78rem;color:var(--muted)}
+.coach-week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.coach-day{min-width:0;background:var(--panel2);border:1px solid var(--border);border-radius:10px;display:grid;gap:6px;justify-items:center;padding:8px 2px}
+.coach-day-label{font-size:.7rem;font-weight:670;color:var(--muted)}
+.coach-day-icon{font-size:1.01rem;line-height:1.2;color:var(--muted)}
+.coach-day.coach-planned{border-color:var(--accent)}
+.coach-day.coach-planned .coach-day-icon,.coach-day.coach-done .coach-day-icon{color:var(--accent)}
+.coach-day.coach-done{background:color-mix(in srgb,var(--accent) 11%,var(--panel2));border-color:var(--accent)}
+.coach-day.coach-ball .coach-day-icon{color:var(--text)}
+.coach-main-tip{padding:13px;border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:11px;background:var(--panel2)}
+.coach-main-tip strong{display:block;font-size:.86rem;margin-bottom:5px}
+.coach-main-tip p{font-size:.91rem;margin:0;line-height:1.47}
+.coach-actions{display:flex;gap:9px}
+.coach-actions button{width:auto;min-height:42px;font-size:.81rem;padding:8px 12px}
+.coach-options{border-top:1px solid var(--border);margin-top:2px}
+.coach-options summary{list-style:none;cursor:pointer;padding:10px 0;color:var(--muted);font-size:.8rem;font-weight:720}
+.coach-options summary::-webkit-details-marker{display:none}
+.coach-options summary:before{content:'▸';display:inline-block;margin-right:7px}
+.coach-options[open] summary:before{content:'▾'}
+.coach-options-body{padding:0 0 10px}
+.coach-options-body select{max-width:190px;font-size:1rem;min-height:43px}
+.coach-options-body label{font-size:.82rem}
+.coach-options-body p{margin:7px 0 0;font-size:.78rem}
+.coach-disclaimer{color:var(--muted);font-size:.76rem;line-height:1.45;margin:0}
+.fit-card .coach-inline-tip{display:flex;align-items:flex-start;gap:8px;padding:10px 10px;background:var(--panel2);border-left:2px solid var(--accent);border-radius:8px;font-size:.82rem;line-height:1.4;margin:9px 0 2px}
+.fit-card .coach-tip-dot{color:var(--accent);font-weight:800;flex:0 0 auto}
+.fit-card .coach-technique{border-top:1px solid var(--border);margin-top:10px;padding-top:6px}
+.fit-card .coach-technique summary{list-style:none;cursor:pointer;font-size:.82rem;color:var(--muted);font-weight:700;padding:7px 2px}
+.fit-card .coach-technique summary::-webkit-details-marker{display:none}
+.fit-card .coach-technique summary:before{content:'▸';display:inline-block;margin-right:7px}
+.fit-card .coach-technique[open] summary:before{content:'▾'}
+.fit-card .coach-technique ul{margin:7px 0 2px;padding-left:21px;font-size:.83rem;color:var(--text);line-height:1.5}
+.fit-card .coach-technique li+li{margin-top:6px}
+.coach-analysis{border:1px solid var(--border);background:var(--panel2);padding:12px;border-radius:12px;margin-top:10px;overflow-wrap:anywhere}
+.coach-analysis strong{font-size:.92rem}
+.coach-analysis p{font-size:.84rem;margin:7px 0 0;line-height:1.5}
+.coach-analysis-note{border-left:2px solid var(--accent);padding-left:9px}
+.coach-report{border:1px solid var(--border);border-left:3px solid var(--accent);background:var(--panel2);border-radius:12px;margin:12px 0 16px;padding:13px}
+.coach-report h3{font-size:1rem;margin:0 0 7px}
+.coach-report-summary{font-size:.89rem;font-weight:730;margin:0}
+.coach-report ul{margin:10px 0 0;padding-left:20px;font-size:.86rem;line-height:1.5}
+.coach-report li+li{margin-top:7px}
+@media(max-width:390px){
+ .coach-week-strip{gap:4px}
+ .coach-day{padding:7px 0}
+ .coach-week-info{display:grid}
+ .coach-overview .coach-top h2{font-size:1.19rem}
+}
+@media(min-width:760px){.coach-overview{padding:18px}.coach-day{max-width:110px}}
