@@ -1,0 +1,12 @@
+/* FormaRota v31 — trim repeated workout prose without removing controls. */
+#fitnessRoot > section.panel[data-fit-page="workout"]:not([id]){display:none!important}
+#fitExercisePanel > p.muted{display:none!important}
+#coachOverview .coach-top{margin-bottom:0}
+#coachOverview .coach-top h2{font-size:1.22rem}
+#coachOverview .coach-week-info{margin-top:0}
+#coachOverview .coach-main-tip{padding:11px 12px}
+.coach-day.coach-partial{border-color:var(--border);background:var(--panel2)}
+.coach-day.coach-partial .coach-day-icon{color:var(--accent)}
+#coachGraphVariantLabel{font-size:.85rem;font-weight:690;margin-top:12px}
+#coachGraphVariant{max-width:310px;min-height:44px;font-size:16px}
+#coachGraphVariant[hidden],#coachGraphVariantLabel[hidden]{display:none!important}

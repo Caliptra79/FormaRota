@@ -50,7 +50,7 @@ function refreshOverview(){
  if(!card)return;
  const w=coachWeek(),moves=readMoves();
  const summary=byId('coachWeekSummary'),tip=byId('coachMainTip'),strip=byId('coachWeekStrip');
- if(summary)summary.textContent=w.finished+' / '+w.target+' Full Body tamamlandı · '+w.sets+' set'+(w.custom?'':' · Örnek günler');
+ if(summary)summary.textContent=w.finished+' / '+w.target+' tam Full Body · '+w.sets+' set'+(w.partial?' · '+w.partial+' yarım seans':'')+(w.custom?'':' · Örnek günler');
  const planTip=byId('coachPlanTip');
  if(planTip){
   const now=typeof today==='function'?today():new Date().toISOString().slice(0,10);
@@ -65,21 +65,24 @@ function refreshOverview(){
   const names=['Pt','Sa','Ça','Pe','Cu','Ct','Pa'];
   w.days.forEach((date,i)=>{
    const done=w.perDay[date]>0;
-   const type=i===2?'ball':done?'done':w.planned.includes(date)?'planned':'rest';
+   const partial=!done&&w.attended?.[date]>0;
+   const type=i===2?'ball':done?'done':partial?'partial':w.planned.includes(date)?'planned':'rest';
    const el=text('div','coach-day coach-'+type);
-   el.title=date+' · '+(i===2?'Basketbol':done?'Antrenman tamamlandı':type==='planned'?'Planlanan antrenman':'Dinlenme');
-   el.append(text('span','coach-day-label',names[i]),text('span','coach-day-icon',i===2?'🏀':done?'✓':type==='planned'?'●':'·'));
+   el.title=date+' · '+(i===2?'Basketbol':done?'Tam Full Body':partial?'Yarım seans':type==='planned'?'Planlanan antrenman':'Dinlenme');
+   el.append(text('span','coach-day-label',names[i]),text('span','coach-day-icon',i===2?'🏀':done?'✓':partial?'◐':type==='planned'?'●':'·'));
    strip.append(el);
   });
  }
  if(tip){
   const suggestions=moves.map(m=>assessMove(m));
-  const increase=suggestions.find(x=>x.status==='increase');
+  const caution=suggestions.find(x=>x.status==='caution');
   const low=suggestions.find(x=>x.status==='hold'&&x.detail.includes('alt sınırının'));
+  const increase=suggestions.find(x=>x.status==='increase');
   const one=suggestions.find(x=>x.status==='collect');
-  tip.textContent=increase
-   ?increase.variant+': '+increase.short
+  tip.textContent=caution
+   ?caution.variant+': '+caution.short
    :low?low.variant+': '+low.short
+   :increase?increase.variant+': '+increase.short
    :one?'Kayıtların oluşuyor. Aynı hareket için bir tamamlanmış seans daha kaydet.'
    :'Hareketlerini ve setlerini kaydettikçe kişisel ağırlık önerilerin burada görünecek.';
  }
@@ -96,10 +99,10 @@ function setupOverview(){
  const card=text('section','panel coach-overview');
  card.id='coachOverview';card.dataset.fitPage='workout';
  const top=text('div','coach-top');
- const group=text('div');group.append(text('h2','', 'Antrenörün'),text('p','muted','Personal Trainer · Kişisel, otomatik uygulanmayan öneriler'));
- top.append(group,text('span','coach-label','v30'));
+ const group=text('div');group.append(text('h2','', 'Antrenörün'));
+ top.append(group);
  const stats=text('div','coach-week-info');
- stats.append(text('strong','', 'Bu haftaki programın'),text('span','', ''));
+ stats.append(text('strong','', 'Haftalık durum'),text('span','', ''));
  stats.lastChild.id='coachWeekSummary';
  const strip=text('div','coach-week-strip');strip.id='coachWeekStrip';
  const reschedule=text('p','coach-reschedule');reschedule.id='coachPlanTip';reschedule.hidden=true;
@@ -117,14 +120,34 @@ function setupOverview(){
  for(const step of [1,2.5,5]){const option=document.createElement('option');option.value=step;option.textContent=E.labelKg(step);sel.add(option)}
  sel.value=String(getStep());sel.addEventListener('change',()=>{
   try{localStorage.setItem(KEY,sel.value)}catch{}
-  refreshOverview();augmentExercises();refreshAnalysis();refreshReport();
+  refreshOverview();updateInlineHints();refreshAnalysis();refreshReport();
  });
  optionWrap.append(lbl,sel,text('p','muted','Yalnızca öneri miktarını değiştirir. Setlerine yazılan ağırlık değişmez.'));
  details.append(optionWrap);
- const disclaimer=text('p','coach-disclaimer','Öneriler yalnızca kayıtlarına dayanır. Ağrı, zorlanma veya teknik bozulması varsa ağırlık artırma.');
+ const disclaimer=text('p','coach-disclaimer','Ağrı veya teknik bozulması varsa ağırlık artırma. Öneriler kayıt bazlıdır.');
  card.append(top,stats,strip,reschedule,tipBox,foot,details,disclaimer);
  timer.before(card);
  refreshOverview();
+}
+function updateInlineHints(){
+ const root=byId('fitExerciseList');if(!root)return;
+ const moves=readMoves();
+ root.querySelectorAll('.fit-card').forEach(card=>{
+  const move=moves.find(x=>x.id===card.dataset.move);if(!move)return;
+  const old=card.querySelector('.coach-inline-tip');
+  const result=assessMove(move);
+  if(old){
+   if(!result.records){old.remove();return}
+   const line=old.querySelector('.coach-inline-value');
+   if(line)line.textContent=result.short;
+  }else if(result.records){
+   const body=card.querySelector('.fit-nametop')?.parentElement;if(!body)return;
+   const hint=text('div','coach-inline-tip');
+   hint.append(text('span','coach-tip-dot','↗'),text('span','coach-inline-value',result.short));
+   const table=body.querySelector('.fit-settable');
+   if(table)body.insertBefore(hint,table);else body.append(hint);
+  }
+ });
 }
 function augmentExercises(){
  const root=byId('fitExerciseList');if(!root)return;
@@ -134,13 +157,6 @@ function augmentExercises(){
   if(!move||card.querySelector('.coach-technique'))return;
   const body=card.querySelector('.fit-nametop')?.parentElement;
   if(!body)return;
-  const result=assessMove(move);
-  if(result.records>0){
-   const hint=text('div','coach-inline-tip');
-   hint.append(text('span','coach-tip-dot','↗'),text('span','',result.short));
-   const table=body.querySelector('.fit-settable');
-   if(table)body.insertBefore(hint,table);else body.append(hint);
-  }
   const instructions=alternatives[selectedName(move)]||tips[move.id]||[];
   const detail=text('details','coach-technique');
   detail.append(text('summary','', 'Teknik ipuçları'));
@@ -148,6 +164,7 @@ function augmentExercises(){
   instructions.forEach(line=>list.append(text('li','',line)));
   detail.append(list);body.append(detail);
  });
+ updateInlineHints();
 }
 function ensureAnalysis(){
  const previous=byId('v21ExercisePrevious');
@@ -156,13 +173,48 @@ function ensureAnalysis(){
  if(!el){el=text('div','coach-analysis');el.id='coachAnalysis';previous.after(el)}
  return el;
 }
+function ensureGraphVariant(){
+ const select=byId('v21Exercise');if(!select)return;
+ let picker=byId('coachGraphVariant');
+ if(!picker){
+  const label=text('label','','Hareket alternatifi');label.htmlFor='coachGraphVariant';label.id='coachGraphVariantLabel';
+  picker=document.createElement('select');picker.id='coachGraphVariant';
+  select.after(label);label.after(picker);
+  picker.addEventListener('change',()=>{
+   const id=byId('v21Exercise')?.value;
+   if(!id)return;
+   window.formaRotaCoachGraphVariant=window.formaRotaCoachGraphVariant||{};
+   window.formaRotaCoachGraphVariant[id]=picker.value;
+   if(typeof v21ExerciseGraph==='function')v21ExerciseGraph();
+   refreshAnalysis();
+  });
+ }
+ const move=readMoves().find(x=>x.id===select.value);
+ if(!move)return;
+ const options=move.options?.length?move.options:[{name:move.name}];
+ const previous=window.formaRotaCoachGraphVariant?.[move.id]||selectedName(move);
+ if(picker.dataset.forMove!==move.id){
+  picker.replaceChildren();
+  options.forEach(option=>{const op=document.createElement('option');op.value=option.name;op.textContent=option.name;picker.append(op)});
+  picker.dataset.forMove=move.id;
+ }
+ picker.value=options.some(o=>o.name===previous)?previous:options[0].name;
+ picker.hidden=options.length<2;
+ const label=byId('coachGraphVariantLabel');if(label)label.hidden=options.length<2;
+}
+function graphName(move){
+ return byId('coachGraphVariant')?.dataset.forMove===move.id
+  ?(byId('coachGraphVariant')?.value||selectedName(move))
+  :selectedName(move);
+}
 function refreshAnalysis(){
+ ensureGraphVariant();
  const root=ensureAnalysis();
  const select=byId('v21Exercise');
  if(!root||!select)return;
  const move=readMoves().find(x=>x.id===select.value);
  if(!move)return;
- const data=E.analysis(move,selectedName(move),readHistory(),getStep());
+ const data=E.analysis(move,graphName(move),readHistory(),getStep());
  root.replaceChildren();
  root.append(text('strong','', 'Antrenör analizi · '+data.variant));
  const records=text('p','muted', data.completed+' tamamlanmış karşılaştırılabilir antrenman');
@@ -173,7 +225,7 @@ function refreshAnalysis(){
   if(data.volumeChange!==null)root.append(text('p','muted','Önceki antrenmana göre hacim: '+(data.volumeChange>0?'+':'')+Math.round(data.volumeChange)+' kg×tekrar'));
  }
  root.append(text('p','coach-analysis-note',data.short));
- if(move.options)root.append(text('p','muted','Alternatif makineler/dambıllar koçluk hesabında ayrı değerlendirilir. Üstteki eski grafik alternatifleri birlikte gösterebilir.'));
+ if(move.options)root.append(text('p','muted','Grafik ve koçluk analizi seçili alternatifi ayrı değerlendirir.'));
 }
 function reportDate(){
  try{const monday=E.weekStart(today());return E.shift(monday,(typeof v21ReportOffset==='number'?v21ReportOffset:0)*7)}catch{return new Date().toISOString().slice(0,10)}
@@ -185,7 +237,7 @@ function refreshReport(){
  const moves=readMoves(),w=E.report(readHistory(),moves,reportDate(),typeof fitConf==='function'?fitConf().frequency:2,getVariants(),getStep());
  box.replaceChildren();
  box.append(text('h3','', 'Antrenörün haftalık değerlendirmesi'));
- box.append(text('p','coach-report-summary', w.finished+' / '+w.target+' Full Body · '+w.sets+' tamamlanan set'));
+ box.append(text('p','coach-report-summary', w.finished+' / '+w.target+' tam Full Body · '+w.sets+' set'+(w.partial?' · '+w.partial+' eksik/yarım seans':'')));
  const list=text('ul');
  w.messages.forEach(message=>list.append(text('li','',message)));
  box.append(list);
@@ -205,7 +257,7 @@ function init(){
  hook('v21Report',refreshReport);
  hook('v21RenderInsights',()=>{refreshAnalysis();refreshReport()});
  hook('showView',()=>{refreshOverview();refreshAnalysis()});
- byId('v21Exercise')?.addEventListener('change',refreshAnalysis);
+ byId('v21Exercise')?.addEventListener('change',()=>{refreshAnalysis();if(typeof v21ExerciseGraph==='function')v21ExerciseGraph()});
  byId('confirmImport')?.addEventListener('click',()=>{queueMicrotask(()=>{byId('coachIncrement')&&(byId('coachIncrement').value=String(getStep()));refreshOverview();augmentExercises();refreshAnalysis();refreshReport()})});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});

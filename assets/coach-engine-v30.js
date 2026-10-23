@@ -18,7 +18,7 @@ function chosenVariant(move,variants){
 function records(history,move,variant){
  const list=[];
  safeArray(history).forEach((session,index)=>{
-  if(session?.status!=='finished'||!validDate(session.date))return;
+  if(!['finished','stopped'].includes(session?.status)||!validDate(session.date))return;
   const raw=safeArray(session.items?.[move.id]);
   const done=raw.filter(x=>x?.done&&Number.isFinite(Number(x.reps))&&Number(x.reps)>0&&Number.isFinite(Number(x.weight))&&Number(x.weight)>=0);
   const matching=done.filter(x=>(typeof x.name==='string'&&x.name?x.name:move.name)===variant);
@@ -26,7 +26,8 @@ function records(history,move,variant){
   list.push({
    date:session.date,sortKey:String(session.endedAt||session.startedAt||session.date)+'-'+String(index).padStart(6,'0'),
    sets:matching.map(s=>({kg:Number(s.weight),reps:Number(s.reps)})),
-   full:matching.length===3&&raw.length>=3&&raw.every(x=>x?.done),
+   full:session.status==='finished'&&matching.length===3&&raw.length>=3&&raw.every(x=>x?.done),
+   sessionStatus:session.status,
    variant
   });
  });
@@ -40,6 +41,10 @@ function assess(move,variant,history,increment){
   lastReps:last?.sets.map(x=>x.reps)||[],direction:'unknown',status:'initial',short:'',detail:'',volume:null};
  if(latest)result.volume=round(latest.sets.reduce((sum,s)=>sum+s.kg*s.reps,0));
  if(!last){result.short='İlk üç setini tamamlayınca öneri oluşacak.';result.detail='Henüz karşılaştırılabilir, tamamlanmış 3 setlik antrenman yok.';return result}
+ if(latest&&(!latest.full||latest!==last)){
+  result.status='caution';result.short='Son seans eksik veya yarım kaldı; ağırlık artışını ertele.';
+  result.detail='En güncel hareket kaydı tamamlanmamış. Yeni bir karşılaştırılabilir seans kaydetmeden yük artırma.';return result;
+ }
  if(!prior){result.status='collect';result.short='Bir tamamlanmış antrenman daha kaydet.';result.detail='Ağırlık artışı önermek için aynı hareket seçeneğinde en az iki tamamlanmış seans gerekiyor.';return result}
  const a=prior.sets,b=last.sets;
  const sameInSession=sets=>sets.every(x=>Math.abs(x.kg-sets[0].kg)<0.0001);
@@ -52,16 +57,16 @@ function assess(move,variant,history,increment){
  if(lastBelow){
   result.status='hold';result.short='Ağırlığı artırma; tekrar aralığını tamamlamaya odaklan.';
   result.detail='Son seanstaki en az bir set hedef tekrar alt sınırının altında. Önce kontrollü tekrarlar ve uygun teknik.';
- }else if(a[0]?.kg===0&&b[0]?.kg===0){
+ }else if(move.id==='calf'&&a[0]?.kg===0&&b[0]?.kg===0){
   result.status='bodyweight';result.short='Tekrarları ve hareket kalitesini takip et.';
   result.detail='Vücut ağırlığıyla yapılan hareketlerde otomatik kilogram artışı önerilmez.';
- }else if(sameLoad&&allMax){
+ }else if(sameLoad&&allMax&&a[0].kg>0){
   const step=[1,2.5,5].includes(Number(increment))?Number(increment):2.5;
   result.status='increase';result.short=labelKg(a[0].kg)+' → '+labelKg(a[0].kg+step)+' artışını değerlendirebilirsin.';
   result.detail='Son iki tamamlanmış antrenmanda tüm setler üst tekrar sınırına ulaştı. Form uygunsa ve ekipmanda bu kademe varsa dene; otomatik uygulanmaz.';
  }else{
   result.status='hold';result.short='Aynı yükte istikrarlı, kontrollü tekrarları sürdür.';
-  result.detail=sameLoad?'Her iki seanstaki tüm setler henüz üst tekrar sınırına ulaşmadı.':'Son seanslardaki yükler farklı. Artış önermeden önce sabit yükte karşılaştırılabilir kayıt oluştur.';
+  result.detail=a[0].kg===0?'Makine ağırlığı 0 kg kaydedilmiş. Gerçek çalışma yükünü doğrula; bu kayıttan artış hesaplanmaz.':sameLoad?'Her iki seanstaki tüm setler henüz üst tekrar sınırına ulaşmadı.':'Son seanslardaki yükler farklı. Artış önermeden önce sabit yükte karşılaştırılabilir kayıt oluştur.';
  }
  return result;
 }
@@ -73,22 +78,28 @@ function shift(date,offset){
  const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+offset);
  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 }
+function countedSets(session){
+ return Object.values(session.items||{}).reduce((sum,x)=>sum+safeArray(x).filter(y=>y?.done).length,0);
+}
 function weekly(history,weekDate,frequency,selected){
  const start=weekStart(weekDate),days=Array.from({length:7},(_,i)=>shift(start,i));
- const finished=safeArray(history).filter(s=>s?.status==='finished'&&days.includes(s.date));
- const perDay=Object.fromEntries(days.map(date=>[date,finished.filter(s=>s.date===date).length]));
- const countSets=finished.reduce((sum,session)=>sum+Object.values(session.items||{}).reduce((total,x)=>total+safeArray(x).filter(y=>y?.done).length,0),0);
+ const sessions=safeArray(history).filter(s=>['finished','stopped'].includes(s?.status)&&days.includes(s.date));
+ const completed=sessions.filter(s=>s.status==='finished'&&countedSets(s)===39);
+ const partial=sessions.filter(s=>!completed.includes(s));
+ const perDay=Object.fromEntries(days.map(date=>[date,completed.filter(s=>s.date===date).length]));
+ const attended=Object.fromEntries(days.map(date=>[date,sessions.filter(s=>s.date===date).length]));
+ const countSets=sessions.reduce((sum,s)=>sum+countedSets(s),0);
  const target=Number(frequency)===3?3:2;
  const selectedDates=safeArray(selected).filter(x=>days.includes(x)&&x!==days[2]);
  const suggested=(target===3?[0,3,5]:[0,4]).map(x=>days[x]);
  const plan=selectedDates.length?selectedDates:suggested;
- return {start,days,finished:finished.length,sets:countSets,target,planned:plan,custom:selectedDates.length>0,perDay};
+ return {start,days,finished:completed.length,partial:partial.length,sets:countSets,target,planned:plan,custom:selectedDates.length>0,perDay,attended};
 }
 function reschedule(w,todayDate){
  if(!w||!w.custom||!validDate(todayDate)||!w.days.includes(todayDate))return {missed:[],replacement:null};
- const missed=w.planned.filter(date=>date<todayDate&&!w.perDay[date]);
+ const missed=w.planned.filter(date=>date<todayDate&&!w.attended?.[date]);
  if(!missed.length)return {missed:[],replacement:null};
- const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.perDay).filter(d=>w.perDay[d]>0),w.days[2]];
+ const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.attended||w.perDay).filter(d=>(w.attended||w.perDay)[d]>0),w.days[2]];
  const candidate=w.days.find(date=>{
   if(date<todayDate||date===w.days[2]||w.planned.includes(date)||w.perDay[date])return false;
   const t=new Date(date+'T12:00:00').getTime();
@@ -108,9 +119,10 @@ function analysis(move,variant,history,increment){
 function report(history,moves,weekDate,frequency,variants,increment,selected){
  const w=weekly(history,weekDate,frequency,selected);
  const messages=[];
- if(w.finished===0)messages.push('Bu hafta tamamlanmış Full Body kaydı yok. İlk seansını kaydettiğinde değerlendirme başlayacak.');
+ if(w.finished===0)messages.push(w.partial?'Bu hafta '+w.partial+' eksik/yarım seans var; henüz tam 39 setlik Full Body tamamlanmadı.':'Bu hafta tamamlanmış Full Body kaydı yok. İlk seansını kaydettiğinde değerlendirme başlayacak.');
  else if(w.finished<w.target)messages.push(w.finished+'/'+w.target+' Full Body tamamlandı. Uygun bir sonraki haftada planına yeniden devam edebilirsin.');
  else messages.push('Bu haftaki '+w.target+' Full Body hedefini tamamladın.');
+ if(w.partial&&w.finished)messages.push(w.partial+' eksik/yarım seans ayrıca kaydedildi.');
  const historyThroughWeek=safeArray(history).filter(session=>validDate(session?.date)&&session.date<=w.days[6]);
  const eligible=w.finished>0?safeArray(moves).map(move=>assess(move,chosenVariant(move,variants),historyThroughWeek,increment)):[];
  const rising=eligible.find(x=>x.status==='increase'),caution=eligible.find(x=>x.status==='hold'&&x.detail.includes('alt sınırının'));

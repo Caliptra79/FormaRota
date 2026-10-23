@@ -1,8 +1,8 @@
-/* FormaRota Solo v30: offline app shell, coach modules, and optional exercise GIF cache. */
-const CACHE='formarota-solo-v30-shell';
-const GIF_CACHE='formarota-solo-v30-gifs';
+/* FormaRota Solo v31: offline app shell, coach modules, and optional exercise GIF cache. */
+const CACHE='formarota-solo-v31-shell';
+const GIF_CACHE='formarota-solo-v31-gifs';
 const GIFS=['calf','dumbbell-row','extension','incline-fly','incline','lat','lateral','legcurl','legpress','overhead','pec','push','rear','row','zottman'].map(name=>'./assets/'+name+'.gif');
-const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/ui-compact-v23.css','./assets/ui-compact-v23.js','./assets/progress-compact-v25.css','./assets/progress-compact-v25.js','./assets/theme-minimal-v26.css','./assets/fitness-simple-v26.js','./assets/hype-themes-v29.css','./assets/coach-v30.css','./assets/coach-engine-v30.js','./assets/coach-ui-v30.js'];
+const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./assets/ui-compact-v23.css','./assets/ui-compact-v23.js','./assets/progress-compact-v25.css','./assets/progress-compact-v25.js','./assets/theme-minimal-v26.css','./assets/fitness-simple-v26.js','./assets/hype-themes-v29.css','./assets/coach-v30.css','./assets/coach-engine-v30.js','./assets/coach-ui-v30.js','./assets/coach-fixes-v31.css'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const shell=await caches.open(CACHE);
  const response=await fetch('./index.html',{cache:'reload'});
