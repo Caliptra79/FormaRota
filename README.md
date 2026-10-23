@@ -1,6 +1,16 @@
-# FormaRota Solo v30 — Personal Trainer
+# FormaRota Solo v31 — Personal Trainer
 
 Türkiye odaklı beslenme, Full Body antrenman ve gelişim takip PWA'sı. GitHub Pages üzerinden çalışır, hesap veya ücretli AI API'si gerektirmez. Antrenman kayıtları cihazda tutulur.
+
+## v31 · Koçluk güvenilirliği ve arayüz düzeltmeleri
+
+- Son karşılaştırılabilir seans yarım veya durdurulmuşsa ağırlık artışı ertelenir.
+- Yalnızca 39/39 tamamlanmış setli, `finished` durumlu seanslar tam Full Body sayılır; diğerleri eksik/yarım seans olarak ayrıca belirtilir. Bütün kaydedilmiş set sayıları gösterilir.
+- Ağırlık artış kademesi değişince hareket kartı önerileri de anında yeniden hesaplanır.
+- Sıfır kilogram yalnızca tanımlı vücut ağırlığı hareketleri için kullanılır; makine egzersizlerinde 0 kg'dan artış çıkarılmaz.
+- Gelişim grafiğinde seçenekli hareketler makine/dambıl seçimine göre filtrelenir; koçluk analizi aynı seçenekle eşleşir.
+- Fitness üstündeki tekrar eden tanıtım paneli ve gereksiz hareket açıklamaları gizlendi. GIF, hareket, tekrar, kilogram ve sayaç alanları korunur.
+- Tekrarlanabilir regresyon testleri: `node --test tests/coach-v30.test.cjs tests/coach-v31.test.cjs`.
 
 ## v30 · Personal Trainer
 
