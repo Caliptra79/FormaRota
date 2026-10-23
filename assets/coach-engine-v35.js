@@ -197,8 +197,8 @@ function reschedule(w,todayDate){
 }
 function analysis(move,variant,history,increment){
  const assessment=assess(move,variant,history,increment);
- const entries=records(history,move,variant).filter(x=>x.full);
- const prev=entries.at(-2),last=entries.at(-1);
+ // Use the same last two distinct training days as the coach's progression evidence.
+ const prev=assessment.basis?.previous,last=assessment.basis?.latest;
  const total=last?last.sets.reduce((sum,x)=>sum+x.kg*x.reps,0):null;
  const prior=prev?prev.sets.reduce((sum,x)=>sum+x.kg*x.reps,0):null;
  const change=total!==null&&prior!==null?round(total-prior):null;
