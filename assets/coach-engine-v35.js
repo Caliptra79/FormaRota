@@ -224,7 +224,7 @@ function report(history,moves,weekDate,frequency,variants,increment,selected){
    assessments.push(assess(move,lastPerformed.name,data,increment,w.days[6]));
   }
  }
- const caution=assessments.find(x=>['invalid','caution','reassess'].includes(x.status));
+ const caution=assessments.find(x=>['invalid','caution','reassess','step_large'].includes(x.status));
  const hold=assessments.find(x=>x.status==='hold'&&x.detail.includes('alt sınır'));
  const increase=assessments.find(x=>x.status==='increase');
  if(caution)messages.push(caution.variant+': '+caution.short);
