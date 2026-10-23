@@ -33,7 +33,8 @@ test('settings import preview contains useful counts, not a backup format versio
 });
 test('no public app version meta is embedded in rendered index page',()=>{
  assert.doesNotMatch(html,/name=['"]application-version['"]/i);
- assert.match(html,/<h1>FormaRota<\/h1>/);
+ assert.match(html,/<h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü<\/h1>/);
+ assert.doesNotMatch(html,/<header(?:\s|>)/i);
  assert.match(html,/<title>FormaRota \| Ana Sayfa<\/title>/);
 });
 test('backup schema version 7 remains for safe old and new imports',()=>{
