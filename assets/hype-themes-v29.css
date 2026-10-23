@@ -1,0 +1,65 @@
+/* FormaRota v29 — bold optional themes. The original four themes remain untouched. */
+html[data-theme="neon"]{
+ color-scheme:dark;
+ --bg:#100b1d;--panel:#1b1430;--panel2:#2a2045;--control:#201735;
+ --text:#faf5ff;--muted:#c0afd8;--border:#514074;--accent:#db7bff;--onaccent:#200d2f;
+ --chart-protein:#48e5ee;--chart-weight:#ffa6d4;--svg-ink:#c0afd8;
+ --info-bg:#26183e;--info-fg:#f1d1ff;--info-border:#68468c;
+ --warning-bg:#352337;--warning-border:#8d596f;--art-bg:#221735;
+ --fit-bg:#281a43;--fit-border:#694b91;--fit-banner:#281a43;--fit-banner-border:#694b91;
+}
+html[data-theme="volt"]{
+ color-scheme:dark;
+ --bg:#0b1011;--panel:#141e20;--panel2:#203033;--control:#131f21;
+ --text:#f3fffc;--muted:#b2c7c4;--border:#375751;--accent:#bcfc45;--onaccent:#142010;
+ --chart-protein:#69dfde;--chart-weight:#d6b0fc;--svg-ink:#b2c7c4;
+ --info-bg:#192d24;--info-fg:#e0ffc3;--info-border:#4b7641;
+ --warning-bg:#342f19;--warning-border:#716434;--art-bg:#152323;
+ --fit-bg:#203225;--fit-border:#597b47;--fit-banner:#203225;--fit-banner-border:#597b47;
+}
+html[data-theme="sunset"]{
+ color-scheme:dark;
+ --bg:#190e16;--panel:#281824;--panel2:#382331;--control:#271723;
+ --text:#fff7f4;--muted:#dec1c8;--border:#704455;--accent:#ff9b67;--onaccent:#32140e;
+ --chart-protein:#ffd76b;--chart-weight:#f89ad8;--svg-ink:#dec1c8;
+ --info-bg:#3a232c;--info-fg:#ffd7ba;--info-border:#8e534c;
+ --warning-bg:#3f2528;--warning-border:#9e6257;--art-bg:#2d1b29;
+ --fit-bg:#42262d;--fit-border:#865047;--fit-banner:#42262d;--fit-banner-border:#865047;
+}
+html[data-theme="neon"] body,html[data-theme="volt"] body,html[data-theme="sunset"] body{
+ background:var(--bg);
+}
+html[data-theme="neon"] .panel,html[data-theme="volt"] .panel,html[data-theme="sunset"] .panel{
+ border-color:var(--border);
+}
+html[data-theme="neon"] .home-stat,
+html[data-theme="neon"] .fit-card.current,
+html[data-theme="neon"] .mobile-tabbar button.active{
+ box-shadow:0 0 0 1px rgba(219,123,255,.15),0 0 23px rgba(164,66,255,.085)!important;
+}
+html[data-theme="volt"] .home-stat,
+html[data-theme="volt"] .fit-card.current,
+html[data-theme="volt"] .mobile-tabbar button.active{
+ box-shadow:0 0 0 1px rgba(188,252,69,.14),0 0 23px rgba(152,255,64,.07)!important;
+}
+html[data-theme="sunset"] .home-stat,
+html[data-theme="sunset"] .fit-card.current,
+html[data-theme="sunset"] .mobile-tabbar button.active{
+ box-shadow:0 0 0 1px rgba(255,155,103,.15),0 0 23px rgba(255,120,70,.07)!important;
+}
+html[data-theme="neon"] .progress span,
+html[data-theme="neon"] .fit-progress span{background:linear-gradient(90deg,#a75aff,#e994ff)}
+html[data-theme="volt"] .progress span,
+html[data-theme="volt"] .fit-progress span{background:linear-gradient(90deg,#74dca4,#bcfc45)}
+html[data-theme="sunset"] .progress span,
+html[data-theme="sunset"] .fit-progress span{background:linear-gradient(90deg,#f96c8d,#ffb267)}
+html[data-theme="neon"] .date-control,html[data-theme="volt"] .date-control,html[data-theme="sunset"] .date-control{background:var(--control);border-color:var(--border)}
+/* Keep form values readable against all three vivid palettes. */
+html[data-theme="neon"] input,html[data-theme="neon"] select,
+html[data-theme="volt"] input,html[data-theme="volt"] select,
+html[data-theme="sunset"] input,html[data-theme="sunset"] select{
+ color:var(--text)!important;background:var(--control)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme="neon"] *,html[data-theme="volt"] *,html[data-theme="sunset"] *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
