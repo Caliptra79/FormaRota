@@ -639,6 +639,7 @@ function showView(view,scroll=true,updateURL=true){
  });
  document.querySelectorAll('#fitnessRoot>[data-fit-page]').forEach(section=>section.classList.toggle('hidden',section.dataset.fitPage!==(view==='fitness-history'?'history':'workout')));
  const nutritionPage=['nutrition','dinner','recipes'].includes(view);
+ document.body.classList.toggle('has-subnav',nutritionPage||fitnessPage);
  $('contextNav').classList.toggle('hidden',!nutritionPage&&!fitnessPage);
  $('nutritionLinks').classList.toggle('hidden',!nutritionPage);
  $('fitnessLinks').classList.toggle('hidden',!fitnessPage);
