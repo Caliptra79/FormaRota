@@ -50,3 +50,11 @@ test('the isolated Electron session also owns our custom protocol',()=>{
  assert.ok(source.includes("nodeIntegration:false"));
  assert.ok(source.includes("sandbox:true"));
 });
+
+test('first-run storage directory is created before assigning paths',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'main.cjs'),'utf8');
+ const mkdir=source.indexOf('fsSync.mkdirSync(dataDir,{recursive:true})');
+ const user=source.indexOf("app.setPath('userData',dataDir)");
+ const session=source.indexOf("app.setPath('sessionData',dataDir)");
+ assert.ok(mkdir>0&&user>mkdir&&session>user);
+});
