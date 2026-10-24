@@ -144,8 +144,10 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/readability-layout.css"/>
 <link rel="stylesheet" href="./assets/compact-shell.css"/>
 <link rel="stylesheet" href="./assets/settings-disclosure.css"/>
-<link rel="stylesheet" href="./assets/final-motion.css"/></head>
+<link rel="stylesheet" href="./assets/final-motion.css"/>
+<link rel="stylesheet" href="./assets/date-meal-polish.css"/></head>
 <body class="compact-app-shell">
+<div class="daily-masthead" role="group" aria-label="Bugünün tarihi"><div class="daily-masthead-inner"><span class="daily-masthead-label" aria-hidden="true">BUGÜN</span><time id="globalTodayDate"></time></div></div>
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
 <div class="context-links" id="nutritionLinks">
 <button type="button" data-go="nutrition">📋 Günlük</button><button type="button" data-go="dinner">🌙 Akşam</button><button type="button" data-go="recipes">🥣 Tarifler</button>
@@ -155,7 +157,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 </div>
 </div>
 <main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide" data-view="home" id="homePanel">
-<div class="home-intro"><div><div class="eyebrow">GÜNLÜK ÖZET</div><h2>Bugünkü rotan</h2><div class="muted" id="homeDateLabel">Günlük özet</div></div><span class="tag hidden" id="homeSessionTag" aria-live="polite"></span></div>
+<div class="home-intro"><div><div class="eyebrow">GÜNLÜK ÖZET</div><h2>Bugünkü rotan</h2><div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div></div><span class="tag hidden" id="homeSessionTag" aria-live="polite"></span></div>
 <div class="home-stats"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span> <small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div>
 <div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span> <small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
 <div class="mini-panel"><h3 class="subheading">Bugün neler yaptın?</h3><div class="daily-steps" id="homeChecklist"></div><div class="home-actions"><button id="homeBreakfast" type="button">🥚 Kahvaltıyı işaretle</button><button class="secondary" id="homeLunch" type="button">🍽 Öğlen kaydet</button><button class="secondary" id="homeDinner" type="button">🌙 Akşam kaydet</button><button class="secondary" id="homeWorkout" type="button">🏋️ Fitness'a git</button></div></div>
@@ -227,6 +229,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <button data-tab="progress" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4v16h16M7 16l5-5 3 2 5-7"/></svg></span><span>Gelişim</span></button>
 <button data-tab="settings" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span>Ayarlar</span></button></nav><script src="./assets/turkish-foods.js"></script>
 <script src="./assets/dinner-coach.js"></script>
+<script defer src="./assets/date-masthead.js"></script>
 <script>
 (function(){const themes={night:'#0c141a',ocean:'#091821',light:'#f4f6f7',sand:'#f7f5f0',neon:'#100b1d',volt:'#0b1011',sunset:'#190e16'};const el=document.getElementById('themeSelect');if(!el)return;const saved=document.documentElement.dataset.theme||'night';el.value=saved;const apply=t=>{if(!Object.hasOwn(themes,t))return;document.documentElement.dataset.theme=t;document.querySelector('meta[name="theme-color"]').content=themes[t];try{localStorage.setItem('formarota-ui-theme',t)}catch(e){}};el.addEventListener('change',()=>apply(el.value));apply(saved)})();
 const $=id=>document.getElementById(id);const profileKey='kocluk-profile-v1',weightKey='kocluk-weight-v1';const logKey="kocluk-food-log-v2",customKey="kocluk-custom-foods-v1";const DINNER_PLAN_KEY='formarota-dinner-plans-v1',WATER_KEY='formarota-water-v1',WALK_KEY='formarota-walks-v1',BACKUP_KEY='formarota-last-backup-v1';
@@ -632,6 +635,7 @@ const VIEW_TITLES={home:'Ana Sayfa',nutrition:'Günlük Beslenme',dinner:'Akşam
 let currentView='home', focusMode=false, phaseAlarmKey='';
 function routeFromHash(){const raw=decodeURIComponent(location.hash.replace(/^#\/?/,''));return (raw==='beslenme/besinler'?'nutrition':Object.keys(VIEW_PATHS).find(key=>VIEW_PATHS[key]===raw))||null}
 function showView(view,scroll=true,updateURL=true){
+ window.FormaRotaDateMasthead?.refresh();
  const motionViewChanged=currentView!==view;
  if(view==='foods')view='nutrition';
  if(!Object.hasOwn(VIEW_PATHS,view))view='home';
@@ -672,7 +676,7 @@ window.addEventListener('hashchange',()=>showView(routeFromHash()||'home',true,f
 function refreshPanels(){renderHome();renderPRs();renderBackupAge()}
 function homeDay(){return today()}
 function sumDay(date,key){return getLogs().filter(x=>x.date===date).reduce((v,x)=>v+(Number(x[key])||0),0)}
-function renderHome(){const date=homeDay(),logs=getLogs().filter(x=>x.date===date),cal=sumDay(date,'kcal'),protein=sumDay(date,'protein'),goalK=Number($('goalKcal').value)||2600,goalP=Number($('goalProtein').value)||160;const dt=dateFromISO(date);$('homeDateLabel').textContent=dt.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});$('homeKcal').textContent=fmt(cal);$('homeKcalGoal').textContent='/ '+fmt(goalK)+' kcal';$('homeProtein').textContent=fmt(protein);$('homeProteinGoal').textContent='/ '+fmt(goalP)+' g';$('homeKcalBar').style.width=Math.min(100,cal/goalK*100)+'%';$('homeProteinBar').style.width=Math.min(100,protein/goalP*100)+'%';
+function renderHome(){const date=homeDay(),logs=getLogs().filter(x=>x.date===date),cal=sumDay(date,'kcal'),protein=sumDay(date,'protein'),goalK=Number($('goalKcal').value)||2600,goalP=Number($('goalProtein').value)||160;const dt=dateFromISO(date);$('homeKcal').textContent=fmt(cal);$('homeKcalGoal').textContent='/ '+fmt(goalK)+' kcal';$('homeProtein').textContent=fmt(protein);$('homeProteinGoal').textContent='/ '+fmt(goalP)+' g';$('homeKcalBar').style.width=Math.min(100,cal/goalK*100)+'%';$('homeProteinBar').style.width=Math.min(100,protein/goalP*100)+'%';
 const dinnerPlan=getDinnerPlans()[date],steps=[['Kahvaltı',logs.some(x=>x.presetBreakfast),'2 yumurta + Antep peyniri + 5 zeytin'],['Öğle yemeği',logs.some(x=>x.meal==='Öğle yemeği'),'Hastanede ne yediysen onu kaydet'],['Akşam yemeği',logs.some(x=>x.meal==='Akşam yemeği'),'Plan: '+(dinnerPlan?.name||'Henüz seçilmedi')],['5 km yürüyüş',Number(read(WALK_KEY,{})[date]||0)>=5,'Günlük rutin']];const root=$('homeChecklist');root.innerHTML='';steps.forEach(([name,done,desc])=>{const e=document.createElement('div');e.className='daily-step';const ic=document.createElement('span');ic.className=done?'ok':'pending';ic.textContent=done?'✓':'○';const text=document.createElement('div');const title=document.createElement('strong');title.textContent=name+(done?' · Tamamlandı':'');const note=document.createElement('div');note.className='muted';note.textContent=desc;text.append(title,note);e.append(ic,text);root.append(e)});const badge=$('homeSessionTag'),basketballDay=dateFromISO(date).getDay()===3;badge.textContent=fitCurrent?'Antrenman sürüyor':basketballDay?'🏀 Basketbol + Karın':'';badge.classList.toggle('hidden',!fitCurrent&&!basketballDay);renderWaterWalk();renderBackupAge()}
 $('homeBreakfast').addEventListener('click',()=>{if(breakfastLogsForDate(homeDay()).length){navigateTo('nutrition','breakfastPanel');return}$('date').value=homeDay();$('breakfastToggle').click();renderHome()});$('homeLunch').addEventListener('click',()=>{$('date').value=homeDay();$('meal').value='Öğle yemeği';renderTotals();openMealEditor('Öğle yemeği')});$('homeDinner').addEventListener('click',()=>{$('date').value=homeDay();openMealEditor('Akşam yemeği')});$('homeWorkout').addEventListener('click',()=>navigateTo('fitness','fitSessionPanel'));$('homeTrends').addEventListener('click',()=>showView('progress'));$('homeBackup').addEventListener('click',()=>navigateTo('settings','backupPanel'));
 function waterGoal(){const n=Number(localStorage.getItem(WATER_GOAL_KEY));return Number.isFinite(n)&&n>=250&&n<=7000?n:2500}
