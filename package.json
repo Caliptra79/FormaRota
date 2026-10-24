@@ -42,7 +42,7 @@
         }
       ],
       "icon": "desktop/formarota.ico",
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true
     },
     "portable": {
       "artifactName": "FormaRota-Portable.${ext}"
