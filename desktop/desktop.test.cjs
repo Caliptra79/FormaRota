@@ -40,3 +40,13 @@ test('desktop bundle is complete and keeps workout history intact',()=>{
  const gifs=fs.readdirSync(path.join(root,'assets')).filter(x=>x.endsWith('.gif'));
  assert.equal(gifs.length,15);
 });
+
+test('the isolated Electron session also owns our custom protocol',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'main.cjs'),'utf8');
+ assert.ok(source.includes("partition:'persist:formarota'"));
+ assert.ok(source.includes("const sess=session.fromPartition('persist:formarota')"));
+ assert.ok(source.includes("sess.protocol.handle('app',async request=>"));
+ assert.ok(!source.includes("\\n protocol.handle('app',async request=>"));
+ assert.ok(source.includes("nodeIntegration:false"));
+ assert.ok(source.includes("sandbox:true"));
+});
