@@ -11,6 +11,10 @@ on:
       - 'package.json'
       - '.github/workflows/windows-desktop.yml'
 
+concurrency:
+  group: windows-desktop-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
