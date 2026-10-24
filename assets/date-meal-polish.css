@@ -1,0 +1,159 @@
+/* FormaRota: elegant date masthead, readable meal rows and restrained motion refinements.
+ * Theme colors remain sourced from the user's chosen one of seven palettes.
+ */
+body.compact-app-shell .daily-masthead{
+ position:sticky;
+ top:0;
+ z-index:50;
+ width:100%;
+ background:var(--bg);
+ color:var(--text);
+ border-bottom:1px solid var(--border);
+ box-shadow:none;
+ isolation:isolate;
+}
+.daily-masthead-inner{
+ width:min(100%,920px);
+ margin-inline:auto;
+ padding:max(14px,env(safe-area-inset-top,0px)) 16px 11px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:11px;
+ min-height:58px;
+}
+.daily-masthead-label{
+ flex:none;
+ font-size:.65rem;
+ font-weight:800;
+ line-height:1;
+ letter-spacing:.14em;
+ color:var(--accent);
+ border-right:1px solid var(--border);
+ padding:5px 12px 5px 0;
+}
+.daily-masthead time{
+ display:block;
+ color:var(--text);
+ -webkit-text-fill-color:var(--text);
+ font-family:ui-rounded,"SF Pro Rounded","Avenir Next",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+ font-weight:740;
+ font-size:clamp(.98rem,3.45vw,1.15rem);
+ letter-spacing:-.025em;
+ line-height:1.35;
+ text-align:center;
+ font-variant-numeric:lining-nums;
+}
+body.compact-app-shell main{
+ padding-top:10px;
+}
+body.compact-app-shell .context-nav{
+ padding-top:8px;
+ padding-bottom:7px;
+ margin-bottom:0;
+}
+body.compact-app-shell.has-subnav main{
+ padding-top:4px;
+}
+html{
+ scroll-padding-top:calc(83px + env(safe-area-inset-top,0px));
+}
+main > section, #fitnessRoot > [data-fit-page]{
+ scroll-margin-top:calc(82px + env(safe-area-inset-top,0px));
+}
+/* Legacy primary button styling gave meal titles the dark-on-accent foreground
+   while the cards themselves use a dark/lighter panel surface. Force correct ink. */
+#mealQuickPanel button.meal-card{
+ background:var(--panel2);
+ border:1px solid var(--border);
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text);
+ box-shadow:none;
+}
+#mealQuickPanel button.meal-card .meal-description,
+#mealQuickPanel button.meal-card .meal-description strong{
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text);
+ opacity:1;
+ font-weight:750;
+}
+#mealQuickPanel button.meal-card .meal-description small{
+ color:var(--muted)!important;
+ -webkit-text-fill-color:var(--muted);
+ opacity:1;
+}
+#mealQuickPanel button.meal-card .meal-arrow{
+ color:var(--accent)!important;
+ -webkit-text-fill-color:var(--accent);
+}
+#mealQuickPanel button.meal-card:focus-visible{
+ outline:2px solid var(--accent);
+ outline-offset:3px;
+}
+#mealQuickPanel .meal-card .meal-description{flex:1 1 auto}
+#mealQuickPanel .meal-card .meal-description strong{line-height:1.35}
+#mealQuickPanel button.meal-card{
+ transition:background-color var(--motion-base) var(--motion-ease),
+ border-color var(--motion-base) var(--motion-ease),
+ transform var(--motion-fast) var(--motion-ease),
+ box-shadow var(--motion-base) var(--motion-ease);
+}
+#mealQuickPanel button.meal-card:active{
+ transform:scale(.992);
+ border-color:var(--accent);
+}
+@media (hover:hover) and (pointer:fine){
+ #mealQuickPanel button.meal-card:hover{
+  border-color:color-mix(in srgb,var(--accent) 35%,var(--border));
+  box-shadow:0 3px 12px color-mix(in srgb,var(--accent) 7%,transparent);
+ }
+ .home-actions button:hover,
+ .fr-dinner-choice button:hover{
+  transform:translateY(-1px);
+ }
+}
+/* Card arrivals remain lightweight. Only animate when the route actually changes,
+   by using the existing fr-motion-enter class; do not animate every data update. */
+@keyframes fr-soft-card{
+ from{opacity:.82;transform:translateY(4px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@keyframes fr-date-appear{
+ from{opacity:.75;transform:translateY(3px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:no-preference){
+ .daily-masthead-inner{
+  animation:fr-date-appear 230ms var(--motion-ease) both;
+ }
+ main>section.fr-motion-enter .home-stat,
+ main>section.fr-motion-enter .meal-card,
+ main>section.fr-motion-enter .v21-box{
+  animation:fr-soft-card 250ms var(--motion-ease) both;
+ }
+ main>section.fr-motion-enter .home-stat:nth-child(2),
+ main>section.fr-motion-enter .meal-card:nth-child(2),
+ main>section.fr-motion-enter .v21-box:nth-child(2){animation-delay:45ms}
+ main>section.fr-motion-enter .meal-card:nth-child(3),
+ main>section.fr-motion-enter .v21-box:nth-child(3){animation-delay:80ms}
+}
+@media(max-width:390px){
+ .daily-masthead-inner{
+  gap:8px;
+  padding-left:10px;
+  padding-right:10px;
+ }
+ .daily-masthead-label{
+  letter-spacing:.09em;
+  padding-right:9px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .daily-masthead-inner,
+ main>section.fr-motion-enter .home-stat,
+ main>section.fr-motion-enter .meal-card,
+ main>section.fr-motion-enter .v21-box{
+  animation:none!important;
+  transition:none!important;
+ }
+}
