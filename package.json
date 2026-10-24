@@ -1,0 +1,61 @@
+{
+  "name": "formarota-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FormaRota kişisel Windows uygulaması",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "build:assets": "node desktop/build-assets.cjs",
+    "test:desktop": "node --test desktop/desktop.test.cjs",
+    "dist:win": "electron-builder --win portable nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.9.3",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.formarota.personal",
+    "productName": "FormaRota",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/main.cjs",
+      "desktop/security.cjs",
+      "desktop/app/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "desktop/formarota.ico",
+      "signAndEditExecutable": true,
+      "signExecutable": false
+    },
+    "portable": {
+      "artifactName": "FormaRota-Portable.${ext}"
+    },
+    "nsis": {
+      "artifactName": "FormaRota-Setup.${ext}",
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "publish": null
+  }
+}
