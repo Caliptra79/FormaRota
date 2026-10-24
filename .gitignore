@@ -1,0 +1,5 @@
+node_modules/
+release/
+desktop/app/
+desktop/formarota.ico
+*.log
