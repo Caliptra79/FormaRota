@@ -1,0 +1,76 @@
+name: Windows personal desktop
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/windows-personal-desktop
+      - main
+    paths:
+      - 'desktop/**'
+      - 'package.json'
+      - '.github/workflows/windows-desktop.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install desktop build tools
+        run: |
+          npm install --no-package-lock --no-audit --no-fund
+          python -m pip install Pillow==11.3.0
+      - name: Prepare offline application and branded Windows icon
+        run: |
+          node desktop/build-assets.cjs
+          python desktop/make-icon.py
+      - name: Test desktop security and offline assets
+        run: node --test desktop/desktop.test.cjs
+      - name: Build portable executable and local installer
+        run: npm run dist:win
+      - name: Verify Windows executables and print SHA-256 checksums
+        shell: pwsh
+        run: |
+          $expected = @('FormaRota-Portable.exe','FormaRota-Setup.exe')
+          foreach ($name in $expected) {
+            $file = Join-Path 'release' $name
+            if (-not (Test-Path $file)) { throw "Missing expected executable: $file" }
+            $bytes = (Get-Item $file).Length
+            if ($bytes -lt 1000000) { throw "Executable unexpectedly small: $file" }
+            Get-FileHash -Algorithm SHA256 $file | Format-List
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FormaRota-Windows-Kisisel
+          path: |
+            release/FormaRota-Portable.exe
+            release/FormaRota-Setup.exe
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish personal Windows downloads on GitHub Releases
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = 'windows-personal'
+          $notes = 'FormaRota kişisel Windows sürümü. Portable sürüm kurulum gerektirmez. Bu dosyalar ücretsiz ve imzasızdır; Windows SmartScreen uyarısı görülebilir. Kaynak: Caliptra79/FormaRota GitHub deposu. Telefon/PWA kayıtları Windows uygulamasıyla otomatik eşitlenmez; Ayarlar bölümündeki JSON yedeğini kullanın.'
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag 'release/FormaRota-Portable.exe' 'release/FormaRota-Setup.exe' --target "${{ github.sha }}" --title "FormaRota — Windows kişisel sürüm" --notes $notes --latest=false
+          } else {
+            gh release upload $tag 'release/FormaRota-Portable.exe' 'release/FormaRota-Setup.exe' --clobber
+          }
