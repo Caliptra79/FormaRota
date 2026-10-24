@@ -55,7 +55,7 @@ app.whenReady().then(async()=>{
  Menu.setApplicationMenu(null);
  const sess=session.fromPartition('persist:formarota');
  sess.setPermissionRequestHandler((_wc,_permission,done)=>done(false));
- protocol.handle('app',async request=>{
+ sess.protocol.handle('app',async request=>{
   const asset=resolveAsset(root,request.url);
   if(!asset)return new Response('Not found',{status:404});
   try{
