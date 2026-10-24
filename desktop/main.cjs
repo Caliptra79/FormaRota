@@ -1,6 +1,7 @@
 'use strict';
 const path=require('node:path');
 const fs=require('node:fs/promises');
+const fsSync=require('node:fs');
 const {app,BrowserWindow,Menu,protocol,session,shell}=require('electron');
 const {resolveAsset,externalURL}=require('./security.cjs');
 
@@ -15,7 +16,10 @@ protocol.registerSchemesAsPrivileged([{
  privileges:{standard:true,secure:true,supportFetchAPI:true}
 }]);
 app.setAppUserModelId(APP_ID);
-app.setPath('userData',path.join(app.getPath('appData'),'FormaRota'));
+const dataDir=path.join(app.getPath('appData'),'FormaRota');
+fsSync.mkdirSync(dataDir,{recursive:true});
+app.setPath('userData',dataDir);
+app.setPath('sessionData',dataDir);
 
 let mainWindow=null;
 const root=path.resolve(__dirname,'app');
