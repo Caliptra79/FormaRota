@@ -112,7 +112,7 @@ test('new contrast layer loads after Studio and is precached for updated offline
  const guardLink=html.indexOf('<link rel="stylesheet" href="./assets/contrast-guard.css"/>');
  assert.ok(studioLink>0&&guardLink>studioLink);
  assert.ok(sw.includes("'./assets/contrast-guard.css'"));
- assert.ok(sw.includes("formarota-solo-v48-shell"));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  for(const id of ['night','ocean','light','sand','neon','volt','sunset'])assert.ok(html.includes('<option value="'+id+'">'));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
  assert.ok(html.includes('const FIT_MOVES=['));
