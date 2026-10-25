@@ -146,7 +146,8 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/settings-disclosure.css"/>
 <link rel="stylesheet" href="./assets/final-motion.css"/>
 <link rel="stylesheet" href="./assets/date-meal-polish.css"/>
-<link rel="stylesheet" href="./assets/luxe-ui.css"/></head>
+<link rel="stylesheet" href="./assets/luxe-ui.css"/>
+<link rel="stylesheet" href="./assets/studio-relaunch.css"/></head>
 <body class="compact-app-shell">
 <div class="daily-masthead" role="group" aria-label="Bugünün tarihi"><div class="daily-masthead-inner"><span class="daily-masthead-label" aria-hidden="true">BUGÜN</span><time id="globalTodayDate"></time></div></div>
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
@@ -158,7 +159,19 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 </div>
 </div>
 <main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide" data-view="home" id="homePanel">
-<div class="home-intro"><div><div class="eyebrow">GÜNLÜK ÖZET</div><h2>Bugünkü rotan</h2><div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div></div><span class="tag hidden" id="homeSessionTag" aria-live="polite"></span></div>
+<div class="home-intro studio-home-intro">
+ <div class="studio-home-copy">
+  <div class="eyebrow"><span class="studio-spark" aria-hidden="true">✦</span> GÜNLÜK ROTA</div>
+  <h2>Her gün<br/><em>kendine yatırım.</em></h2>
+  <p>Bir öğün, bir set, bir adım. Her küçük hareket hedefine doğru ilerler.</p>
+  <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
+  <div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div>
+ </div>
+ <div class="studio-home-art" aria-hidden="true">
+  <div class="studio-art-orbit orbit-one"></div><div class="studio-art-orbit orbit-two"></div>
+  <div class="studio-art-star">✦</div><div class="studio-art-mark">FR<span>↗</span></div>
+ </div>
+</div>
 <div class="home-stats"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span> <small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div>
 <div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span> <small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
 <div class="mini-panel"><h3 class="subheading">Bugün neler yaptın?</h3><div class="daily-steps" id="homeChecklist"></div><div class="home-actions"><button id="homeBreakfast" type="button">🥚 Kahvaltıyı işaretle</button><button class="secondary" id="homeLunch" type="button">🍽 Öğlen kaydet</button><button class="secondary" id="homeDinner" type="button">🌙 Akşam kaydet</button><button class="secondary" id="homeWorkout" type="button">🏋️ Fitness'a git</button></div></div>
@@ -166,7 +179,15 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <div class="backup-alert" id="homeBackupAlert" role="status"></div>
 <div class="mini-panel"><div class="split"><h3 class="subheading">Kısa yollar</h3><span class="muted">Günlük araçlar ve kayıtlar</span></div><div class="row"><button class="secondary" id="homeTrends" type="button">📈 Gelişimim</button><button class="secondary" id="homeBackup" type="button">⬇️ Yedeklemeye git</button></div></div>
 </section>
-<section class="route-heading wide" data-view="nutrition" aria-label="Öğün günlüğün"><div class="eyebrow">BESLENME / GÜNLÜK</div><h2>Öğün günlüğün</h2><p>Kahvaltını işaretle, günlük makrolarını ve öğün kayıtlarını takip et.</p></section>
+<section class="route-heading wide studio-nutrition-hero" data-view="nutrition" aria-label="Öğün günlüğün">
+ <div class="studio-nutrition-copy">
+  <div class="eyebrow">✦ BESLENME STÜDYOSU</div>
+  <h2>İyi beslen.<br/><em>İyi hisset.</em></h2>
+  <p>Günlük öğünlerin, makro hedeflerin ve küçük alışkanlıkların tek yerde.</p>
+  <button id="studioMealAction" type="button">Öğün seç <span aria-hidden="true">↗</span></button>
+ </div>
+ <div class="studio-nutrition-art" aria-hidden="true"><span>🥬</span><span>🍓</span><span>✦</span></div>
+</section>
 <section class="panel wide" data-view="nutrition" id="nutritionTop"><div class="row"><div><label for="date">Gün</label><input id="date" type="date"/></div><div><label for="meal">Öğün</label><select id="meal"><option>Kahvaltı</option><option selected="">Öğle yemeği</option><option>Akşam yemeği</option><option>Ara öğün</option></select></div></div>
 <div class="stats" style="margin-top:12px"><div class="stat"><span class="muted">Kalori</span><strong><span id="totalKcal">0</span> <small>kcal</small></strong><span class="muted">Hedef <input class="inlinegoal" id="goalKcal" min="0" type="number" value="2600"/></span><div class="progress"><span id="kcalProgress"></span></div></div><div class="stat"><span class="muted">Protein</span><strong><span id="totalProtein">0</span> <small>g</small></strong><span class="muted">Hedef <input class="inlinegoal" id="goalProtein" min="0" type="number" value="160"/></span><div class="progress"><span id="proteinProgress"></span></div></div><div class="stat"><span class="muted">Karbonhidrat</span><strong><span id="totalCarbs">0</span> <small>g</small></strong><span class="muted">Günlük toplam</span></div><div class="stat"><span class="muted">Yağ</span><strong><span id="totalFat">0</span> <small>g</small></strong><span class="muted">Günlük toplam</span></div></div></section>
 <section class="panel wide" data-view="nutrition" id="v21Budget"><h2>Bugünkü kalan hedefin</h2><div class="v21-grid"><div class="v21-box"><small>Kalan kalori</small><div><strong id="v21KcalLeft">0</strong> kcal</div></div><div class="v21-box"><small>Kalan protein</small><div><strong id="v21ProteinLeft">0</strong> g</div></div></div><p class="v21-mini">Hedef aşıldığında kalan miktar negatif gösterilir. Kayıtlı tüm öğünler hesaba katılır.</p></section><section class="panel wide" data-view="nutrition" id="v21Recents"><h2>Sık yediklerin ve son öğünler</h2><p class="v21-mini">Besine dokunup porsiyonu onayla; seçili öğüne hemen kaydedilir.</p><div class="v21-pills" id="v21MealFilters"></div><div id="v21RecentList" class="v21-list"></div></section><section class="panel wide" data-view="nutrition" id="mealQuickPanel"><div class="split"><div><h2>Öğünlerim</h2><p class="muted">Öğüne dokunarak besin seç ve doğrudan günlüğüne kaydet.</p></div></div><div class="meal-cards" id="mealCards"><button type="button" class="meal-card" data-meal-open="Öğle yemeği"><span class="meal-symbol">🍽️</span><span class="meal-description"><strong>Öğle yemeği</strong><small id="lunchMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Akşam yemeği"><span class="meal-symbol">🌙</span><span class="meal-description"><strong>Akşam yemeği</strong><small id="dinnerMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Ara öğün"><span class="meal-symbol">🍎</span><span class="meal-description"><strong>Ara öğün</strong><small id="snackMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button></div></section>
@@ -191,10 +212,40 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 </section>
 <section class="panel wide" data-view="settings" id="informationPanel"><details class="app-information"><summary>ℹ️ Uygulama hakkında ve bilgilendirme</summary><p>Besin değerleri hazırlama yöntemi ve ürüne göre değişebilir. Bu uygulama tıbbi öneri yerine geçmez.</p></details></section>
 <section class="panel wide" data-view="settings" id="backupPanel"><h2>Verilerim ve yedekleme</h2><div class="warning">Yerel besin tabanındaki değerler yaklaşık referans değerleridir; özellikle yağlı yemekler ve ev tarifleri kullanılan malzemeye göre değişir. Kişisel eklediğin besinleri etiket veya tarif hesabına göre doldur.</div><div class="backup-meta" id="backupAge">Henüz yedek alınmadı.</div><p class="muted">Paketli ürün araması Open Food Facts üzerinden yapılır; veriler eksik veya hatalı olabilir. Kayıtlar yalnızca bu telefonda saklanır. Önemli kayıtlarını korumak için düzenli JSON yedeği indir.</p><button class="secondary" id="exportBtn">⬇️ Yedeği indir (JSON)</button><input accept="application/json" class="hidden" id="importFile" type="file"/><button class="secondary" id="importBtn" style="margin-top:8px">⬆️ Yedeği içe aktar</button><div class="muted" id="backupStatus" role="status" style="margin-top:8px"></div><div aria-live="polite" class="mini-panel hidden" id="importPreview"><strong>İçe aktarma önizlemesi</strong><p class="muted" id="importPreviewText"></p><div class="warning">Telefonundaki mevcut kayıtlar bu dosyadaki kayıtlarla değişecek. Önce aşağıdaki düğmeyle kurtarma yedeğini indirip iPhone Dosyalar'da bulunduğunu kontrol et.</div><button class="secondary" id="safetyDownload" style="margin-top:10px" type="button">⬇️ Kurtarma yedeğini indir</button><button disabled="" id="confirmImport" style="margin-top:8px" type="button">✓ Yedek kontrol edildi — geri yükle</button><button class="danger" id="cancelImport" style="margin-top:8px" type="button">İptal</button></div></section>
-<section class="route-heading wide" data-view="fitness" aria-label="Full Body rutinin"><div class="eyebrow">ANTRENMAN</div><h2>Full Body rutinin</h2><p>Hareket, ağırlık, tekrar ve dinlenme — hepsi tek yerde.</p></section>
+<section class="route-heading wide studio-fitness-hero" data-view="fitness" id="studioFitnessHero" aria-label="Full Body antrenman stüdyosu">
+ <div class="studio-hero-glow studio-hero-glow-a" aria-hidden="true"></div>
+ <div class="studio-hero-glow studio-hero-glow-b" aria-hidden="true"></div>
+ <div class="studio-hero-content">
+  <div class="studio-hero-copy">
+   <div class="studio-overline"><span class="studio-live-dot" aria-hidden="true"></span> FORMAROTA / TRAINING STUDIO</div>
+   <h2>Gücünü<br/><em>inşa et.</em></h2>
+   <p>Full Body programın, setlerin ve gelişimin tek bir kontrol merkezinde.</p>
+   <span class="studio-state-pill" id="studioWorkoutState">● Program hazır</span>
+   <div class="studio-hero-actions">
+    <button id="studioPrimaryAction" type="button">▶ Antrenmana başla</button>
+    <button id="studioExercisesAction" class="studio-outline-button" type="button">Hareketleri gör <span aria-hidden="true">↗</span></button>
+   </div>
+  </div>
+  <div class="studio-progress-card">
+   <div class="studio-progress-ring" id="studioProgressRing" role="progressbar" aria-label="Tamamlanan setler" aria-valuemin="0" aria-valuemax="39" aria-valuenow="0">
+    <div class="studio-progress-inner">
+     <span class="studio-progress-icon" aria-hidden="true">⚡</span>
+     <strong id="studioDoneCount">0</strong>
+     <span class="studio-progress-caption">/ 39 SET</span>
+    </div>
+   </div>
+   <span class="studio-progress-note" id="studioProgressNote">İlk setini kaydettiğinde ilerlemen burada görünecek.</span>
+  </div>
+ </div>
+ <div class="studio-hero-footer">
+  <div><span aria-hidden="true">◈</span><strong>13</strong><small>hareket</small></div>
+  <div><span aria-hidden="true">⏱</span><strong>3</strong><small>set / hareket</small></div>
+  <div><span aria-hidden="true">✳</span><strong>39</strong><small>toplam set</small></div>
+ </div>
+</section>
 <section class="route-heading wide" data-view="fitness-history" aria-label="Antrenman arşivin"><div class="eyebrow">ANTRENMAN / GEÇMİŞ</div><h2>Antrenman arşivin</h2><p>Tamamladığın ve yarım bıraktığın seanslar.</p></section>
 <section aria-label="Fitness takip bölümü" class="fitness-root hidden" data-view="fitness" id="fitnessRoot">
-<section data-fit-page="workout" class="panel"><div class="fit-headline"><h2>Full Body · Kişisel program</h2><span class="tag">13 hareket · her biri 3 set</span></div>
+<section data-fit-page="workout" class="panel studio-legacy-intro" aria-hidden="true"><div class="fit-headline"><h2>Full Body · Kişisel program</h2><span class="tag">13 hareket · her biri 3 set</span></div>
 <p class="muted">13 hareket, her biri 3 set. Ağırlığını ve tekrarını kaydet; gerektiğinde hareket alternatifini seç.</p>
 
 </section>
@@ -206,12 +257,12 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <p aria-live="polite" class="muted" id="fitWeekStatus"></p>
 <div class="fit-banner"><b>Wednesday · Basketball + Abs</b><div class="muted">Bu gün fitness yok. Karın hareketleri henüz bildirilmediğinden kendiliğimizden yeni hareket eklemiyoruz.</div><label style="margin-top:10px"><input id="fitAbsDone" style="width:auto;margin-right:7px" type="checkbox"/>Bu haftanın çarşamba basketbol + karın seansı tamamlandı</label></div>
 </section>
-<section data-fit-page="workout" class="panel" id="fitSessionPanel"><h2>Antrenman zamanlayıcısı</h2><div class="fit-timerbox">
+<section data-fit-page="workout" class="panel" id="fitSessionPanel"><div class="studio-panel-eyebrow">01 / KONTROL MERKEZİ</div><h2>Antrenman zamanlayıcısı</h2><p class="studio-panel-sub">Seansı başlat, çalışma ve dinlenme süreni tek noktadan yönet.</p><div class="fit-timerbox">
 <div class="muted" id="fitSessionLabel">Henüz antrenman başlatılmadı.</div><div class="fit-timerrow"><div><div aria-live="off" class="fit-clock" id="fitMainClock">90:00</div><div class="muted">Toplam kalan süre · geriye sayar</div></div><div class="fit-secondarytimer"><div class="muted" id="fitPhaseLabel">Set zamanlayıcısı</div><strong id="fitPhaseClock">01:15</strong><div class="muted">Çalışma / dinlenme</div></div></div>
 <div class="fit-progress"><span id="fitProgressBar" style="width:0%"></span></div>
 <div class="fit-toolbar"><button id="fitStart" type="button">▶ Antrenmanı başlat</button><button class="secondary" disabled="" id="fitPause" type="button">Ⅱ Duraklat</button><button class="secondary" disabled="" id="fitSetTimer" type="button">▶ Seti başlat</button><button class="secondary" disabled="" id="fitRestTimer" type="button">☕ Dinlen</button><button class="danger" disabled="" id="fitStop" type="button">■ Durdur</button><button class="secondary" disabled="" id="fitFinish" type="button">✓ Bitir ve kaydet</button></div>
 </div><p aria-live="polite" class="muted" id="fitTimerStatus">Başlatınca antrenman sayacı geriye doğru işler; gerektiğinde duraklatıp devam edebilirsin. Set tamamlandığında tekrarı ve ağırlığı ayrıca kaydet.</p></section>
-<section data-fit-page="workout" class="panel" id="v21TimerPanel"><h2>Gelişmiş dinlenme sayacı</h2><p class="v21-mini">Harekete özel süre. Ön planda ses/titreşim uyarısı desteklenir; iPhone arka planda uyarı garanti edilmez.</p><div class="v21-grid"><div><label for="v21TimerMove">Hareket</label><select id="v21TimerMove"></select></div><div><label for="v21TimerSec">Dinlenme (sn)</label><input type="number" id="v21TimerSec" min="15" max="600" step="5" value="90"></div></div><div class="v21-actions"><button id="v21TimerStart">▶ Başlat</button><button id="v21TimerPause" class="secondary">Ⅱ Duraklat</button><button id="v21TimerReset" class="secondary">Sıfırla</button><button id="v21TimerSound" class="secondary">🔊 Ses açık</button></div><div id="v21TimerClock">01:30</div><p class="v21-mini" id="v21TimerMessage">Hareket seçip süreyi kaydedebilirsin.</p></section><section data-fit-page="workout" class="panel" id="fitExercisePanel"><div class="fit-headline"><h2>Hareket sırası ve set kayıtları</h2><span class="tag" id="fitCompletedText">0 / 39 set</span></div><p class="muted">Sıralama sabit, alternatifleri seçebilirsin. Ağırlık ve tekrarları antrenman sırasında set bazında kaydet. Önceki kayıtların gelişim geçmişi için korunur.</p><div class="fit-list" id="fitExerciseList"></div></section>
+<section data-fit-page="workout" class="panel" id="v21TimerPanel"><h2>Gelişmiş dinlenme sayacı</h2><p class="v21-mini">Harekete özel süre. Ön planda ses/titreşim uyarısı desteklenir; iPhone arka planda uyarı garanti edilmez.</p><div class="v21-grid"><div><label for="v21TimerMove">Hareket</label><select id="v21TimerMove"></select></div><div><label for="v21TimerSec">Dinlenme (sn)</label><input type="number" id="v21TimerSec" min="15" max="600" step="5" value="90"></div></div><div class="v21-actions"><button id="v21TimerStart">▶ Başlat</button><button id="v21TimerPause" class="secondary">Ⅱ Duraklat</button><button id="v21TimerReset" class="secondary">Sıfırla</button><button id="v21TimerSound" class="secondary">🔊 Ses açık</button></div><div id="v21TimerClock">01:30</div><p class="v21-mini" id="v21TimerMessage">Hareket seçip süreyi kaydedebilirsin.</p></section><section data-fit-page="workout" class="panel" id="fitExercisePanel"><div class="studio-panel-eyebrow">02 / ANTRENMAN KÜTÜPHANESİ</div><div class="fit-headline"><h2>Hareket sırası ve set kayıtları</h2><span class="tag" id="fitCompletedText">0 / 39 set</span></div><p class="muted">Sıralama sabit, alternatifleri seçebilirsin. Ağırlık ve tekrarları antrenman sırasında set bazında kaydet. Önceki kayıtların gelişim geçmişi için korunur.</p><div class="fit-list" id="fitExerciseList"></div></section>
 <section data-fit-page="history" class="panel"><h2>Antrenman geçmişi</h2><p class="muted">Bitirilen veya durdurulan seanslar burada kalır. Daha önce kullandığın ağırlıkları hareket kartlarında görebilirsin.</p><div class="fit-session-list" id="fitHistory"></div></section>
 </section>
 
@@ -839,4 +890,4 @@ function v21RestChange(){const times=read(V21_RESTS,{}),n=times[$('v21TimerMove'
 function v21Init(){v21MoveOptions();$('v21MeasureDate').value=today();$('v21SleepDate').value=today();$('v21Exercise').addEventListener('change',v21ExerciseGraph);$('v21WorkoutMove').addEventListener('change',v21WorkoutPrevious);$('v21MonthPrev').onclick=()=>{v21MonthOffset--;v21Calendar()};$('v21MonthNext').onclick=()=>{v21MonthOffset++;v21Calendar()};$('v21ReportPrev').onclick=()=>{v21ReportOffset--;v21Report()};$('v21ReportNow').onclick=()=>{v21ReportOffset=0;v21Report()};$('v21MeasureSave').onclick=()=>{const date=$('v21MeasureDate').value,record={};for(const [key,id] of [['waist','v21Waist'],['chest','v21Chest'],['arm','v21Arm'],['hip','v21Hip']]){const field=$(id);if(field.value!==''){const n=Number(field.value);if(n<=0||n>300){alert('Ölçü değerlerini kontrol et.');return}record[key]=n}}if(!date||!Object.keys(record).length){alert('Tarih ve en az bir ölçü gir.');return}const data=read(V21_MEASURES,{});data[date]={...(data[date]||{}),...record};write(V21_MEASURES,data);v21RenderInsights()};$('v21SleepSave').onclick=()=>{const date=$('v21SleepDate').value,hrs=Number($('v21SleepHours').value),energy=Number($('v21Energy').value);if(!date||$('v21SleepHours').value===''||hrs<0||hrs>24){alert('Uyku süresi 0–24 saat olmalı.');return}const data=read(V21_SLEEP,{});data[date]={hours:hrs,energy};write(V21_SLEEP,data);v21RenderInsights()};$('v21TimerMove').addEventListener('change',v21RestChange);$('v21TimerSec').addEventListener('change',()=>{const n=Number($('v21TimerSec').value);if(n<15||n>600||!Number.isFinite(n)){alert('Dinlenme 15–600 saniye olmalı.');return}const data=read(V21_RESTS,{});data[$('v21TimerMove').value]=n;write(V21_RESTS,data);if(!v21TimerRunning){v21PauseAt=0;v21TimerDisplay()}});$('v21TimerStart').onclick=()=>{if(!v21AudioCtx&&window.AudioContext){try{v21AudioCtx=new AudioContext()}catch{}}if(v21AudioCtx?.state==='suspended')v21AudioCtx.resume().catch(()=>{});if(!v21TimerRunning){v21End=Date.now()+(v21PauseAt||v21TimerDuration());v21TimerRunning=true;v21Alarmed=false;$('v21TimerMessage').textContent='Dinlenme devam ediyor.';v21TimerDisplay()}};$('v21TimerPause').onclick=()=>{if(v21TimerRunning){v21PauseAt=Math.max(0,v21End-Date.now());v21TimerRunning=false;$('v21TimerMessage').textContent='Dinlenme duraklatıldı.';v21TimerDisplay()}};$('v21TimerReset').onclick=()=>{v21TimerRunning=false;v21PauseAt=0;v21Alarmed=false;v21TimerDisplay()};$('v21TimerSound').onclick=()=>{v21Sound=!v21Sound;$('v21TimerSound').textContent=v21Sound?'🔊 Ses açık':'🔇 Ses kapalı'};$('v21Portions').addEventListener('input',v21RecipePortion);$('recipeAddIngredient').addEventListener('click',()=>setTimeout(v21RecipePortion,0));$('recipeIngredients').addEventListener('click',()=>setTimeout(v21RecipePortion,0));$('date').addEventListener('change',v21Refresh);$('meal').addEventListener('change',v21Refresh);$('goalKcal').addEventListener('change',v21Refresh);$('goalProtein').addEventListener('change',v21Refresh);const watcher=new MutationObserver(()=>{v21Budget();v21SmartDinner()});watcher.observe($('totalKcal'),{childList:true,characterData:true,subtree:true});v21RestChange();v21Refresh();setInterval(v21TimerDisplay,250)}
 v21Init();window.v21Ready=true;const v21OriginalTotals=renderTotals;renderTotals=function(){v21OriginalTotals();v21Refresh()};if(currentView==='insights')v21RenderInsights();
 </script><script defer src="./assets/ui-compact-v23.js"></script><script defer src="./assets/progress-compact-v25.js"></script><script defer src="./assets/fitness-simple-v26.js"></script><script defer src="./assets/coach-engine-v35.js"></script><script defer src="./assets/coach-ui-v33.js"></script>
-<script defer src="./assets/fitness-record-editor.js"></script><script defer src="./assets/refinement-v32.js"></script><script defer src="./assets/luxe-ui.js"></script></body></html>
+<script defer src="./assets/fitness-record-editor.js"></script><script defer src="./assets/refinement-v32.js"></script><script defer src="./assets/luxe-ui.js"></script><script defer src="./assets/studio-relaunch.js"></script></body></html>
