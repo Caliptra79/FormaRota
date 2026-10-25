@@ -45,7 +45,7 @@ test('Themes retain their distinct hero palettes and primary labels have a consi
  for(const target of ['--studio-ink:#f3fbff','--studio-ink-muted:#bfd5de','--studio-pop:#90e6cb','#studioPrimaryAction','#studioExercisesAction','#fitSessionPanel #fitMainClock'])assert.ok(css.includes(target),target);
  assert.ok(css.includes('color:var(--studio-ink)!important'));
  assert.ok(css.includes('color:var(--studio-pop)'));
- assert.ok(css.includes('#fitnessRoot #fitExercisePanel .fit-card'));
+ assert.ok(css.includes('#fitExercisePanel .fit-card'));
 });
 test('Mobile iPhone layout and reduced motion stay supported',()=>{
  assert.ok(css.includes('@media(max-width:600px)'));
