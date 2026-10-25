@@ -1,0 +1,287 @@
+/* FormaRota Studio Plus: four accessible live goal rings, honest 7-day story,
+   clearer GIF/set hierarchy and restrained ambient glow for all seven themes. */
+html[data-theme]{
+ --sp-coral:var(--luxe-coral);
+ --sp-violet:var(--luxe-violet);
+ --sp-blue:var(--luxe-blue);
+ --sp-mint:var(--luxe-mint);
+ --sp-neutral:var(--text);
+ --sp-shadow:0 9px 27px color-mix(in srgb,var(--bg) 43%,transparent);
+ --sp-glow:color-mix(in srgb,var(--accent) 18%,transparent);
+}
+html[data-theme="night"]{--sp-glow:rgba(84,210,188,.15)}
+html[data-theme="ocean"]{--sp-glow:rgba(100,212,235,.18)}
+html[data-theme="light"]{--sp-glow:rgba(66,164,144,.09)}
+html[data-theme="sand"]{--sp-glow:rgba(188,144,95,.11)}
+html[data-theme="neon"]{--sp-glow:rgba(189,119,255,.21)}
+html[data-theme="volt"]{--sp-glow:rgba(180,241,107,.17)}
+html[data-theme="sunset"]{--sp-glow:rgba(246,149,147,.17)}
+
+/* Replace the old pair of rectangular macro bars with actual circular indicators.
+   IDs of old readings remain in DOM, so data logic and backups still work. */
+html[data-theme] #homePanel .home-stats{display:none!important}
+.sp-rings{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:11px;margin:5px 0 15px;
+}
+.sp-goal-card{
+ --sp-tone:var(--sp-mint);
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+ gap:9px;min-width:0;padding:15px 9px 12px;
+ text-align:center;border-radius:20px;
+ border:1px solid color-mix(in srgb,var(--sp-tone) 30%,var(--border));
+ background:
+  radial-gradient(ellipse 90% 82% at 50% -10%,color-mix(in srgb,var(--sp-tone) 18%,transparent),transparent 87%),
+  var(--panel2);
+ color:var(--text);
+ box-shadow:var(--sp-shadow);
+}
+.sp-goal-card.sp-coral{--sp-tone:var(--sp-coral)}
+.sp-goal-card.sp-violet{--sp-tone:var(--sp-violet)}
+.sp-goal-card.sp-blue{--sp-tone:var(--sp-blue)}
+.sp-goal-card.sp-mint{--sp-tone:var(--sp-mint)}
+.sp-goal-ring{
+ --sp-progress:0%;
+ width:clamp(83px,9.2vw,118px);aspect-ratio:1;
+ border-radius:50%;padding:7px;
+ display:grid;place-items:center;
+ background:conic-gradient(var(--sp-tone) 0 var(--sp-progress),
+   color-mix(in srgb,var(--sp-tone) 14%,var(--border)) var(--sp-progress) 100%);
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--sp-tone) 20%,var(--border));
+}
+.sp-goal-center{
+ width:100%;height:100%;border-radius:50%;display:flex;
+ flex-direction:column;justify-content:center;align-items:center;
+ background:var(--panel2);
+ box-shadow:inset 0 0 11px color-mix(in srgb,var(--bg) 13%,transparent);
+}
+.sp-goal-emoji{font-size:1.1rem;line-height:1.25}
+.sp-goal-percent{
+ font-variant-numeric:tabular-nums;
+ font-size:1.12rem;font-weight:850;letter-spacing:-.055em;
+ color:var(--text);line-height:1.35;
+}
+.sp-goal-content{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sp-goal-title{font-size:.9rem;font-weight:800;letter-spacing:-.02em;color:var(--text)}
+.sp-goal-value{font-size:.82rem;color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+.sp-goal-unit{color:var(--muted);font-size:.76rem}
+@media(hover:hover) and (pointer:fine){
+ .sp-goal-card:hover{
+  border-color:color-mix(in srgb,var(--sp-tone) 66%,var(--border));
+  transform:translateY(-2px);
+ }
+}
+.sp-goal-card{transition:transform .18s ease,border-color .18s ease}
+
+/* Weekly story: actual records, limited claims, always readable. */
+html[data-theme] .sp-week-panel,
+html[data-theme] .sp-week-teaser{
+ position:relative;isolation:isolate;overflow:hidden;
+ border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));
+ border-radius:24px;
+ background:
+  radial-gradient(ellipse 43% 70% at 93% 2%,var(--sp-glow),transparent 85%),
+  var(--panel);
+ color:var(--text);
+}
+html[data-theme] .sp-week-panel{
+ padding:21px 18px;box-shadow:var(--sp-shadow);
+}
+html[data-theme] .sp-week-teaser{
+ margin:9px 0 15px;padding:16px;
+ box-shadow:0 5px 18px color-mix(in srgb,var(--bg) 34%,transparent);
+}
+.sp-week-head{
+ display:flex;justify-content:space-between;align-items:flex-start;
+ gap:12px;margin-bottom:18px;flex-wrap:wrap;
+}
+.sp-week-head h2{
+ font-size:clamp(1.33rem,4vw,1.8rem);
+ font-weight:870;letter-spacing:-.05em;
+ color:var(--text);margin:6px 0!important;
+}
+.sp-week-head p{margin:0!important;color:var(--muted);font-size:.85rem;line-height:1.5}
+.sp-overline{color:var(--accent);letter-spacing:.12em;font-weight:850;font-size:.67rem}
+.sp-week-milestone{
+ display:inline-flex;align-items:center;
+ padding:8px 11px;border-radius:99px;
+ background:color-mix(in srgb,var(--luxe-amber) 12%,var(--panel2));
+ color:var(--text);
+ border:1px solid color-mix(in srgb,var(--luxe-amber) 34%,var(--border));
+ font-weight:720;font-size:.77rem;
+}
+.sp-story-stats{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:10px;margin-bottom:17px;
+}
+.sp-story-stat{
+ --sp-story-tone:var(--luxe-coral);
+ padding:14px 11px;border-radius:16px;
+ border:1px solid color-mix(in srgb,var(--sp-story-tone) 28%,var(--border));
+ background:linear-gradient(145deg,color-mix(in srgb,var(--sp-story-tone) 11%,var(--panel2)),var(--panel2));
+ min-height:134px;min-width:0;display:flex;flex-direction:column;gap:9px;
+}
+.sp-story-stat.violet{--sp-story-tone:var(--luxe-violet)}
+.sp-story-stat.mint{--sp-story-tone:var(--luxe-mint)}
+.sp-story-stat.blue{--sp-story-tone:var(--luxe-blue)}
+.sp-story-stat-head{display:flex;gap:6px;align-items:center;font-size:.75rem;color:var(--muted);font-weight:740}
+.sp-story-icon{font-size:1rem;line-height:1}
+.sp-story-number{
+ color:var(--text);font-size:clamp(1.13rem,3vw,1.45rem);
+ font-weight:850;letter-spacing:-.045em;line-height:1.2;
+ overflow-wrap:anywhere;
+}
+.sp-story-stat small{color:var(--muted);line-height:1.4;font-size:.71rem}
+.sp-rhythm{border-top:1px solid var(--border);padding:15px 0 12px}
+.sp-rhythm>strong{font-size:.98rem;color:var(--text)}
+.sp-rhythm>p{font-size:.79rem;color:var(--muted);margin:6px 0 12px!important}
+.sp-week-days{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));
+ gap:7px;
+}
+.sp-week-day{
+ border:1px solid var(--border);border-radius:12px;
+ background:var(--panel2);padding:10px 3px;
+ text-align:center;min-width:0;color:var(--text);
+}
+.sp-week-day.active{
+ background:color-mix(in srgb,var(--accent) 8%,var(--panel2));
+ border-color:color-mix(in srgb,var(--accent) 30%,var(--border));
+}
+.sp-week-day.future{opacity:.54}
+.sp-day-name{display:block;color:var(--muted);font-size:.75rem;font-weight:750;margin-bottom:7px}
+.sp-day-marks{display:flex;gap:4px;justify-content:center;align-items:center}
+.sp-day-mark{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.sp-day-mark.on.food{background:var(--luxe-coral)}
+.sp-day-mark.on.fitness{background:var(--luxe-violet)}
+.sp-day-mark.on.walk{background:var(--luxe-mint)}
+.sp-story-footer{display:flex;gap:8px;flex-wrap:wrap}
+.sp-story-footer span{
+ border-radius:11px;border:1px solid var(--border);
+ background:var(--panel2);padding:7px 11px;
+ color:var(--text);font-size:.75rem;font-weight:690;
+}
+.sp-week-teaser-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:11px}
+.sp-week-teaser-head strong{color:var(--text);font-size:1.02rem;font-weight:840}
+.sp-week-teaser-head span{color:var(--muted);font-size:.78rem}
+.sp-week-teaser-sub{font-size:.79rem;color:var(--muted);margin-top:11px}
+html[data-theme] button.sp-week-open{
+ display:block;
+ width:100%;min-height:40px;text-align:center;margin-top:13px;
+ border:1px solid color-mix(in srgb,var(--accent) 34%,var(--border));
+ background:color-mix(in srgb,var(--accent) 11%,var(--panel2))!important;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ border-radius:12px;font-weight:770;font-size:.85rem;
+}
+
+/* Exercise architecture: big GIF preserved, visible progress dots & group ribbons.
+   Only CSS/DOM addition, no changes to sets, kg/reps, variants or corrections. */
+html[data-theme] #fitExerciseList .sp-move-card{
+ --sp-muscle:var(--luxe-blue);
+ border-left:4px solid var(--sp-muscle)!important;
+ background:
+  radial-gradient(ellipse 70% 40% at 3% 0%,color-mix(in srgb,var(--sp-muscle) 9%,transparent),transparent 87%),
+  var(--panel2)!important;
+ transition:border-color .18s ease,box-shadow .18s ease;
+}
+html[data-theme] .sp-move-card[data-group="Chest"]{--sp-muscle:var(--luxe-coral)}
+html[data-theme] .sp-move-card[data-group="Back"]{--sp-muscle:var(--luxe-blue)}
+html[data-theme] .sp-move-card[data-group="Shoulders"]{--sp-muscle:var(--luxe-violet)}
+html[data-theme] .sp-move-card[data-group="Legs"]{--sp-muscle:var(--luxe-mint)}
+html[data-theme] .sp-move-card[data-group="Triceps"],
+html[data-theme] .sp-move-card[data-group="Biceps"]{--sp-muscle:var(--luxe-amber)}
+html[data-theme] .sp-move-card[data-complete="true"]{
+ border-color:color-mix(in srgb,var(--luxe-mint) 50%,var(--border))!important;
+ background:linear-gradient(145deg,
+ color-mix(in srgb,var(--luxe-mint) 13%,var(--panel2)),
+ var(--panel2) 76%)!important;
+}
+.sp-move-heading{
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;margin-bottom:10px;
+ border-bottom:1px solid var(--border);padding-bottom:8px;
+}
+.sp-move-label{
+ font-weight:800;letter-spacing:.1em;
+ color:var(--sp-muscle);font-size:.69rem;
+ overflow-wrap:anywhere;
+}
+.sp-move-card[data-complete="true"] .sp-move-label{color:var(--luxe-mint)}
+.sp-move-count{
+ color:var(--text);font-size:.77rem;
+ font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.sp-move-dots{display:flex;gap:6px;margin:12px 0 10px}
+.sp-move-dot{
+ height:7px;flex:1;border-radius:99px;
+ background:color-mix(in srgb,var(--sp-muscle) 15%,var(--border));
+}
+.sp-move-dot.done{
+ background:var(--sp-muscle);
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--sp-muscle) 15%,transparent);
+}
+.sp-move-card[data-complete="true"] .sp-move-dot.done{background:var(--luxe-mint)}
+@keyframes sp-set-saved{
+ from{box-shadow:0 0 0 0 color-mix(in srgb,var(--sp-muscle) 25%,transparent)}
+ 50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--sp-muscle) 20%,transparent)}
+ to{box-shadow:0 0 0 0 transparent}
+}
+@keyframes sp-exercise-complete{
+ from{border-left-color:var(--sp-muscle)}
+ 50%{border-left-color:var(--luxe-mint)}
+ to{border-left-color:var(--luxe-mint)}
+}
+@media(prefers-reduced-motion:no-preference){
+ .sp-move-card.sp-set-flash{animation:sp-set-saved .4s ease-out both}
+ .sp-move-card.sp-move-finished{animation:sp-exercise-complete .48s ease-out both}
+ main>section.fr-motion-enter .sp-week-panel,
+ #homePanel.fr-motion-enter .sp-goal-card{
+  animation:fr-soft-card .26s var(--motion-ease) both;
+ }
+}
+/* Ambient background is color, not an endlessly looping costly animation. */
+html[data-theme] .studio-home-intro,
+html[data-theme] .studio-fitness-hero,
+html[data-theme] .studio-nutrition-hero{
+ isolation:isolate;
+ box-shadow:0 14px 38px color-mix(in srgb,var(--sp-glow) 50%,transparent)!important;
+}
+html[data-theme] .studio-hero-glow-a{
+ background:radial-gradient(circle,color-mix(in srgb,var(--studio-pop) 34%,transparent),transparent 69%);
+}
+html[data-theme] .studio-hero-glow-b{
+ background:radial-gradient(circle,color-mix(in srgb,var(--luxe-violet) 28%,transparent),transparent 70%);
+}
+html[data-theme] .daily-masthead{
+ background:
+  linear-gradient(115deg,color-mix(in srgb,var(--sp-glow) 24%,var(--panel)),var(--panel))!important;
+}
+@media(max-width:740px){
+ .sp-rings{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sp-goal-card{flex-direction:row;gap:10px;padding:12px 10px;min-height:117px;text-align:left}
+ .sp-goal-ring{width:80px;flex:none}
+ .sp-goal-title{font-size:.87rem}
+ .sp-goal-value{font-size:.79rem}
+ .sp-story-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .sp-story-stat{min-height:124px}
+}
+@media(max-width:380px){
+ .sp-goal-card{gap:7px;padding:10px 7px}
+ .sp-goal-ring{width:66px;padding:5px}
+ .sp-goal-percent{font-size:.95rem}
+ .sp-goal-emoji{font-size:.95rem}
+ .sp-goal-value{font-size:.72rem}
+ .sp-goal-unit{font-size:.7rem}
+ .sp-goal-title{font-size:.78rem}
+ .sp-week-days{gap:4px}
+ .sp-week-day{padding:8px 1px}
+ .sp-day-marks{gap:2px}
+ .sp-day-mark{height:5px;width:5px}
+ .sp-story-stat{padding:11px 9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .sp-goal-card,.sp-move-card,.sp-move-dot,
+ .sp-move-card.sp-set-flash,.sp-move-card.sp-move-finished{
+  animation:none!important;transition:none!important;
+ }
+}
