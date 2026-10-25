@@ -1,0 +1,187 @@
+/* FormaRota — contrast contract for all seven themes.
+ * Loaded AFTER Studio/Luxe layers so themed text matches its real surface.
+ * Keep semantic accents, but never put --onaccent (primary button ink)
+ * on panel-toned buttons, labels or the exercise timer's dark studio glass.
+ */
+
+/* The light/sand accent palette had 3.5–4.4:1 against actual panel2 cards.
+   These darker chromas retain the five-color Luxe feel and exceed 4.5:1. */
+html[data-theme="light"]{
+ --luxe-coral:#a44634;
+ --luxe-violet:#6250a2;
+ --luxe-blue:#1d6685;
+ --luxe-mint:#176f5b;
+ --luxe-amber:#76511c;
+}
+html[data-theme="sand"]{
+ --luxe-coral:#9c4635;
+ --luxe-violet:#634886;
+ --luxe-blue:#2d667e;
+ --luxe-mint:#22634d;
+ --luxe-amber:#76521d;
+}
+
+/* Body-based controls (including iOS form inputs) always use surface ink.
+   Do not apply this to gradient hero text: it intentionally uses light ink. */
+html[data-theme] #nutritionTop .stat,
+html[data-theme] #v21Budget .v21-box,
+html[data-theme] #v21RecentList .entry,
+html[data-theme] #foodLogPanel .entry,
+html[data-theme] #dinnerSuggestions .fr-dinner-choice,
+html[data-theme] #searchPanel .result,
+html[data-theme] #fitnessRoot .fit-card,
+html[data-theme] #fitnessRoot .fit-optional,
+html[data-theme] #profilePanel .stat,
+html[data-theme] .luxe-feature-list > div{
+ color:var(--text);
+}
+html[data-theme] #nutritionTop .stat strong,
+html[data-theme] #nutritionTop .stat label,
+html[data-theme] #v21Budget .v21-box strong,
+html[data-theme] #mealCards .meal-description strong,
+html[data-theme] #foodLogPanel .entry strong,
+html[data-theme] #v21RecentList .entry strong,
+html[data-theme] #fitnessRoot .fit-card .fit-nametop strong,
+html[data-theme] .luxe-dialog h2,
+html[data-theme] .luxe-dialog .luxe-feature-list strong{
+ color:var(--text)!important;
+}
+html[data-theme] #nutritionTop .stat .muted,
+html[data-theme] #v21Budget .v21-box small,
+html[data-theme] #mealCards .meal-description small,
+html[data-theme] #foodLogPanel .entry .muted,
+html[data-theme] #v21RecentList .entry .muted,
+html[data-theme] .luxe-dialog-body p,
+html[data-theme] .luxe-dialog .luxe-feature-list span{
+ color:var(--muted)!important;
+}
+
+/* The generic legacy primary-button rule colored even panel-backed options
+   with dark --onaccent. On iOS, WebKit's text-fill can also remain inherited. */
+html[data-theme] #mealQuickPanel button.meal-card,
+html[data-theme] #v21MealFilters button.secondary,
+html[data-theme] #dinnerSuggestions button.secondary,
+html[data-theme] #fitnessRoot button.fit-day,
+html[data-theme] .luxe-theme-launch,
+html[data-theme] button.luxe-exercise-detail,
+html[data-theme] button.luxe-dinner-more,
+html[data-theme] button.luxe-backup-launch{
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+}
+html[data-theme] #mealQuickPanel button.meal-card .meal-description,
+html[data-theme] #mealQuickPanel button.meal-card .meal-description strong,
+html[data-theme] #mealQuickPanel button.meal-card .meal-symbol{
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+}
+html[data-theme] #mealQuickPanel button.meal-card .meal-description small{
+ color:var(--muted)!important;
+ -webkit-text-fill-color:var(--muted)!important;
+}
+html[data-theme] #mealQuickPanel button.meal-card .meal-arrow{
+ color:var(--accent)!important;
+ -webkit-text-fill-color:var(--accent)!important;
+}
+html[data-theme] .luxe-theme-launch small{
+ color:var(--muted)!important;
+ -webkit-text-fill-color:var(--muted)!important;
+}
+html[data-theme] .luxe-theme-tile .luxe-theme-check{
+ color:var(--tile-accent)!important;
+ -webkit-text-fill-color:var(--tile-accent)!important;
+}
+
+/* Dedicated dark timer glass: in light/sand themes panel2 was almost white,
+   while Studio timer texts intentionally remain white. */
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox,
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .fit-secondarytimer{
+ color:var(--studio-ink)!important;
+}
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .fit-secondarytimer{
+ background:rgba(255,255,255,.09)!important;
+ border:1px solid rgba(255,255,255,.22)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+}
+/* Secondary session actions sit on the DARK timer glass, not on panel2.
+   Their labels must use the Studio light ink even in the Light/Sand themes. */
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .fit-toolbar button.secondary{
+ color:var(--studio-ink)!important;
+ -webkit-text-fill-color:var(--studio-ink)!important;
+}
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitPhaseClock,
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitMainClock{
+ color:var(--studio-pop)!important;
+ -webkit-text-fill-color:var(--studio-pop)!important;
+}
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitMainClock.low{
+ color:#ffe2ad!important;
+ -webkit-text-fill-color:#ffe2ad!important;
+}
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .muted,
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitSessionLabel,
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitPhaseLabel{
+ color:var(--studio-ink-muted)!important;
+ -webkit-text-fill-color:var(--studio-ink-muted)!important;
+}
+
+/* Contrast-aware semantic state: selected nav is light-on-accent or accent
+   on panel, depending on the actual background; never dark-on-dark. */
+html[data-theme] .context-links button.active,
+html[data-theme] .appnav .navbtn.active{
+ color:var(--onaccent)!important;
+ -webkit-text-fill-color:var(--onaccent)!important;
+}
+html[data-theme] .mobile-tabbar button.active{
+ color:var(--accent)!important;
+ -webkit-text-fill-color:var(--accent)!important;
+}
+html[data-theme] .mobile-tabbar button:not(.active),
+html[data-theme] .context-links button:not(.active){
+ color:var(--muted)!important;
+ -webkit-text-fill-color:var(--muted)!important;
+}
+html[data-theme] button.secondary:not(.active){
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+}
+html[data-theme] button.danger{
+ color:var(--danger)!important;
+ -webkit-text-fill-color:var(--danger)!important;
+}
+/* Keep disabled controls distinguishable but not invisible. */
+html[data-theme] button:disabled,
+html[data-theme] input:disabled,
+html[data-theme] select:disabled{
+ opacity:.76;
+}
+
+/* All native entry/select values and placeholder ink match the selected theme,
+   including dark-mode iOS. */
+html[data-theme] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme] textarea,
+html[data-theme] select{
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+ background-color:var(--control)!important;
+}
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder{
+ color:var(--muted)!important;
+ opacity:1;
+}
+html[data-theme] select option{
+ color:var(--text)!important;
+ background:var(--control)!important;
+}
+
+/* Critical controls retain keyboard and screen-reader-visible focus rings. */
+html[data-theme] :is(button,input,select,textarea,summary):focus-visible{
+ outline:2px solid var(--accent);
+ outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-theme] button,
+ html[data-theme] input,
+ html[data-theme] select{transition:none!important}
+}
