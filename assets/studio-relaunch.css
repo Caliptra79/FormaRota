@@ -347,7 +347,7 @@ html[data-theme] #studioExercisesAction{
  border-radius:50%;
  display:flex;flex-direction:column;
  align-items:center;justify-content:center;
- background:var(--studio-bg-deep,var(--studio-bg-deep));
+ background:var(--studio-bg-deep);
  box-shadow:inset 0 0 18px rgba(0,0,0,.14);
 }
 .studio-progress-icon{font-size:1.05rem;color:var(--studio-pop)}
@@ -567,6 +567,64 @@ html[data-theme] #fitnessRoot #coachOverview{
  border-radius:21px;
  background:linear-gradient(115deg,color-mix(in srgb,var(--luxe-violet) 9%,var(--panel)),var(--panel));
 }
+/* A shared secondary hero language unifies Progress, Recipes, History and Settings. */
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero){
+ position:relative;
+ overflow:hidden;
+ min-height:165px;
+ margin:0!important;width:100%;
+ display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+ padding:24px 27px;
+ border-radius:25px;
+ border:1px solid color-mix(in srgb,var(--accent) 26%,var(--border));
+ text-align:left!important;
+ background:
+  radial-gradient(ellipse 250px 170px at 91% 18%,color-mix(in srgb,var(--luxe-violet) 16%,transparent),transparent 79%),
+  linear-gradient(120deg,var(--panel),color-mix(in srgb,var(--luxe-blue) 9%,var(--panel)));
+ box-shadow:var(--luxe-elev);
+}
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero):before{
+ content:"";position:absolute;right:29px;top:17px;
+ width:69px;height:69px;
+ border:2px solid color-mix(in srgb,var(--luxe-violet) 40%,transparent);
+ border-radius:22px;transform:rotate(28deg);
+ pointer-events:none;opacity:.65;
+}
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero) .eyebrow{
+ color:var(--accent)!important;letter-spacing:.14em;
+}
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero) h2,
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero) p{
+ text-align:left!important;margin-left:0!important;margin-right:0!important;
+ max-width:68ch;
+}
+html[data-theme] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero) h2{
+ font-size:clamp(1.75rem,5vw,2.3rem);
+ letter-spacing:-.055em;margin-bottom:6px;
+}
+html[data-theme] .mobile-tabbar{
+ border-top:1px solid color-mix(in srgb,var(--accent) 18%,var(--border));
+ padding-top:8px;
+}
+html[data-theme] .mobile-tabbar button{
+ border-radius:15px!important;
+ font-size:.74rem;letter-spacing:-.01em;
+ min-height:59px;display:flex;
+ flex-direction:column;align-items:center;justify-content:center;
+ gap:2px;
+}
+html[data-theme] .mobile-tabbar button .ni{
+ display:grid;place-items:center;
+ width:36px;height:30px;border-radius:12px;
+ transition:background-color .2s ease,transform .2s ease;
+}
+html[data-theme] .mobile-tabbar button.active .ni{
+ background:color-mix(in srgb,var(--accent) 18%,transparent);
+}
+@media(hover:hover) and (pointer:fine){
+ html[data-theme] .mobile-tabbar button:hover .ni{transform:translateY(-2px)}
+}
+
 /* Soft motion communicates navigation without bouncing the layout. */
 @keyframes studio-arrive{
  from{opacity:.55;transform:translateY(10px)}
