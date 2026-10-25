@@ -59,7 +59,7 @@ html[data-theme] .luxe-dialog .luxe-feature-list span{
 /* The generic legacy primary-button rule colored even panel-backed options
    with dark --onaccent. On iOS, WebKit's text-fill can also remain inherited. */
 html[data-theme] #mealQuickPanel button.meal-card,
-html[data-theme] #v21MealFilters button,
+html[data-theme] #v21MealFilters button.secondary,
 html[data-theme] #dinnerSuggestions button.secondary,
 html[data-theme] #fitnessRoot button.fit-day,
 html[data-theme] .luxe-theme-launch,
@@ -102,6 +102,12 @@ html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .fit-secondarytimer
  background:rgba(255,255,255,.09)!important;
  border:1px solid rgba(255,255,255,.22)!important;
  box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+}
+/* Secondary session actions sit on the DARK timer glass, not on panel2.
+   Their labels must use the Studio light ink even in the Light/Sand themes. */
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox .fit-toolbar button.secondary{
+ color:var(--studio-ink)!important;
+ -webkit-text-fill-color:var(--studio-ink)!important;
 }
 html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitPhaseClock,
 html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox #fitMainClock{
