@@ -1,0 +1,669 @@
+/* FormaRota STUDIO — an actual new visual hierarchy, not another card tint.
+   Seven original palettes and tracking IDs stay intact. Styles load last. */
+html[data-theme]{
+ --studio-bg:#0a2430;
+ --studio-bg-deep:#091822;
+ --studio-ink:#f3fbff;
+ --studio-ink-muted:#bfd5de;
+ --studio-pop:#90e6cb;
+ --studio-pop-2:#b6a0ff;
+ --studio-sun:#ffd395;
+ --studio-rim:rgba(217,248,249,.17);
+}
+html[data-theme="night"]{--studio-bg:#102f38;--studio-bg-deep:#0b1d2b;--studio-pop:#83ddba;--studio-pop-2:#aeb6ff;--studio-sun:#ffc88a}
+html[data-theme="ocean"]{--studio-bg:#074353;--studio-bg-deep:#0a2339;--studio-pop:#87e9dc;--studio-pop-2:#8abaff;--studio-sun:#ffce9c}
+html[data-theme="light"]{--studio-bg:#173c4a;--studio-bg-deep:#1d3042;--studio-pop:#a7efd5;--studio-pop-2:#c2b9ff;--studio-sun:#ffdc9f}
+html[data-theme="sand"]{--studio-bg:#594233;--studio-bg-deep:#362f39;--studio-pop:#eec89b;--studio-pop-2:#d2b5e8;--studio-sun:#ffe4a4}
+html[data-theme="neon"]{--studio-bg:#332357;--studio-bg-deep:#170e2e;--studio-pop:#ecbaff;--studio-pop-2:#9fcbff;--studio-sun:#ffdc93}
+html[data-theme="volt"]{--studio-bg:#284539;--studio-bg-deep:#0a2428;--studio-pop:#d5fb83;--studio-pop-2:#b4cbff;--studio-sun:#ffd693}
+html[data-theme="sunset"]{--studio-bg:#603244;--studio-bg-deep:#311d38;--studio-pop:#ffbd9d;--studio-pop-2:#f5b6ff;--studio-sun:#ffdd9f}
+
+/* Home: the first viewport is an editorial dashboard, not a list of boxes. */
+html[data-theme] #homePanel{
+ padding:12px 12px 18px;
+ background:var(--panel)!important;
+ background-image:none!important;
+ border-radius:27px;
+}
+html[data-theme] #homePanel .studio-home-intro{
+ position:relative;
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(140px,.72fr);
+ align-items:center;
+ overflow:hidden;
+ padding:28px 24px;
+ margin:0 0 15px;
+ gap:8px;
+ min-height:260px;
+ color:var(--studio-ink);
+ background:
+  radial-gradient(circle at 77% 18%,color-mix(in srgb,var(--studio-pop-2) 34%,transparent),transparent 47%),
+  linear-gradient(125deg,var(--studio-bg),var(--studio-bg-deep));
+ border-radius:24px;
+ border:1px solid var(--studio-rim);
+}
+html[data-theme] .studio-home-intro .studio-home-copy{
+ position:relative;z-index:2;
+ text-align:left!important;
+}
+html[data-theme] .studio-home-copy .eyebrow{
+ display:inline-flex;align-items:center;gap:7px;
+ font-size:.73rem;letter-spacing:.19em;color:var(--studio-pop)!important;
+ font-weight:850;
+}
+html[data-theme] .studio-home-copy h2{
+ color:var(--studio-ink)!important;
+ font-size:clamp(2rem,6vw,3.18rem)!important;
+ font-weight:870;
+ letter-spacing:-.068em;
+ line-height:1.04;
+ margin:16px 0 14px;
+ text-align:left!important;
+}
+.studio-home-copy h2 em{font-style:normal;color:var(--studio-pop)}
+html[data-theme] .studio-home-copy p{
+ max-width:32ch;
+ margin:0 0 16px;
+ color:var(--studio-ink-muted);
+ font-size:.92rem;
+ line-height:1.48;
+}
+html[data-theme] .studio-home-copy #homeSessionTag{
+ color:var(--studio-ink);
+ border-color:var(--studio-rim);
+ background:rgba(255,255,255,.11);
+ margin:0!important;
+}
+.studio-home-art{
+ min-height:192px;height:100%;position:relative;
+ display:grid;place-items:center;isolation:isolate;
+}
+.studio-home-art .studio-art-orbit{
+ position:absolute;width:160px;height:160px;border-radius:50%;
+ border:1px solid rgba(232,255,251,.35);
+ background:radial-gradient(circle at 28% 24%,rgba(255,255,255,.16),transparent 50%);
+}
+.studio-home-art .orbit-two{
+ width:210px;height:210px;transform:rotate(-30deg) scaleY(.71);
+ border-color:rgba(255,255,255,.25);border-width:2px;
+}
+.studio-art-mark{
+ font-weight:900;font-size:clamp(3rem,9vw,5.1rem);
+ letter-spacing:-.09em;
+ background:linear-gradient(135deg,#fff,var(--studio-pop) 85%);
+ color:transparent;-webkit-background-clip:text;background-clip:text;
+ transform:rotate(-9deg);
+}
+.studio-art-mark span{font-size:.55em;display:inline-block;vertical-align:top;color:var(--studio-sun);-webkit-text-fill-color:var(--studio-sun);transform:translate(-3px,4px)}
+.studio-art-star{
+ position:absolute;top:7%;right:11%;color:var(--studio-sun);
+ font-size:2.2rem;
+}
+html[data-theme] #homePanel .home-stats{
+ margin:0 0 13px;
+ gap:11px;
+}
+html[data-theme] #homePanel .home-stats .home-stat{
+ min-height:133px;
+ padding:17px!important;
+ border-radius:20px;
+ text-align:left!important;
+ box-shadow:none!important;
+}
+html[data-theme] #homePanel .home-stat .value{
+ font-size:clamp(1.66rem,5vw,2.32rem);
+ margin:12px 0 6px;
+}
+html[data-theme] #homePanel .home-stat .muted{font-weight:750;letter-spacing:.025em}
+html[data-theme] #homePanel .tracker-pair .tracker{
+ border-radius:20px;padding:15px!important;
+}
+html[data-theme] #homePanel .mini-panel{
+ margin-top:14px!important;
+ padding:17px!important;
+ border-radius:20px;
+ border:1px solid var(--border);
+ background:var(--panel2);
+ box-shadow:none!important;
+}
+html[data-theme] #homePanel .home-actions{
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ gap:10px;
+}
+html[data-theme] #homePanel .home-actions #homeDinner{grid-column:auto!important}
+html[data-theme] #homePanel .home-actions button{
+ padding:14px 11px;
+ min-height:66px!important;
+ font-size:.91rem;
+ border-radius:16px!important;
+ text-align:left;
+ display:flex;align-items:center;justify-content:center;
+}
+html[data-theme] #homePanel .home-actions #homeWorkout{
+ background:color-mix(in srgb,var(--luxe-violet) 16%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--luxe-violet) 36%,var(--border));
+ color:var(--text)!important;
+}
+html[data-theme] #homePanel .home-actions #homeLunch{
+ background:color-mix(in srgb,var(--luxe-blue) 13%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--luxe-blue) 34%,var(--border));
+}
+
+/* Nutrition: a prominent first-screen editorial masthead. */
+html[data-theme] main>.studio-nutrition-hero{
+ position:relative;
+ min-height:235px;
+ border-radius:27px;
+ padding:25px 25px 23px;
+ overflow:hidden;
+ background:
+  radial-gradient(circle at 79% 20%,color-mix(in srgb,var(--luxe-mint) 24%,transparent),transparent 46%),
+  linear-gradient(125deg,var(--studio-bg),var(--studio-bg-deep));
+ border:1px solid var(--studio-rim);
+ text-align:left!important;
+ width:100%;
+ margin:0!important;
+}
+.studio-nutrition-copy{position:relative;z-index:2;max-width:74%;text-align:left}
+html[data-theme] .studio-nutrition-copy .eyebrow{
+ color:var(--studio-pop)!important;letter-spacing:.17em;font-size:.71rem;
+}
+html[data-theme] .studio-nutrition-copy h2{
+ font-size:clamp(2rem,6vw,2.85rem);
+ font-weight:870;
+ color:var(--studio-ink)!important;
+ text-align:left;letter-spacing:-.065em;
+ line-height:1.08;margin:11px 0 10px;
+}
+.studio-nutrition-copy h2 em{font-style:normal;color:var(--studio-pop)}
+html[data-theme] .studio-nutrition-copy p{
+ margin:0 0 14px;
+ font-size:.86rem;line-height:1.47;
+ color:var(--studio-ink-muted);
+}
+html[data-theme] #studioMealAction{
+ display:inline-flex;gap:13px;align-items:center;justify-content:center;
+ width:auto;min-width:137px;min-height:46px;
+ color:#102633!important;
+ background:var(--studio-pop)!important;
+ border-radius:13px;border:none;font-size:.89rem;font-weight:800;
+}
+html[data-theme] #studioMealAction span{font-size:1.08rem}
+.studio-nutrition-art{
+ position:absolute;inset:0 0 0 auto;width:38%;
+ pointer-events:none;overflow:hidden;
+}
+.studio-nutrition-art span:nth-child(1){
+ position:absolute;right:4%;top:17%;
+ font-size:clamp(4.4rem,10vw,7rem);
+ filter:drop-shadow(0 19px 18px rgba(0,0,0,.22));
+ transform:rotate(-17deg);
+}
+.studio-nutrition-art span:nth-child(2){
+ position:absolute;right:49%;bottom:7%;font-size:clamp(2.6rem,6vw,4.1rem);
+ transform:rotate(15deg);filter:drop-shadow(0 6px 11px rgba(0,0,0,.18));
+}
+.studio-nutrition-art span:nth-child(3){
+ position:absolute;right:6%;bottom:9%;font-size:2rem;color:var(--studio-sun);
+}
+html[data-theme] #nutritionTop{
+ border-radius:23px;
+ box-shadow:var(--luxe-elev)!important;
+}
+html[data-theme] #mealQuickPanel{
+ border-radius:23px;
+ border-color:color-mix(in srgb,var(--accent) 34%,var(--border));
+}
+html[data-theme] #mealCards .meal-card{
+ min-height:90px;
+ border-radius:18px!important;
+}
+html[data-theme] #mealCards .meal-symbol{
+ display:grid;place-items:center;
+ width:48px;height:48px;flex:none;
+ border-radius:15px;
+ background:color-mix(in srgb,var(--luxe-blue) 13%,var(--panel));
+ font-size:1.55rem;
+}
+html[data-theme] #mealCards .meal-card:nth-child(2) .meal-symbol{background:color-mix(in srgb,var(--luxe-violet) 18%,var(--panel))}
+html[data-theme] #mealCards .meal-card:nth-child(3) .meal-symbol{background:color-mix(in srgb,var(--luxe-mint) 18%,var(--panel))}
+html[data-theme] #mealCards .meal-description strong{font-size:1.04rem!important}
+
+/* Fitness: dark, recognizably different workout studio cover. */
+html[data-theme] main>.studio-fitness-hero{
+ display:block;
+ position:relative;
+ isolation:isolate;
+ width:100%;
+ min-height:390px;
+ margin:0!important;
+ padding:25px 24px 17px;
+ overflow:hidden;
+ text-align:left!important;
+ color:var(--studio-ink);
+ border:1px solid var(--studio-rim);
+ border-radius:28px;
+ background:linear-gradient(125deg,var(--studio-bg) 0%,var(--studio-bg-deep) 96%);
+ box-shadow:0 18px 46px rgba(0,0,0,.18);
+}
+.studio-hero-glow{
+ position:absolute;
+ border-radius:50%;pointer-events:none;z-index:-1;
+}
+.studio-hero-glow-a{
+ width:370px;height:370px;right:-100px;top:-160px;
+ background:radial-gradient(circle,color-mix(in srgb,var(--studio-pop) 26%,transparent),transparent 68%);
+}
+.studio-hero-glow-b{
+ width:300px;height:300px;left:-140px;bottom:-170px;
+ background:radial-gradient(circle,color-mix(in srgb,var(--studio-pop-2) 31%,transparent),transparent 70%);
+}
+.studio-hero-content{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(185px,.74fr);
+ gap:24px;align-items:center;
+}
+.studio-hero-copy{min-width:0}
+.studio-overline{
+ display:inline-flex;align-items:center;gap:8px;
+ color:var(--studio-pop);
+ font-size:.72rem;letter-spacing:.16em;font-weight:840;
+}
+.studio-live-dot{
+ width:8px;height:8px;flex:none;border-radius:50%;
+ background:var(--studio-pop);
+ box-shadow:0 0 0 4px rgba(255,255,255,.075);
+}
+html[data-theme] main>.studio-fitness-hero h2{
+ color:var(--studio-ink)!important;
+ font-size:clamp(2.42rem,7.1vw,4.2rem);
+ font-weight:890;
+ letter-spacing:-.075em;
+ line-height:.98;
+ margin:16px 0 18px;
+ text-align:left!important;
+}
+.studio-fitness-hero h2 em{font-style:normal;color:var(--studio-pop)}
+html[data-theme] .studio-hero-copy p{
+ color:var(--studio-ink-muted);
+ font-size:.92rem;line-height:1.52;max-width:37ch;margin:0 0 16px;
+}
+.studio-state-pill{
+ display:inline-flex;align-items:center;
+ gap:7px;
+ padding:7px 12px;
+ border:1px solid var(--studio-rim);
+ border-radius:99px;background:rgba(255,255,255,.095);
+ color:var(--studio-ink);
+ font-size:.75rem;font-weight:760;
+}
+.studio-hero-actions{
+ display:flex;gap:9px;margin-top:20px;flex-wrap:wrap;
+}
+html[data-theme] .studio-hero-actions button{
+ min-height:48px;
+ width:auto;
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ padding:11px 17px;
+ border-radius:13px!important;
+ font-size:.88rem;font-weight:820;
+}
+html[data-theme] #studioPrimaryAction{
+ color:#142b32!important;background:var(--studio-pop)!important;
+ border:1px solid transparent;
+ box-shadow:0 8px 21px rgba(0,0,0,.12);
+}
+html[data-theme] #studioPrimaryAction:disabled{
+ background:rgba(255,255,255,.15)!important;
+ color:var(--studio-ink)!important;opacity:.8;
+}
+html[data-theme] #studioExercisesAction{
+ color:var(--studio-ink)!important;
+ background:rgba(255,255,255,.09)!important;
+ border:1px solid var(--studio-rim);
+}
+.studio-progress-card{
+ justify-self:end;
+ width:min(100%,235px);
+ display:flex;flex-direction:column;align-items:center;gap:13px;
+ padding:16px 13px 11px;
+ background:rgba(255,255,255,.07);
+ border:1px solid var(--studio-rim);
+ border-radius:25px;
+ backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+}
+.studio-progress-ring{
+ --studio-value:0%;
+ display:grid;place-items:center;
+ width:clamp(140px,20vw,183px);
+ aspect-ratio:1/1;
+ border-radius:50%;
+ background:conic-gradient(var(--studio-pop) 0 var(--studio-value),
+ rgba(255,255,255,.14) var(--studio-value) 100%);
+ box-shadow:0 0 0 1px var(--studio-rim);
+ padding:11px;
+}
+.studio-progress-inner{
+ width:100%;height:100%;
+ border-radius:50%;
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ background:var(--studio-bg-deep,var(--studio-bg-deep));
+ box-shadow:inset 0 0 18px rgba(0,0,0,.14);
+}
+.studio-progress-icon{font-size:1.05rem;color:var(--studio-pop)}
+.studio-progress-inner strong{
+ color:var(--studio-ink);
+ font-weight:890;font-size:clamp(2.75rem,8vw,3.6rem);
+ letter-spacing:-.08em;line-height:1.15;
+}
+.studio-progress-caption{font-size:.75rem;color:var(--studio-ink-muted);font-weight:810;letter-spacing:.15em}
+.studio-progress-note{
+ min-height:2.6em;
+ font-size:.78rem;line-height:1.4;
+ text-align:center;color:var(--studio-ink-muted);
+}
+.studio-hero-footer{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:8px;
+ border-top:1px solid var(--studio-rim);
+ margin-top:22px;padding-top:13px;
+}
+.studio-hero-footer>div{
+ display:flex;align-items:center;justify-content:center;
+ gap:8px;min-width:0;
+}
+.studio-hero-footer>div>span{font-size:1.07rem;color:var(--studio-pop)}
+.studio-hero-footer strong{color:var(--studio-ink);font-size:1.05rem;font-weight:860}
+.studio-hero-footer small{color:var(--studio-ink-muted);font-size:.74rem}
+
+/* Establish visual reading order: session -> all 13 GIFs -> secondary options. */
+html[data-theme] #fitnessRoot:not(.hidden){
+ display:flex;
+ flex-direction:column;
+ gap:15px;
+}
+#fitnessRoot>.studio-legacy-intro{display:none!important}
+#fitnessRoot #coachOverview{order:0}
+#fitnessRoot #fitSessionPanel{order:1}
+#fitnessRoot #fitExercisePanel{order:2}
+#fitnessRoot #v21WorkoutLast{order:3}
+#fitnessRoot #fitSchedulePanel{order:4}
+#fitnessRoot #v21TimerPanel{order:5}
+#fitnessRoot>[data-fit-page="history"]{order:0}
+#fitnessRoot>section{width:100%;min-width:0}
+html[data-theme] #fitnessRoot #fitSessionPanel,
+html[data-theme] #fitnessRoot #fitExercisePanel{
+ border-radius:24px!important;
+ padding:20px!important;
+ box-shadow:var(--luxe-elev)!important;
+}
+.studio-panel-eyebrow{
+ font-size:.71rem;
+ font-weight:840;letter-spacing:.17em;
+ color:var(--accent);
+ margin-bottom:8px;
+}
+.studio-panel-sub{color:var(--muted);font-size:.89rem;margin:-4px 0 14px}
+html[data-theme] #fitnessRoot #fitSessionPanel h2,
+html[data-theme] #fitnessRoot #fitExercisePanel .fit-headline h2{
+ font-weight:850;font-size:clamp(1.35rem,4vw,1.65rem);
+ letter-spacing:-.04em;
+}
+html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox{
+ border-radius:21px;
+ border:1px solid var(--studio-rim);
+ padding:19px 17px;
+ background:linear-gradient(140deg,var(--studio-bg),var(--studio-bg-deep));
+ color:var(--studio-ink);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+html[data-theme] #fitSessionPanel .fit-timerbox .muted{
+ color:var(--studio-ink-muted)!important;
+}
+html[data-theme] #fitSessionPanel .fit-timerrow{
+ display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr);
+ gap:12px;align-items:center;
+}
+html[data-theme] #fitSessionPanel .fit-timerrow>div{
+ min-width:0;
+}
+html[data-theme] #fitSessionPanel #fitMainClock{
+ color:var(--studio-ink);
+ font-size:clamp(2.9rem,9vw,4.6rem)!important;
+ font-weight:860;letter-spacing:-.065em;
+ line-height:1.1;
+}
+html[data-theme] #fitSessionPanel .fit-secondarytimer{
+ padding:13px 10px;
+ border:1px solid var(--studio-rim);
+ background:rgba(255,255,255,.055);
+ border-radius:16px;
+}
+html[data-theme] #fitSessionPanel #fitPhaseClock{
+ color:var(--studio-pop);
+ font-size:clamp(1.52rem,5vw,2.35rem);
+ font-weight:850;
+}
+html[data-theme] #fitSessionPanel .fit-progress{
+ margin:18px 0 17px;
+ height:10px;
+ border-radius:99px;
+ background:rgba(255,255,255,.15)!important;
+ overflow:hidden;
+}
+html[data-theme] #fitSessionPanel #fitProgressBar{
+ background:linear-gradient(90deg,var(--studio-pop-2),var(--studio-pop))!important;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar{
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:9px;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar button{
+ border-radius:13px!important;min-height:49px;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar button.secondary{
+ background:rgba(255,255,255,.12)!important;
+ border:1px solid var(--studio-rim)!important;
+ color:var(--studio-ink)!important;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar button.danger{
+ color:#ffc1b8!important;
+ background:rgba(255,114,112,.08)!important;
+ border:1px solid rgba(255,175,170,.38)!important;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar #fitStart{
+ background:var(--studio-pop)!important;
+ border:none!important;color:#18312f!important;
+ font-size:1.03rem;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar #fitFinish{
+ background:rgba(255,255,255,.13)!important;
+ color:var(--studio-ink)!important;
+ border:1px solid var(--studio-rim)!important;
+}
+html[data-theme] #fitExercisePanel>.fit-headline{
+ margin-bottom:10px;
+ display:flex;
+ justify-content:space-between;
+}
+html[data-theme] #fitExercisePanel>.muted{
+ margin:0 0 17px;
+}
+html[data-theme] #fitExercisePanel #fitCompletedText{
+ display:inline-flex;
+ align-items:center;justify-content:center;
+ min-height:38px;padding:8px 13px;
+ border-radius:13px;
+ background:color-mix(in srgb,var(--accent) 12%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--accent) 32%,var(--border));
+ color:var(--text);
+ font-weight:840;font-size:.8rem;
+}
+html[data-theme] #fitExerciseList{
+ display:grid;grid-template-columns:1fr;gap:17px;
+}
+html[data-theme] #fitExercisePanel .fit-card{
+ padding:18px!important;
+ border-radius:22px!important;
+ background:var(--panel2)!important;
+ background-image:none!important;
+ border:1px solid color-mix(in srgb,var(--border) 85%,var(--accent));
+ box-shadow:none!important;
+}
+html[data-theme] #fitExercisePanel .fit-card.current{
+ border:2px solid var(--accent)!important;
+ box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 11%,transparent)!important;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-nametop strong{
+ font-size:clamp(1.23rem,4.2vw,1.55rem);
+ letter-spacing:-.045em;font-weight:870;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-nametop .tag{
+ border:1px solid color-mix(in srgb,var(--luxe-blue) 29%,var(--border));
+ color:var(--text);
+ background:color-mix(in srgb,var(--luxe-blue) 10%,var(--panel));
+ padding:5px 9px;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+ border-radius:18px;
+ background:color-mix(in srgb,var(--bg) 18%,var(--panel));
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--border) 65%,transparent);
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-settable{
+ border-top:1px solid var(--border);padding-top:10px;
+ margin-top:15px;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set{
+ border-radius:11px;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set.done{
+ background:color-mix(in srgb,var(--luxe-mint) 10%,transparent);
+}
+html[data-theme] #fitnessRoot .fit-optional{
+ border-radius:19px!important;
+ padding:0!important;
+ overflow:hidden;
+ border:1px solid var(--border);
+ box-shadow:none!important;
+}
+html[data-theme] #fitnessRoot .fit-optional details.fit-fold>summary{
+ display:flex;align-items:center;
+ min-height:64px;
+ padding:17px 18px;
+ margin:0;
+ font-size:1rem;
+ font-weight:810;letter-spacing:-.02em;
+ cursor:pointer;
+ background:linear-gradient(95deg,color-mix(in srgb,var(--luxe-blue) 9%,var(--panel)),var(--panel));
+}
+html[data-theme] #fitnessRoot .fit-optional details.fit-fold[open]>summary{
+ border-bottom:1px solid var(--border);
+}
+html[data-theme] #fitnessRoot .fit-optional .fit-fold-body{
+ padding:16px;
+}
+html[data-theme] #fitnessRoot #coachOverview{
+ border:1px solid color-mix(in srgb,var(--luxe-violet) 30%,var(--border));
+ border-radius:21px;
+ background:linear-gradient(115deg,color-mix(in srgb,var(--luxe-violet) 9%,var(--panel)),var(--panel));
+}
+/* Soft motion communicates navigation without bouncing the layout. */
+@keyframes studio-arrive{
+ from{opacity:.55;transform:translateY(10px)}
+ to{opacity:1;transform:translateY(0)}
+}
+@media(prefers-reduced-motion:no-preference){
+ main>.studio-fitness-hero.fr-motion-enter .studio-hero-copy,
+ main>.studio-nutrition-hero.fr-motion-enter .studio-nutrition-copy{
+  animation:studio-arrive .32s cubic-bezier(.2,.8,.2,1) both;
+ }
+ .studio-fitness-hero.fr-motion-enter .studio-progress-card{
+  animation:studio-arrive .37s cubic-bezier(.2,.8,.2,1) .05s both;
+ }
+ #homePanel.fr-motion-enter .studio-home-intro{
+  animation:studio-arrive .3s cubic-bezier(.2,.8,.2,1) both;
+ }
+}
+@media(min-width:680px){
+ html[data-theme] #fitExercisePanel .fit-card{
+  display:grid!important;
+  grid-template-columns:minmax(180px,240px) minmax(0,1fr)!important;
+  gap:22px!important;
+  align-items:start;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+  width:100%!important;max-width:240px!important;
+ }
+}
+@media(max-width:600px){
+ html[data-theme] #homePanel{padding:9px 9px 15px}
+ html[data-theme] #homePanel .studio-home-intro{
+  padding:24px 17px;
+  grid-template-columns:minmax(0,1.3fr) minmax(82px,.7fr);
+  min-height:240px;gap:3px;
+ }
+ html[data-theme] .studio-home-copy h2{font-size:clamp(1.75rem,7vw,2.4rem)!important}
+ html[data-theme] .studio-home-copy p{font-size:.82rem}
+ .studio-home-art .studio-art-orbit{width:104px;height:104px}
+ .studio-home-art .orbit-two{width:143px;height:143px}
+ .studio-art-mark{font-size:3rem}
+ .studio-art-star{font-size:1.65rem}
+ html[data-theme] main>.studio-fitness-hero{
+  padding:21px 17px 16px;
+  min-height:0;
+ }
+ .studio-hero-content{
+  grid-template-columns:1fr;
+  gap:20px;
+ }
+ html[data-theme] main>.studio-fitness-hero h2{
+  font-size:clamp(2.6rem,10.5vw,3.85rem);
+  margin:12px 0 14px;
+ }
+ .studio-hero-copy p{max-width:42ch}
+ .studio-progress-card{
+  width:100%;display:grid;grid-template-columns:auto 1fr;
+  align-items:center;justify-self:stretch;
+  gap:14px;padding:12px 15px;
+  border-radius:18px;
+ }
+ .studio-progress-ring{width:115px}
+ .studio-progress-inner strong{font-size:2.55rem}
+ .studio-progress-note{text-align:left;font-size:.84rem;min-height:0}
+ .studio-hero-footer{margin-top:14px;gap:5px}
+ .studio-hero-footer>div{flex-wrap:wrap;gap:4px}
+ .studio-hero-footer small{width:100%;text-align:center}
+ html[data-theme] main>.studio-nutrition-hero{
+  padding:23px 18px;
+  min-height:246px;
+ }
+ .studio-nutrition-copy{max-width:79%}
+ html[data-theme] .studio-nutrition-copy h2{font-size:clamp(2rem,8vw,2.8rem)}
+ .studio-nutrition-art{width:31%;opacity:.92}
+ .studio-nutrition-art span:nth-child(2){right:45%}
+ html[data-theme] #fitnessRoot #fitSessionPanel,
+ html[data-theme] #fitnessRoot #fitExercisePanel{
+  padding:15px!important;
+ }
+ html[data-theme] #fitSessionPanel #fitMainClock{font-size:clamp(2.5rem,10.4vw,3.65rem)!important}
+}
+@media(max-width:390px){
+ html[data-theme] #homePanel .studio-home-intro{
+  grid-template-columns:1fr minmax(58px,.33fr);
+  padding:23px 15px;
+ }
+ .studio-home-art .studio-art-orbit{width:85px;height:85px}
+ .studio-home-art .orbit-two{width:112px;height:112px}
+ .studio-art-mark{font-size:2.5rem}
+ .studio-home-copy p{max-width:25ch}
+ .studio-hero-actions button{flex:1}
+ html[data-theme] #fitnessRoot #fitSessionPanel .fit-timerbox{padding:14px 10px}
+ .studio-overline{font-size:.65rem;letter-spacing:.095em}
+ html[data-theme] #fitSessionPanel .fit-timerrow{gap:6px}
+ html[data-theme] #fitSessionPanel .fit-secondarytimer{padding:8px 6px}
+}
+@media(prefers-reduced-motion:reduce){
+ .studio-hero-copy,.studio-progress-card,.studio-nutrition-copy,.studio-home-intro{
+  animation:none!important;transition:none!important;
+ }
+}
