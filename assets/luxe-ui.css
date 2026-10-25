@@ -8,6 +8,10 @@ html[data-theme]{
  --luxe-ring:color-mix(in srgb,var(--accent) 35%,var(--border));
  --luxe-sheen:color-mix(in srgb,var(--accent) 6%,transparent);
 }
+html[data-theme="night"]{
+ --luxe-coral:#ffa083;--luxe-violet:#b9a6f9;--luxe-blue:#77c9ef;
+ --luxe-mint:#68d8b3;--luxe-amber:#e9c37b;
+}
 html[data-theme="light"]{
  --luxe-coral:#be634f;--luxe-violet:#7762b8;--luxe-blue:#257ba2;
  --luxe-mint:#23876f;--luxe-amber:#98702a;
