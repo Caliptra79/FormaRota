@@ -298,6 +298,18 @@ html[data-theme] body.luxe-sheet-active #searchPanel .meal-editor-head{
 }
 .luxe-feature-list strong{display:block;color:var(--text);font-size:.85rem}
 .luxe-feature-list span{color:var(--muted);font-size:.77rem}
+html[data-theme] .luxe-backup-launch{
+ width:100%;min-height:52px;display:flex;justify-content:center;align-items:center;
+ border-radius:17px;
+ margin:9px 0 13px;
+ color:var(--text)!important;
+ background:linear-gradient(110deg,
+ color-mix(in srgb,var(--luxe-mint) 12%,var(--panel2)),
+ color-mix(in srgb,var(--luxe-violet) 12%,var(--panel2)))!important;
+ border:1px solid color-mix(in srgb,var(--accent) 29%,var(--border));
+ font-weight:750;
+}
+html[data-theme] .luxe-backup-launch:hover{border-color:var(--accent)}
 .luxe-exercise-detail{
  width:auto!important;min-width:0;min-height:40px;
  padding:8px 13px!important;border-radius:12px!important;
@@ -338,6 +350,7 @@ html[data-theme] body.luxe-sheet-active #searchPanel .meal-editor-head{
 }
 @media(max-width:600px){
  .luxe-dialog{
+  inset:auto 0 0;
   width:100%;max-width:none;
   max-height:min(85dvh,860px);margin:auto 0 0;
   border-radius:26px 26px 0 0;
