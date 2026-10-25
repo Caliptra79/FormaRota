@@ -152,6 +152,30 @@
   const name=byId('luxeThemeName');
   if(name)name.textContent=theme.name+' · '+theme.subtitle;
  }
+ function openBackupHub(trigger){
+  const {el,body}=dialog('Yedekleme merkezi',trigger);
+  body.append(make('p','','Kayıtların bu cihazda tutuluyor. Düzenli JSON yedeği alabilir veya başka cihazdan aldığın yedeği kontrollü olarak içeri aktarabilirsin.'));
+  const details=make('div','luxe-feature-list');
+  for(const [title,desc] of [
+   ['🔐 Yerel veriler','Hesap veya bulut senkronizasyonu gerekmez.'],
+   ['📦 Taşınabilir yedek','Yedekleri telefon ile Windows arasında aktarabilirsin.']
+  ]){
+   const box=make('div');box.append(make('strong','',title),make('span','',desc));details.append(box);
+  }
+  body.append(details);
+  body.append(make('p','','İçe aktarma mevcut kayıtların üzerine yazabilir; uygulama işlemden önce dosyayı ve kurtarma yedeğini kontrol etmene olanak verir.'));
+  actions(body,[
+   {label:'Kapat',secondary:true,action:()=>el.close()},
+   {label:'Yedek indir',secondary:true,action:()=>{
+    el.close();
+    byId('exportBtn')?.click();
+   }},
+   {label:'İçe aktar',action:()=>{
+    el.close();
+    byId('importBtn')?.click();
+   }}
+  ]);
+ }
  function openMealSheet(){
   const panel=byId('searchPanel');
   const shade=byId('luxeShade');
@@ -315,6 +339,14 @@
     event.preventDefault();first.focus();
    }
   });
+  const backupPanel=byId('backupPanel');
+  if(backupPanel&&!byId('luxeBackupHub')){
+   const button=actionButton('✦ Yedekleme merkezini aç',()=>openBackupHub(button),true);
+   button.id='luxeBackupHub';
+   button.className='luxe-backup-launch';
+   const heading=backupPanel.querySelector('h2');
+   if(heading)heading.after(button);
+  }
   setupObservers();
  }
  root.FormaRotaLuxe=Object.freeze({toast,openMealSheet,closeMealSheet,viewChange,openThemeDialog});
