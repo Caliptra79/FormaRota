@@ -554,6 +554,8 @@ renderTotals();renderCustomFoods();renderRecipeOptions();renderRecipe();if('serv
 // =============== Fitness v10 | kendi programı, haftalık takvim, zamanlayıcı ===============
 const FIT_BASE='https://fitnessprogramer.com/exercise/';
 // FitnessProgramer GIF bağlantıları referans olarak tutulur. Varsayılan hareket GIF’leri kullanıcı tarafından sağlanan Görseller.zip arşivinden paketlenmiştir.
+// Localization applies only to labels. Original group IDs are kept for CSS and saved data.
+const FIT_GROUP_TR=Object.freeze({Back:'Sırt',Chest:'Göğüs',Shoulders:'Omuz',Triceps:'Arka kol',Biceps:'Ön kol',Legs:'Bacak',Calves:'Baldır'});
 const FIT_MOVES=[
  {id:'lat',name:'Lat Pulldown',reps:'8–12',initial:10,group:'Back',move:'pull',src:'lat-pulldown',gif:'2021/02/Lat-Pulldown.gif'},
  {id:'row',name:'Seated Cable Row',reps:'8–12',initial:10,group:'Back',move:'row',src:'seated-cable-row',gif:'2021/02/Seated-Cable-Row.gif',options:[{name:'Seated Cable Row',src:'seated-cable-row',gif:'2021/02/Seated-Cable-Row.gif'},{name:'Dumbbell Row',src:'dumbbell-row',gif:'2021/02/Dumbbell-Row.gif'}]},
@@ -570,6 +572,7 @@ const FIT_MOVES=[
  {id:'calf',name:'Bodyweight Standing Calf Raise',reps:'15–25',initial:20,group:'Calves',move:'calf',src:'standing-calf-raise',gif:'2021/06/Standing-Calf-Raise.gif'}
 ];
 window.formaRotaFitnessCatalog=FIT_MOVES;
+window.formaRotaFitnessGroupLabels=FIT_GROUP_TR;
 const FIT_KEY='kocluk-fitness-current-v1',FIT_WEEK_KEY='kocluk-fitness-weeks-v1',FIT_CONF_KEY='kocluk-fitness-config-v1',FIT_HISTORY_KEY='kocluk-fitness-history-v1';
 const FIT_ABS_KEY='kocluk-fitness-abs-v1';
 const FIT_DAYS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
@@ -657,7 +660,7 @@ function fitDrawExercises(){const root=$('fitExerciseList');root.innerHTML='';FI
  picture.onerror=()=>{figure.replaceChildren();const label=document.createElement('span');label.className='muted';label.textContent='Hareket görseli yüklenemedi';figure.append(label)};
  figure.append(picture);
  const body=document.createElement('div');body.style.minWidth='0';
- const headline=document.createElement('div');headline.className='fit-nametop';const strong=document.createElement('strong');strong.textContent=`${idx+1}. ${fitActiveVariant(move).name}`;const tag=document.createElement('span');tag.className='tag';tag.textContent=move.group;headline.append(strong,tag);body.append(headline);
+ const headline=document.createElement('div');headline.className='fit-nametop';const strong=document.createElement('strong');strong.textContent=`${idx+1}. ${fitActiveVariant(move).name}`;const tag=document.createElement('span');tag.className='tag';tag.textContent=FIT_GROUP_TR[move.group]||move.group;headline.append(strong,tag);body.append(headline);
  const desc=document.createElement('div');desc.className='muted';desc.textContent=`3 set × ${move.reps} tekrar · Son kayıt: ${fitLastResult(move.id,selectedGif.name)}`;body.append(desc);
  if(move.options){const sel=document.createElement('select');sel.setAttribute('aria-label',move.name+' alternatifi');sel.dataset.variant=move.id;move.options.forEach((opt,j)=>{const option=document.createElement('option');option.value=j;option.textContent=opt.name;sel.add(option)});sel.value=String(fitCurrent?.variants?.[move.id]??read('kocluk-fitness-variants-v1',{})[move.id]??0);sel.disabled=Boolean(fitCurrent?.items?.[move.id]?.some(x=>x.done));sel.addEventListener('change',()=>{if(!fitCurrent){const choices=read('kocluk-fitness-variants-v1',{});choices[move.id]=Number(sel.value);write('kocluk-fitness-variants-v1',choices)}else{fitCurrent.variants[move.id]=Number(sel.value);fitSaveCurrent()}fitDrawExercises()});body.append(sel)}
  const selected=fitCurrent?fitActiveVariant(move):((move.options||[])[read('kocluk-fitness-variants-v1',{})[move.id]||0]||move);
