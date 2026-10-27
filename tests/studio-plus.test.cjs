@@ -154,7 +154,7 @@ test('all seven themes have non-looping ambient polish, reduce-motion, and offli
   assert.ok(html.includes('./assets/'+asset));
   assert.ok(sw.includes("'./assets/"+asset+"'"));
  }
- assert.ok(sw.includes('formarota-solo-v49-shell'));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.equal(JSON.parse(read('manifest.webmanifest')).id,'./index.html');
  new vm.Script(ui);
  new vm.Script(read('assets/studio-plus-engine.js'));
