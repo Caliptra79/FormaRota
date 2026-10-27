@@ -189,7 +189,7 @@
    const headline=card.querySelector('.fit-nametop');
    if(!body||!headline)continue;
    const ribbon=el('div','sp-move-heading');
-   const info=el('span','sp-move-label',done===3?'✓ HAREKET TAMAMLANDI':'ANTRENMAN / '+String(move.group).toLocaleUpperCase('tr-TR'));
+   const info=el('span','sp-move-label',done===3?'✓ HAREKET TAMAMLANDI':'ANTRENMAN / '+String(root.formaRotaFitnessGroupLabels?.[move.group]||move.group).toLocaleUpperCase('tr-TR'));
    const count=el('strong','sp-move-count',done+'/3 SET');
    ribbon.append(info,count);
    body.insertBefore(ribbon,headline);
