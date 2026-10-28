@@ -56,7 +56,7 @@ test('offline update caches new stylesheet and retains all original app assets',
  for(const key of ['coach-engine-v35.js','fitness-record-editor.js','turkish-foods.js','dinner-coach.js','formarota-icon.svg'])assert.ok(sw.includes(key));
  const gifList=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1];
  assert.ok(gifList);
- assert.equal((gifList.match(/'/g)||[]).length/2,15);
+ assert.equal((gifList.match(/'/g)||[]).length/2,19);
 });
 test('no personal data/backup schema or PWA install identity changes are introduced',()=>{
  const manifest=JSON.parse(get('manifest.webmanifest'));
