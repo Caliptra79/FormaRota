@@ -91,7 +91,7 @@ function renderGraph(){
   summary.textContent=details+' Tahmini 1RM hesaplanamadı.';return;
  }
  if(metric!=='maxKg'&&typeof root.v21Svg==='function'){
-  const series=data.entries.filter(x=>x[metric]!=null).map(x=>({d:x.date,v:x[metric]}));
+  const series=data.entries.filter(x=>x[metric]!=null).slice(-24).map(x=>({d:x.date,v:x[metric]}));
   chart.innerHTML=root.v21Svg(series);
  }
  const change=data.changes?.[metric],changeText=change==null?'Karşılaştırma için ikinci geçerli gün gerekli.':
