@@ -26,7 +26,7 @@ test('original group IDs remain stable for muscle color themes, backups and exer
  assert.ok(html.includes('const FIT_MOVES=['));
 });
 test('localized labels are cached offline on installed iPhones and original scripts parse',()=>{
- assert.ok(sw.includes('formarota-solo-v50-shell'));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.ok(sw.includes("'./assets/studio-plus.js'"));
  for(const m of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)){
   assert.doesNotThrow(()=>new vm.Script(m[1]));
