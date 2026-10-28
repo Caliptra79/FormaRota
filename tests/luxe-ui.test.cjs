@@ -50,7 +50,8 @@ test('interactive Luxe layers have native dialogs, shade and accessibility behav
  assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
 });
 test('preexisting nutrition behaviors are routed into sheet without changing logging or history keys',()=>{
- assert.ok(html.includes("window.FormaRotaLuxe?.openMealSheet?.()"));
+ assert.ok(html.includes("window.FormaRotaLuxe?.closeMealSheet?.(false)"));
+ assert.ok(html.includes("panel.style.display='block'"));
  assert.ok(html.includes("window.FormaRotaLuxe?.closeMealSheet?.()"));
  assert.ok(html.includes("window.FormaRotaLuxe?.viewChange?.(view)"));
  assert.ok(html.includes("window.FormaRotaLuxe?.toast?.("));
