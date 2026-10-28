@@ -1,0 +1,389 @@
+/* FormaRota program switcher + stand-alone ABS studio.
+   Existing Full Body cards, timers, GIFs and coach remain unchanged. */
+html[data-theme]{
+ --abs-accent:var(--luxe-violet);
+ --abs-green:var(--luxe-mint);
+ --abs-gold:var(--luxe-amber);
+}
+html[data-theme] main>#workoutProgramChooser{
+ padding:15px 17px;
+ border-radius:22px;
+ background:
+  linear-gradient(125deg,color-mix(in srgb,var(--luxe-violet) 10%,var(--panel)),var(--panel));
+ border:1px solid color-mix(in srgb,var(--luxe-violet) 28%,var(--border));
+ box-shadow:var(--luxe-elev);
+ margin:0!important;
+ width:100%;
+}
+.abs-choice-heading{
+ display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+ margin-bottom:11px;
+}
+.abs-choice-heading strong{display:block;font-size:1.02rem;font-weight:860;letter-spacing:-.02em}
+.abs-choice-heading small{display:block;font-size:.79rem;margin-top:4px;color:var(--muted)}
+.abs-choice-pills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+html[data-theme] .abs-choice-pills button{
+ display:flex;align-items:center;gap:10px;
+ padding:12px 14px;min-height:67px;
+ border-radius:16px;
+ border:1px solid var(--border);
+ background:var(--panel2)!important;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+ text-align:left;
+ box-shadow:none;
+}
+html[data-theme] .abs-choice-pills button[aria-pressed="true"]{
+ border-color:var(--accent);
+ background:color-mix(in srgb,var(--accent) 14%,var(--panel2))!important;
+ box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 15%,transparent);
+}
+.abs-choice-icon{
+ display:grid;place-items:center;
+ border-radius:14px;
+ background:color-mix(in srgb,var(--abs-accent) 16%,var(--panel));
+ width:39px;height:39px;flex:none;
+ font-size:1.2rem;
+}
+.abs-choice-pills strong{font-weight:830;display:block;font-size:.99rem}
+.abs-choice-pills small{font-size:.74rem;color:var(--muted);display:block;margin-top:3px}
+.abs-today-summary{
+ display:flex;gap:7px;flex-wrap:wrap;
+ margin-top:12px;min-height:22px;
+}
+.abs-today-main,.abs-today-note{
+ display:inline-flex;align-items:center;
+ border-radius:10px;
+ background:color-mix(in srgb,var(--luxe-mint) 11%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--luxe-mint) 30%,var(--border));
+ padding:6px 10px;color:var(--text);
+ font-size:.8rem;font-weight:700;
+}
+.abs-today-note{
+ background:var(--panel2);border-color:var(--border);
+ font-weight:620;color:var(--muted);
+}
+/* The original Full Body route structure remains available; hide only
+   visuals of the program that was not selected, never its saved state. */
+html[data-workout-program="abs"] main>#studioFitnessHero:not(.hidden){display:none!important}
+html[data-workout-program="fullbody"] main>#absWorkoutHero:not(.hidden){display:none!important}
+html[data-workout-program="abs"] #fitnessRoot>section[data-fit-page="workout"]:not(#absWorkoutPanel){
+ display:none!important;
+}
+html[data-workout-program="fullbody"] #fitnessRoot>#absWorkoutPanel{display:none!important}
+#fitnessRoot>#absWorkoutPanel.hidden{display:none!important}
+html[data-workout-program="abs"] #fitnessRoot>#absWorkoutPanel:not(.hidden){display:block!important;order:1}
+html[data-workout-program="abs"] main>#absWorkoutHero:not(.hidden){
+ display:block!important;
+}
+/* Fresh ABS hero */
+html[data-theme] main>#absWorkoutHero{
+ position:relative;isolation:isolate;
+ width:100%;padding:25px 22px 19px;margin:0!important;
+ border-radius:26px;overflow:hidden;text-align:left!important;
+ color:var(--studio-ink);
+ border:1px solid var(--studio-rim);
+ background:
+  radial-gradient(ellipse 44% 73% at 88% 6%,color-mix(in srgb,var(--studio-pop-2) 30%,transparent),transparent 80%),
+  linear-gradient(125deg,var(--studio-bg),var(--studio-bg-deep));
+ box-shadow:0 14px 39px color-mix(in srgb,var(--sp-glow) 45%,transparent);
+}
+.abs-hero-layout{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(160px,.67fr);
+ gap:16px;align-items:center;
+}
+.abs-overline{
+ color:var(--studio-pop);
+ font-size:.72rem;letter-spacing:.17em;
+ font-weight:850;
+}
+html[data-theme] #absWorkoutHero h2{
+ margin:11px 0 11px;
+ font-size:clamp(2.4rem,7.7vw,3.9rem);
+ line-height:1.04;letter-spacing:-.075em;
+ color:var(--studio-ink)!important;font-weight:890;text-align:left!important;
+}
+#absWorkoutHero h2 em{color:var(--studio-pop);font-style:normal}
+#absWorkoutHero p{
+ color:var(--studio-ink-muted)!important;
+ margin:0 0 15px;font-size:.9rem;line-height:1.55;
+ max-width:35ch;text-align:left!important;
+}
+#absSessionState{
+ display:inline-block;
+ padding:7px 12px;border:1px solid var(--studio-rim);
+ border-radius:99px;background:rgba(255,255,255,.1);
+ color:var(--studio-ink);font-size:.77rem;font-weight:780;
+}
+.abs-hero-meter{
+ justify-self:center;width:100%;
+ min-width:0;display:flex;
+ flex-direction:column;align-items:center;gap:12px;
+ padding:16px 10px 12px;border-radius:22px;
+ background:rgba(255,255,255,.065);
+ border:1px solid var(--studio-rim);
+}
+.abs-hero-meter .studio-progress-ring{
+ width:clamp(130px,19vw,175px);
+ background:conic-gradient(var(--studio-pop) 0 var(--studio-value),
+ rgba(255,255,255,.14) var(--studio-value) 100%);
+}
+.abs-hero-meter strong{color:var(--studio-ink)}
+.abs-hero-meter small{
+ color:var(--studio-ink-muted);text-align:center;font-size:.77rem;line-height:1.4;
+}
+.abs-hero-metrics{
+ display:flex;gap:8px;flex-wrap:wrap;
+ border-top:1px solid var(--studio-rim);
+ margin-top:20px;padding-top:13px;
+}
+.abs-hero-metrics span{
+ display:inline-flex;align-items:center;gap:6px;
+ color:var(--studio-ink);
+ font-size:.76rem;font-weight:740;
+ padding:5px 10px;border-radius:11px;
+ background:rgba(255,255,255,.08);
+}
+html[data-theme] #fitnessRoot>#absWorkoutPanel{
+ background:var(--panel);
+ border:1px solid var(--border);
+ padding:18px!important;border-radius:24px;
+ box-shadow:var(--luxe-elev);
+}
+.abs-panel-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.abs-panel-heading h2{
+ color:var(--text);font-size:clamp(1.27rem,4vw,1.65rem);
+ font-weight:860;letter-spacing:-.04em;margin:5px 0;
+}
+.abs-panel-heading .tag{background:color-mix(in srgb,var(--abs-accent) 11%,var(--panel2));color:var(--text)}
+.abs-panel-desc{font-size:.86rem;color:var(--muted);margin:5px 0 14px}
+.abs-session-toolbar{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+ margin-bottom:15px;
+}
+html[data-theme] .abs-session-toolbar button{
+ min-height:49px;border-radius:14px;
+ font-weight:810;color:var(--onaccent);
+}
+html[data-theme] #absStart{
+ background:linear-gradient(125deg,var(--accent),color-mix(in srgb,var(--accent) 78%,var(--luxe-mint)))!important;
+ color:var(--onaccent)!important;
+}
+html[data-theme] #absFinish{
+ background:var(--accent)!important;color:var(--onaccent)!important;
+}
+html[data-theme] #absStop{
+ background:var(--panel2)!important;
+ color:var(--text)!important;border:1px solid var(--border);
+}
+html[data-theme] #absStart:disabled,html[data-theme] #absFinish:disabled,html[data-theme] #absStop:disabled{opacity:.58}
+.abs-status{
+ min-height:22px;
+ color:var(--muted);font-size:.82rem;line-height:1.5;margin:0 0 15px;
+}
+#absExerciseList{display:grid;grid-template-columns:1fr;gap:17px;margin-top:13px}
+html[data-theme] .abs-exercise{
+ --abs-card-accent:var(--luxe-blue);
+ display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr);
+ gap:18px;
+ border-radius:22px;
+ border:1px solid color-mix(in srgb,var(--abs-card-accent) 32%,var(--border));
+ border-left:4px solid var(--abs-card-accent);
+ background:
+  radial-gradient(ellipse 54% 55% at 0% 2%,color-mix(in srgb,var(--abs-card-accent) 10%,transparent),transparent 88%),
+  var(--panel2);
+ padding:15px;
+}
+html[data-theme] .abs-exercise:nth-child(1){--abs-card-accent:var(--luxe-coral)}
+html[data-theme] .abs-exercise:nth-child(2){--abs-card-accent:var(--luxe-blue)}
+html[data-theme] .abs-exercise:nth-child(3){--abs-card-accent:var(--luxe-violet)}
+html[data-theme] .abs-exercise:nth-child(4){--abs-card-accent:var(--luxe-mint)}
+html[data-theme] .abs-exercise.abs-complete{
+ border-color:color-mix(in srgb,var(--luxe-mint) 58%,var(--border));
+ box-shadow:0 0 0 2px color-mix(in srgb,var(--luxe-mint) 9%,transparent);
+}
+.abs-figure{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.abs-figure img,.abs-figure-fallback{
+ width:100%;max-width:240px;aspect-ratio:1;
+ object-fit:contain;
+ border-radius:16px;
+ background:var(--panel);
+ border:1px solid var(--border);
+}
+.abs-figure img[hidden],.abs-figure-fallback[hidden]{display:none!important}
+.abs-figure-fallback{
+ display:grid;place-items:center;
+ text-align:center;padding:17px;color:var(--muted);font-size:.82rem;
+}
+.abs-source{
+ font-size:.74rem;color:var(--accent);
+ font-weight:700;text-align:center;
+ text-decoration:underline;text-underline-offset:3px;
+}
+.abs-exercise-body{min-width:0}
+.abs-exercise-top{
+ display:flex;justify-content:space-between;align-items:center;gap:8px;
+ border-bottom:1px solid var(--border);padding-bottom:9px;
+}
+.abs-exercise-overline{
+ color:var(--abs-card-accent);font-size:.69rem;letter-spacing:.11em;font-weight:850;
+}
+.abs-done-pill{
+ white-space:nowrap;font-size:.76rem;font-weight:770;
+ color:var(--text);
+ border:1px solid var(--border);
+ background:var(--panel);
+ border-radius:99px;padding:6px 9px;
+}
+.abs-exercise h3{
+ font-size:clamp(1.1rem,3.6vw,1.42rem);
+ font-weight:850;letter-spacing:-.035em;line-height:1.3;
+ color:var(--text);margin:12px 0 6px;
+}
+.abs-move-hint{font-size:.82rem;color:var(--muted);line-height:1.49;margin:0 0 10px}
+.abs-set-list{display:grid;gap:7px}
+.abs-set-row{
+ display:grid;grid-template-columns:58px minmax(0,1fr) 46px minmax(104px,1fr);
+ gap:7px;align-items:center;
+ border-radius:13px;padding:9px 8px;
+ background:var(--panel);
+ border:1px solid var(--border);
+}
+.abs-set-row.recorded{
+ border-color:color-mix(in srgb,var(--luxe-mint) 37%,var(--border));
+ background:color-mix(in srgb,var(--luxe-mint) 6%,var(--panel));
+}
+.abs-set-row label{color:var(--text);font-size:.79rem;font-weight:750}
+html[data-theme] .abs-set-row input{
+ min-width:0;width:100%;height:42px;min-height:42px;
+ padding:7px;text-align:center;font-size:1rem;
+ border:1px solid var(--border);border-radius:10px;
+ background:var(--control);color:var(--text);
+}
+html[data-theme] .abs-set-row input:disabled{opacity:.8}
+.abs-unit{font-size:.76rem;color:var(--muted)}
+.abs-row-actions{display:flex;gap:5px;min-width:0}
+html[data-theme] .abs-row-actions button{
+ min-height:42px;font-size:.75rem;font-weight:750;
+ border-radius:10px;padding:7px;
+ min-width:0;flex:1;
+}
+html[data-theme] .abs-row-actions button.secondary{
+ background:var(--panel2)!important;color:var(--text)!important;
+ border:1px solid var(--border);
+}
+html[data-theme] .abs-row-actions button.abs-undo{
+ flex:0 0 34px;width:34px;font-size:1.08rem;
+ background:transparent!important;
+ color:var(--text)!important;
+}
+.abs-timer-tip{color:var(--muted);font-size:.79rem;line-height:1.5;margin:11px 0 0}
+html[data-theme] .abs-stopwatch{
+ padding:14px 16px;margin:13px 0 16px;
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);
+ gap:12px;align-items:center;
+ border:1px solid color-mix(in srgb,var(--luxe-blue) 32%,var(--border));
+ border-radius:19px;
+ background:linear-gradient(135deg,
+  color-mix(in srgb,var(--luxe-blue) 9%,var(--panel2)),
+  color-mix(in srgb,var(--luxe-violet) 7%,var(--panel2)));
+}
+.abs-stopwatch-title{color:var(--muted);font-size:.71rem;font-weight:760;letter-spacing:.09em}
+.abs-stopwatch-clock{
+ color:var(--text);
+ font-variant-numeric:tabular-nums;
+ font-size:clamp(2.3rem,8vw,3.6rem);
+ font-weight:870;letter-spacing:-.07em;
+ line-height:1.2;
+}
+.abs-stopwatch-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+html[data-theme] .abs-stopwatch-actions button{
+ min-height:42px;border-radius:11px;
+ font-size:.77rem;padding:6px;
+ font-weight:760;
+}
+html[data-theme] .abs-stopwatch-actions button.secondary{
+ background:var(--panel)!important;color:var(--text)!important;
+ border:1px solid var(--border);
+}
+html[data-theme] .abs-stopwatch-actions button:disabled{opacity:.58}
+html[data-theme] #absWatchTransfer{
+ grid-column:1 / -1;
+ background:color-mix(in srgb,var(--accent) 13%,var(--panel))!important;
+ color:var(--text)!important;
+ border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));
+}
+.abs-external-note{font-size:.73rem;color:var(--muted);line-height:1.5;margin:15px 0 0}
+.abs-history-row{
+ display:flex;align-items:center;justify-content:space-between;gap:9px;
+ padding:12px;border-radius:14px;
+ background:var(--panel2);border:1px solid var(--border);
+ color:var(--text);
+}
+.abs-history-row+.abs-history-row{margin-top:8px}
+.abs-history-row strong{display:block;color:var(--text);font-size:.88rem}
+.abs-history-row small{display:block;color:var(--muted);font-size:.76rem;margin-top:5px;line-height:1.45}
+.abs-history-badge{
+ display:inline-block;flex:none;
+ font-size:.72rem;color:var(--muted);
+ background:var(--panel);
+ border:1px solid var(--border);padding:6px 9px;
+ border-radius:99px;
+}
+.abs-history-badge.done{
+ color:var(--text);
+ border-color:color-mix(in srgb,var(--luxe-mint) 38%,var(--border));
+ background:color-mix(in srgb,var(--luxe-mint) 13%,var(--panel));
+}
+.abs-week-report,.abs-week-story{
+ display:block;
+ border:1px solid color-mix(in srgb,var(--luxe-violet) 30%,var(--border));
+ background:color-mix(in srgb,var(--luxe-violet) 10%,var(--panel2));
+ padding:11px 13px;border-radius:14px;
+ color:var(--text)!important;
+ font-size:.84rem;font-weight:730;line-height:1.5;
+ margin:12px 0;
+}
+html[data-theme] .abs-history-panel{
+ border:1px solid color-mix(in srgb,var(--abs-accent) 25%,var(--border));
+ border-radius:22px;
+}
+@keyframes abs-confirm{from{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--abs-card-accent) 20%,transparent)}to{box-shadow:0 0 0 0 transparent}}
+@keyframes abs-finish{from{transform:scale(1)}50%{transform:scale(1.007)}to{transform:scale(1)}}
+@media(prefers-reduced-motion:no-preference){
+ .abs-exercise.abs-set-pulse{animation:abs-confirm .38s ease-out both}
+ .abs-exercise.abs-complete-pulse{animation:abs-finish .4s ease-out both}
+}
+@media(max-width:650px){
+ html[data-theme] main>#workoutProgramChooser{padding:14px}
+ .abs-choice-pills{gap:8px}
+ html[data-theme] .abs-choice-pills button{padding:11px 9px}
+ .abs-choice-icon{width:33px;height:33px;font-size:1.03rem}
+ html[data-theme] main>#absWorkoutHero{padding:22px 16px 17px}
+ .abs-hero-layout{grid-template-columns:1fr;gap:17px}
+ .abs-hero-meter{width:100%;flex-direction:row;justify-content:center;gap:15px;padding:10px 16px}
+ .abs-hero-meter .studio-progress-ring{width:100px;flex:none}
+ .abs-hero-meter small{text-align:left;max-width:150px}
+ html[data-theme] #fitnessRoot>#absWorkoutPanel{padding:14px!important}
+ html[data-theme] .abs-exercise{grid-template-columns:1fr;gap:14px}
+ .abs-figure img,.abs-figure-fallback{max-width:min(100%,240px)}
+ .abs-source{font-size:.79rem}
+}
+@media(max-width:400px){
+ .abs-choice-pills strong{font-size:.87rem}
+ .abs-choice-pills small{font-size:.69rem}
+ .abs-choice-icon{width:30px;height:30px}
+ .abs-set-row{grid-template-columns:42px minmax(0,1fr) 36px minmax(82px,1.15fr);gap:4px;padding:7px 5px}
+ .abs-set-row label{font-size:.7rem}
+ .abs-unit{font-size:.69rem}
+ html[data-theme] .abs-row-actions button{font-size:.7rem;padding:5px}
+ html[data-theme] .abs-row-actions button.abs-undo{flex-basis:29px;width:29px}
+ .abs-stopwatch{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .abs-exercise.abs-set-pulse,.abs-exercise.abs-complete-pulse{animation:none!important}
+ .abs-choice-pills button{transition:none!important}
+}
