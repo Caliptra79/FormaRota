@@ -58,3 +58,19 @@
 #trainerMuscleVolume meter{width:100%;height:14px;min-width:0}
 #trainerMuscleVolume small{color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
 @media(max-width:370px){#trainerMuscleVolume .trainer-volume-row{grid-template-columns:70px minmax(0,1fr);gap:4px 7px}#trainerMuscleVolume small{grid-column:2;text-align:left}}
+
+/* Personal Trainer: enriched existing progress chart & conservative recovery. */
+#trainerGraphMetrics{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+#trainerGraphMetrics label{font-weight:700;font-size:.84rem;flex:0 0 auto}
+#trainerGraphMetric{flex:1 1 190px;min-width:0;width:100%;max-width:100%;min-height:44px}
+#trainerGraphSummary{font-size:.86rem;line-height:1.55;color:var(--muted);overflow-wrap:anywhere;margin:9px 0}
+#trainerRecovery{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-top:12px;min-width:0}
+#trainerRecovery>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:740}
+#trainerRecovery .trainer-recovery-body{display:grid;gap:9px;padding-top:6px}
+#trainerRecovery .trainer-pain-check{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.87rem;line-height:1.45}
+#trainerRecovery .trainer-pain-check input{width:20px;height:20px;flex-shrink:0;margin:0}
+#trainerRecovery .trainer-recovery-result{min-width:0;line-height:1.5}
+#trainerRecovery .trainer-recovery-result ul{padding-left:21px;margin:8px 0}
+#trainerRecovery .trainer-recovery-result p{margin:6px 0;overflow-wrap:anywhere}
+#trainerRecovery .trainer-recovery-result>strong{color:var(--accent)}
+@media(max-width:410px){#trainerGraphMetrics{display:grid;grid-template-columns:minmax(0,1fr)}#trainerGraphMetric{width:100%}}
