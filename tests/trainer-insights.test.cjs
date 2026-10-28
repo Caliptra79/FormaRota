@@ -128,3 +128,15 @@ test('current pain signals do not rewrite historical exercise coach recommendati
  const {E}=harness(true,storage);
  assert.equal(E.assess(lat,lat.name,h,2.5,'2026-10-17').status,'increase');
 });
+
+test('current-week coach report prioritizes fatigue warning, without rewriting older reports',()=>{
+ const history=[session('2026-10-28',lat,lat.name,40,[12,12,12])];
+ const storage={'kocluk-fitness-history-v1':JSON.stringify(history),
+  'formarota-sleep-energy-v1':JSON.stringify({'2026-10-28':{hours:5,energy:2}})};
+ const {E}=harness(true,storage);
+ const current=E.report(history,[lat],'2026-10-29',2,{},2.5,[]);
+ assert.match(current.messages[0],/Toparlanma/i);
+ assert.ok(current.messages.every(s=>!s.includes('artışını değerlendirebilirsin')));
+ const past=E.report(history,[lat],'2026-10-19',2,{},2.5,[]);
+ assert.ok(past.messages.every(s=>!s.startsWith('Toparlanma:')));
+});
