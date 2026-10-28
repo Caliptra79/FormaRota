@@ -118,5 +118,5 @@ test('new contrast layer loads after Studio and is precached for updated offline
  assert.ok(html.includes('const FIT_MOVES=['));
  assert.ok(html.includes('id="globalTodayDate"'));
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
