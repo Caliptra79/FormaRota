@@ -913,16 +913,13 @@ function openMealEditor(meal){
  $('mealEditorHelp').textContent='Aradığın yemeği seç, miktarını gram olarak gir ve Ekle düğmesine dokun. Kaydın seçili günün günlük kalorisine eklenir.';
  $('searchPanel').classList.remove('hidden','meal-editor-closed');
  $('status').textContent=meal+' için besin arayabilirsin.';
- // iOS uses the stable inline editor instead of a modal sheet.
- const useInline=window.matchMedia?.('(pointer:coarse)').matches||window.innerWidth<=760;
- if(useInline){
-  window.FormaRotaLuxe?.closeMealSheet?.(false);
-  const panel=$('searchPanel');
-  panel.style.display='block';
-  requestAnimationFrame(()=>panel.scrollIntoView({block:'start',behavior:'auto'}));
- }else if(!window.FormaRotaLuxe?.openMealSheet?.()){
-  $('searchPanel').scrollIntoView({block:'start',behavior:'smooth'});
- }
+ // Single reliable inline editor for iPhone, browser and Windows Electron.
+ window.FormaRotaLuxe?.closeMealSheet?.(false);
+ document.body.classList.remove('luxe-sheet-active');
+ const shade=document.getElementById('luxeShade');if(shade)shade.hidden=true;
+ const panel=$('searchPanel');
+ panel.style.display='block';
+ requestAnimationFrame(()=>panel.scrollIntoView({block:'start',behavior:'auto'}));
 }
 function closeMealEditor(){window.FormaRotaLuxe?.closeMealSheet?.();$('searchPanel').style.removeProperty('display');$('searchPanel').classList.add('hidden','meal-editor-closed');navigateTo('nutrition','mealQuickPanel')}
 document.querySelectorAll('[data-meal-open]').forEach(button=>button.addEventListener('click',()=>openMealEditor(button.dataset.mealOpen)));
