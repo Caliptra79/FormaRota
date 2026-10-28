@@ -38,7 +38,7 @@ test('desktop bundle is complete and keeps workout history intact',()=>{
  assert.ok(html.includes('fitness-record-editor.js'));
  assert.ok(html.includes('id="globalTodayDate"'));
  const gifs=fs.readdirSync(path.join(root,'assets')).filter(x=>x.endsWith('.gif'));
- assert.equal(gifs.length,15);
+ assert.equal(gifs.length,19);
 });
 
 test('the isolated Electron session also owns our custom protocol',()=>{
