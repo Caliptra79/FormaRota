@@ -8,7 +8,7 @@ function week(s){const a=s.split('-').map(Number),d=new Date(a[0],a[1]-1, a[2],1
 const waterTarget=()=>{const n=Number(localStorage.getItem('formarota-water-goal-v1'));return n>=250&&n<=7000?n:2500};
 const XP_GOALS_KEY='formarota-rank-goals-snapshot-v1';
 function snapshotGoals(){let g=read(XP_GOALS_KEY,null);if(!g||!(Number(g.kcal)>0)||!(Number(g.protein)>0)){g={kcal:Number(document.getElementById('goalKcal')?.value)||2600,protein:Number(document.getElementById('goalProtein')?.value)||160};try{localStorage.setItem(XP_GOALS_KEY,JSON.stringify(g))}catch(e){}}return g}
-function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='full')return Array.isArray(row.items)&&row.items.length>=13;return true}
+function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='full')return row.items&&typeof row.items==='object'&&Object.keys(row.items).length>=13&&Object.values(row.items).reduce((n,sets)=>n+(Array.isArray(sets)?sets.filter(v=>v&&v.done===true).length:0),0)>=39;return true}
 function tally(){
  const days=new Map(),entry=d=>{if(!days.has(d))days.set(d,{food:[],walk:0,water:0,full:0,abs:0});return days.get(d)};
  const foods=read('kocluk-food-log-v2',[]);if(Array.isArray(foods))foods.forEach(x=>{if(iso(x?.date)&&Number(x.amount)>0)entry(x.date).food.push(x)});
