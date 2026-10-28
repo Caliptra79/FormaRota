@@ -44,7 +44,7 @@
   return moveIds.reduce((count,id)=>count+(Array.isArray(session.items?.[id])?
    session.items[id].filter(row=>row?.done===true&&n(row.weight)!==null&&n(row.weight)>=0&&n(row.weight)<=1500&&integer(row.reps,1,100)).length:0),0);
  }
- function week({asOf=new Date(),logs=[],sessions=[],weights=[],water={},walk={},moveIds=[]}={}){
+ function week({asOf=new Date(),logs=[],sessions=[],absCompletedDates=[],weights=[],water={},walk={},moveIds=[]}={}){
   const selected=daysOfWeek(asOf);
   const today=localISO(asOf);
   const visible=selected.filter(date=>date<=today);
@@ -52,13 +52,14 @@
   const recordRows=Array.isArray(logs)?logs.filter(row=>daySet.has(row?.date)):[];
   const allSessions=Array.isArray(sessions)?sessions:[];
   const fullDates=new Set(allSessions.filter(row=>daySet.has(row?.date)&&fullSession(row,moveIds)).map(row=>row.date));
+  const absDates=new Set((Array.isArray(absCompletedDates)?absCompletedDates:[]).filter(date=>daySet.has(date)));
   const daily=selected.map(date=>{
    const meals=recordRows.filter(row=>row.date===date);
    const isFuture=date>today;
    const waterMl=Math.max(0,n(water?.[date])??0);
    const walkKm=Math.max(0,n(walk?.[date])??0);
-   return {date,future:isFuture,loggedMeals:meals.length,fullWorkout:fullDates.has(date),
-    waterMl,walkKm,active:!isFuture&&(meals.length>0||fullDates.has(date)||waterMl>0||walkKm>0)};
+   return {date,future:isFuture,loggedMeals:meals.length,fullWorkout:fullDates.has(date),absWorkout:absDates.has(date),
+    waterMl,walkKm,active:!isFuture&&(meals.length>0||fullDates.has(date)||absDates.has(date)||waterMl>0||walkKm>0)};
   });
   const registered=new Set(recordRows.map(row=>row.date));
   // A logged day may contain only a snack. Never call this a complete day's intake.
