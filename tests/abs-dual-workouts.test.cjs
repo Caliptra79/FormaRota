@@ -131,8 +131,8 @@ test('mobile route switch prevents unselected program panels appearing and all a
   assert.ok(html.includes('./assets/'+asset));
   assert.ok(sw.includes("'./assets/"+asset+"'"));
  }
- const shellCache=sw.match(/const CACHE='(formarota-solo-v\\d+-shell)'/);
- const gifCache=sw.match(/const GIF_CACHE='(formarota-solo-v\\d+-gifs)'/);
+ const shellCache=sw.match(/const CACHE='(formarota-solo-v\d+-shell)'/);
+ const gifCache=sw.match(/const GIF_CACHE='(formarota-solo-v\d+-gifs)'/);
  assert.ok(shellCache,'PWA shell cache must use a versioned name');
  assert.ok(gifCache,'PWA GIF cache must use a versioned name');
  assert.equal(shellCache[1].replace(/-shell$/, ''),gifCache[1].replace(/-gifs$/, ''),'PWA shell and GIF cache versions must match');
