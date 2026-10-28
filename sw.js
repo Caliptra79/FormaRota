@@ -8,8 +8,8 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
  const response=await fetch('./index.html',{cache:'reload'});
  if(!response.ok)throw new Error('Offline HTML cannot be installed');
  await shell.put('./index.html',response);
- await Promise.allSettled(SHELL.filter(x=>x!=='./index.html').map(async path=>{
-  const r=await fetch(path,{cache:'reload'});if(r.ok)await shell.put(path,r);
+ await Promise.all(SHELL.filter(x=>x!=='./index.html').map(async path=>{
+  const r=await fetch(path,{cache:'reload'});if(!r.ok)throw new Error('Offline asset cannot be installed: '+path);await shell.put(path,r);
  }));
  const gifCache=await caches.open(GIF_CACHE);
  await Promise.allSettled(GIFS.map(async path=>{
