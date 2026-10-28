@@ -138,7 +138,7 @@ test('exercises receive progress ribbons, three completion dots, 13 existing GIF
  assert.ok(css.includes('.sp-move-dot.done'));
  for(const group of ['Chest','Back','Shoulders','Legs','Biceps','Triceps'])assert.ok(css.includes('[data-group="'+group+'"]'));
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
  assert.ok(html.includes('fit-gif-preview'));
 });
 test('all seven themes have non-looping ambient polish, reduce-motion, and offline assets',()=>{
