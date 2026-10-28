@@ -84,7 +84,7 @@
   const redundant=document.getElementById('homeBackup')?.closest('.mini-panel');
   if(redundant){redundant.hidden=true;redundant.setAttribute('aria-hidden','true');}
   const checklist=document.getElementById('homeChecklist');
-  if(checklist&&!checklist.closest('details')){
+  if(checklist&&!checklist.hidden&&!checklist.closest('details')){
    const panel=checklist.closest('.mini-panel');
    const heading=panel?.querySelector('.subheading');
    const details=document.createElement('details');
