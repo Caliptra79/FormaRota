@@ -32,7 +32,7 @@ async function createWindow(){
   width:1150,height:860,minWidth:390,minHeight:580,
   show:false,backgroundColor:'#0c141a',
   title:'FormaRota',autoHideMenuBar:true,
-  icon:path.join(__dirname,'app','icon-512.png'),
+  icon:path.join(__dirname,'formarota-window.png'),
   webPreferences:{
    contextIsolation:true,
    sandbox:true,
