@@ -55,8 +55,17 @@ function lastPerformances({history=[],moves=[],asOf,coach}={}){
 }
 function recovery({asOf,fullHistory=[],absHistory=[],sleepLog={},moves=[],coach,painReported=false}={}){
  if(!validDate(asOf))return {status:'insufficient',headline:'Veri yetersiz',reasons:['Geçerli tarih bulunamadı.'],allowIncrease:false};
- const sessions=[...arr(fullHistory),...arr(absHistory)].filter(x=>x&&validDate(x.date)&&
-  ['finished','stopped'].includes(x.status)&&diff(x.date,asOf)>=0&&diff(x.date,asOf)<=7);
+ const foundation=root.FormaRotaTrainerFoundation;
+ const performed=(session,kind)=>{
+  if(!foundation||!session?.items||!validDate(session.date)||
+     !['finished','stopped'].includes(session.status))return false;
+  const ids=kind==='full'?foundation.FULL_IDS:foundation.ABS_IDS;
+  return ids.some(id=>Array.isArray(session.items[id])&&session.items[id].slice(0,3).some(s=>
+   kind==='full'?foundation.validFullSet(s):foundation.validAbsSet(s,id)));
+ };
+ const sessions=[...arr(fullHistory).filter(s=>performed(s,'full')),
+  ...arr(absHistory).filter(s=>performed(s,'abs'))]
+  .filter(x=>diff(x.date,asOf)>=0&&diff(x.date,asOf)<=7);
  const dates=[...new Set(sessions.map(x=>x.date))].sort();
  const latestDate=dates.at(-1)||null,daysSince=latestDate?diff(latestDate,asOf):null;
  const validSleep=Object.entries(sleepLog&&typeof sleepLog==='object'&&!Array.isArray(sleepLog)?sleepLog:{})
@@ -67,7 +76,6 @@ function recovery({asOf,fullHistory=[],absHistory=[],sleepLog={},moves=[],coach,
  const hours=validSleep.find(x=>x.hours!=null&&Number.isFinite(x.hours)&&x.hours>=0.5&&x.hours<=16);
  const energy=validSleep.find(x=>x.energy!=null&&Number.isInteger(x.energy)&&x.energy>=1&&x.energy<=5);
  const lowSleep=!!hours&&hours.hours<6,lowEnergy=!!energy&&energy.energy<=2;
- const foundation=root.FormaRotaTrainerFoundation;
  const worked={};
  if(foundation?.MUSCLES){
   for(const [history,kind] of [[fullHistory,'full'],[absHistory,'abs']]){
