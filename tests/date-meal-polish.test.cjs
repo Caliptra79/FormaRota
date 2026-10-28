@@ -51,6 +51,6 @@ test('functional date inputs, original workout and data remain untouched',()=>{
 test('service worker and HTML include both assets and keep offline GIFs',()=>{
  for(const asset of ['date-meal-polish.css','date-masthead.js']){assert.ok(html.includes('./assets/'+asset));assert.ok(sw.includes("'./assets/"+asset+"'"))}
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
  for(const m of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))assert.doesNotThrow(()=>new vm.Script(m[1]));
 });
