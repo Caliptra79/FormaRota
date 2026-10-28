@@ -15,3 +15,5 @@ jobs:
           node-version: '22'
       - name: Run all regression tests
         run: node --test tests/*.test.cjs
+      - name: Validate Windows offline bundle
+        run: node desktop/build-assets.cjs && node --test desktop/desktop.test.cjs
