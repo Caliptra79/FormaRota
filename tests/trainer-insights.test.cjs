@@ -6,7 +6,7 @@ function harness(extraUI=false,storage={}){
  const localStorage={getItem:key=>storage[key]||null,setItem:(key,value)=>storage[key]=String(value)};
  const document={readyState:'loading',addEventListener(){}};
  const sandbox=vm.createContext({window,localStorage,document});
- for(const p of ['assets/coach-engine-v35.js','assets/trainer-insights-engine.js',...(extraUI?['assets/trainer-insights-ui.js']:[])])
+ for(const p of ['assets/trainer-foundation.js','assets/coach-engine-v35.js','assets/trainer-insights-engine.js',...(extraUI?['assets/trainer-insights-ui.js']:[])])
   vm.runInContext(source(p),sandbox,{filename:p});
  return {E:window.FormaRotaCoachEngine,M:window.FormaRotaTrainerInsights,window,localStorage};
 }
@@ -46,6 +46,7 @@ test('estimated 1RM uses eligible positive kg records only, and is explicitly no
  assert.equal(perf([session('2026-10-28',lat,lat.name,50,[8,9,10])]).latest.e1rm,66.7);
  assert.equal(perf([session('2026-10-28',lat,lat.name,50,[12,12,12])]).latest.e1rm,null);
  assert.equal(perf([session('2026-10-28',lat,lat.name,0,[8,9,10])]).latest.e1rm,null);
+ assert.equal(perf([session('2026-10-28',lat,lat.name,40,[10,11,12])]).latest.e1rm,null);
 });
 test('empty and future dated histories yield insufficient trend',()=>{
  const {M,E}=harness();
@@ -87,6 +88,16 @@ test('three comparable session declines count as performance signal',()=>{
 test('weight changes, duplicate same-day sessions, or stale decline do not generate performance decline',()=>{
  const h=[session('2026-10-18',lat,lat.name,40,[12,12,12]),session('2026-10-23',lat,lat.name,42.5,[11,11,11]),session('2026-10-27',lat,lat.name,42.5,[10,10,10])];
  assert.equal(recovery({fullHistory:h}).performanceDeclines,0);
+});
+test('widely spaced sessions do not imply muscle recovery risk',()=>{
+ const r=recovery({fullHistory:[session('2026-10-21'),session('2026-10-28')]});
+ assert.equal(r.signals.includes('muscle-interval'),false);
+});
+test('adjacent days with unrelated muscles do not imply repeated muscle loading',()=>{
+ const r=recovery({fullHistory:[session('2026-10-27')],absHistory:[{
+  date:'2026-10-28',status:'finished',items:{plank:[{done:true,seconds:40}]}
+ }]});
+ assert.equal(r.signals.includes('muscle-interval'),false);
 });
 test('source fitness and wellness objects are not modified',()=>{
  const fullHistory=[session('2026-10-28')],sleepLog={'2026-10-28':{hours:5,energy:2}};
