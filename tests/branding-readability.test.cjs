@@ -83,7 +83,7 @@ test('offline shell includes new brand icons and contrast stylesheet without rem
   assert.ok(sw.includes("'"+src+"'"),src);
  }
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
  assert.ok(html.includes('coach-engine-v35.js'));
  assert.ok(html.includes('FormaRotaTurkishFoods||[]'));
 });
