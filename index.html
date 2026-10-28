@@ -165,7 +165,31 @@ html{background:var(--bg,#101216)}
 </style></head>
 <body class="compact-app-shell">
 <div id="fr-launch" role="status" aria-label="FormaRota açılıyor"><div class="fr-launch-center"><img class="fr-launch-icon" src="./assets/formarota-icon.svg" alt="" width="120" height="120"/><div class="fr-launch-wordmark">FormaRota</div><div class="fr-launch-rule" aria-hidden="true"></div></div></div>
-<script>(function(){var start=Date.now(),finished=false;function close(){if(finished)return;finished=true;var el=document.getElementById('fr-launch');if(!el)return;el.classList.add('fr-launch-done');setTimeout(function(){el.remove()},420)}function afterLoad(){setTimeout(close,Math.max(0,950-(Date.now()-start)))}if(document.readyState==='complete')afterLoad();else window.addEventListener('load',afterLoad,{once:true});setTimeout(close,2800)})()</script>
+<script>(function(){
+var el=document.getElementById('fr-launch'),started=Date.now(),hiddenAt=0,seq=0,first=true;
+if(!el)return;
+function hide(token){if(token!==seq)return;el.classList.add('fr-launch-done');el.setAttribute('aria-hidden','true')}
+function display(){
+ var token=++seq;
+ el.classList.remove('fr-launch-done');
+ el.removeAttribute('aria-hidden');
+ /* Re-trigger logo and wordmark animations on iOS WebKit resumes. */
+ var center=el.querySelector('.fr-launch-center');
+ if(center){center.style.animation='none';void center.offsetWidth;center.style.animation=''}
+ var icon=el.querySelector('.fr-launch-icon'),word=el.querySelector('.fr-launch-wordmark'),rule=el.querySelector('.fr-launch-rule');
+ [icon,word,rule].forEach(function(node){if(node){node.style.animation='none';void node.offsetWidth;node.style.animation=''}});
+ setTimeout(function(){hide(token)},1350);
+}
+function onReady(){var elapsed=Date.now()-started;setTimeout(function(){hide(seq)},Math.max(0,1350-elapsed))}
+if(document.readyState==='complete')onReady();else window.addEventListener('load',onReady,{once:true});
+document.addEventListener('visibilitychange',function(){
+ if(document.hidden){hiddenAt=Date.now();return}
+ if(hiddenAt&&Date.now()-hiddenAt>2500){hiddenAt=0;display()}
+});
+window.addEventListener('pageshow',function(event){if(event.persisted)display()});
+/* Never block the app if some resource fails to load. */
+setTimeout(function(){hide(seq)},4000);
+})()</script>
 <div class="daily-masthead" role="group" aria-label="Bugünün tarihi"><div class="daily-masthead-inner"><span class="daily-masthead-label" aria-hidden="true">BUGÜN</span><time id="globalTodayDate"></time></div></div>
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
 <div class="context-links" id="nutritionLinks">
