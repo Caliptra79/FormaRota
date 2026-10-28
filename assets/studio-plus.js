@@ -91,6 +91,7 @@
   return metrics.week({
    asOf:new Date(),
    logs:read(key.logs,[]),sessions:read(key.history,[]),
+   absCompletedDates:[...(root.FormaRotaABSEngine?.completedDates?.(read('formarota-abs-history-v1',[]))||new Set())],
    weights:read(key.weights,[]),
    water:safeMap(read(key.water,{})),walk:safeMap(read(key.walk,{})),
    moveIds:workoutIds()
@@ -103,7 +104,7 @@
    const tile=el('div','sp-week-day'+(d.active?' active':'')+(d.future?' future':''));
    const activity=d.future?'Gelecek gün':[
     d.loggedMeals?'Beslenme kaydı':'',
-    d.fullWorkout?'Tam Full Body':'',
+    d.fullWorkout?'Tam Full Body':'',d.absWorkout?'ABS tamamlandı':'',
     d.waterMl>0?'Su kaydı':'',
     d.walkKm>0?'Yürüyüş kaydı':''
    ].filter(Boolean).join(', ')||'Kayıt yok';
@@ -111,7 +112,7 @@
    tile.setAttribute('aria-label',d.date+' '+activity);
    tile.append(el('span','sp-day-name',labels[i]));
    const marks=el('div','sp-day-marks');
-   for(const [yes,cls] of [[d.loggedMeals>0,'food'],[d.fullWorkout,'fitness'],[d.walkKm>0,'walk']]){
+   for(const [yes,cls] of [[d.loggedMeals>0,'food'],[d.fullWorkout||d.absWorkout,'fitness'],[d.walkKm>0,'walk']]){
     const dot=el('i','sp-day-mark'+(yes?' on '+cls:''));dot.setAttribute('aria-hidden','true');marks.append(dot);
    }
    tile.append(marks);
