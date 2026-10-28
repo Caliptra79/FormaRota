@@ -30,6 +30,6 @@ test('no theme, GIF or backup format was removed for final release',()=>{
  assert.ok(html.includes('formarota-icon.svg'));
  assert.ok(sw.includes("'./assets/final-motion.css'"));
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
 test('all scripts remain syntactically valid',()=>{for(const x of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))assert.doesNotThrow(()=>new vm.Script(x[1]))});
