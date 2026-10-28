@@ -92,11 +92,58 @@ function checkRankUp(xp){
  const previous=milestone(old);
  if(now.value>previous.value)celebrate(now,previous);
 }
+
+/* Achievements and four weekly progress charts, computed from existing offline records. */
+const ACHIEVEMENTS=[
+ ['first-workout','🏋️','İlk adım','İlk tamamlanan antrenman',x=>x.workouts>=1],
+ ['ten-workouts','💪','İstikrar','10 tamamlanan antrenman',x=>x.workouts>=10],
+ ['fifty-workouts','🏆','Demir irade','50 tamamlanan antrenman',x=>x.workouts>=50],
+ ['first-walk','👟','İlk kilometre','Toplam 1 km yürüyüş',x=>x.km>=1],
+ ['twentyfive-km','🥾','Yol arkadaşı','Toplam 25 km yürüyüş',x=>x.km>=25],
+ ['hundred-km','🗺️','100 kilometre','Toplam 100 km yürüyüş',x=>x.km>=100],
+ ['seven-food-days','🥗','Beslenme günlüğü','7 ayrı gün beslenme kaydı',x=>x.foodDays>=7],
+ ['thirty-food-days','🍽️','Düzenli takip','30 ayrı gün beslenme kaydı',x=>x.foodDays>=30],
+ ['five-active-weeks','🌟','Beş haftalık emek','En az 5 aktif haftaya ulaş',x=>x.activeWeeks>=5]
+];
+function historySummary(){
+ const foods=read('kocluk-food-log-v2',[]),walks=read('formarota-walks-v1',{}),full=read('kocluk-fitness-history-v1',[]),abs=read('formarota-abs-history-v1',[]);
+ const dayMap=new Map(),get=d=>{if(!dayMap.has(d))dayMap.set(d,{food:false,walk:0,workouts:0,kcal:0,protein:0});return dayMap.get(d)};
+ if(Array.isArray(foods))for(const x of foods){if(!iso(x?.date)||!(Number(x.amount)>0))continue;const v=get(x.date);v.food=true;v.kcal+=Math.max(0,Number(x.kcal)||0);v.protein+=Math.max(0,Number(x.protein)||0)}
+ if(walks&&typeof walks==='object'&&!Array.isArray(walks))for(const [d,n] of Object.entries(walks))if(iso(d))get(d).walk=Math.max(0,Number(n)||0);
+ for(const rows of [full,abs])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&x.status==='finished')get(d).workouts++}
+ const weeks=new Map();dayMap.forEach((v,d)=>{const key=week(d);if(!weeks.has(key))weeks.set(key,{workouts:0,walk:0,foodDays:0,activeDays:0,protein:0,proteinDays:0});const w=weeks.get(key);w.workouts+=v.workouts;w.walk+=v.walk;if(v.food){w.foodDays++;w.protein+=v.protein;w.proteinDays++}if(v.food||v.walk>0||v.workouts>0)w.activeDays++});
+ const stats={workouts:0,km:0,foodDays:0,activeWeeks:0};dayMap.forEach(v=>{stats.workouts+=v.workouts;stats.km+=v.walk;if(v.food)stats.foodDays++});weeks.forEach(w=>{if(w.activeDays>=3)stats.activeWeeks++});
+ return {stats,weeks};
+}
+function achievementMarkup(stats){
+ const unlocked=ACHIEVEMENTS.filter(a=>a[4](stats)).length;
+ return '<div class="fr-achievements"><h3>🎖️ Başarı rozetleri <small>'+unlocked+'/'+ACHIEVEMENTS.length+' kazanıldı</small></h3><div class="fr-badge-grid">'+ACHIEVEMENTS.map(a=>{const yes=a[4](stats);return '<div class="fr-badge '+(yes?'earned':'locked')+'" aria-label="'+a[2]+(yes?', kazanıldı':', kilitli')+'"><span aria-hidden="true">'+(yes?a[1]:'🔒')+'</span><strong>'+a[2]+'</strong><small>'+a[3]+'</small></div>'}).join('')+'</div></div>';
+}
+function graphMarkup(weeks){
+ const all=[...weeks.entries()].sort((a,b)=>a[0].localeCompare(b[0]));const recent=all.slice(-8),labels=recent.map(x=>x[0].slice(5)),values=[
+ ['🏋️ Güç / Antrenman','Tamamlanan seans',recent.map(x=>x[1].workouts),'seans'],
+ ['🏃 Dayanıklılık','Yürüyüş mesafesi',recent.map(x=>x[1].walk),'km'],
+ ['🥗 Beslenme','Beslenme kaydedilen gün',recent.map(x=>x[1].foodDays),'gün'],
+ ['📅 Disiplin','Aktif gün sayısı',recent.map(x=>x[1].activeDays),'gün']
+ ];
+ return '<div class="fr-stats-charts"><h3>📊 Gelişim istatistikleri</h3><p class="muted">Son 8 kayıtlı haftan. Güç, tamamlanan seanslarla temsil edilir; gerçek kas kuvveti ölçümü değildir.</p><div class="fr-charts-grid">'+values.map(([name,desc,points,unit])=>{const max=Math.max(1,...points),v=points.length?points:[],bars=v.map((p,i)=>'<div class="fr-chart-column"><div class="fr-chart-val">'+Number(p.toFixed(1)).toLocaleString('tr-TR')+'</div><div class="fr-chart-bar" style="height:'+Math.max(p>0?6:2,Math.round(p/max*80))+'px"></div><small>'+labels[i]+'</small></div>').join('');return '<div class="fr-chart"><strong>'+name+'</strong><small>'+desc+' ('+unit+')</small><div class="fr-chart-bars">'+(bars||'<div class="muted">Henüz veri yok. İlk kaydını oluştur!</div>')+'</div></div>'}).join('')+'</div></div>';
+}
+function ensureProgressStyles(){
+ if(document.getElementById('fr-rank-extras-style'))return;
+ const st=document.createElement('style');st.id='fr-rank-extras-style';st.textContent=`
+ .fr-achievements,.fr-stats-charts{margin-top:24px}.fr-achievements h3,.fr-stats-charts h3{margin:0 0 10px}.fr-achievements h3 small{color:var(--muted);font-size:.76rem;font-weight:400}
+ .fr-badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px}
+ .fr-badge{border:1px solid var(--border);background:var(--panel2);border-radius:15px;padding:13px 9px;text-align:center;display:flex;align-items:center;flex-direction:column;gap:5px}
+ .fr-badge span{font-size:28px}.fr-badge strong{font-size:.86rem}.fr-badge small{font-size:.72rem;color:var(--muted);line-height:1.3}.fr-badge.locked{opacity:.6}.fr-badge.earned{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));background:color-mix(in srgb,var(--accent) 8%,var(--panel2))}
+ .fr-charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.fr-chart{border:1px solid var(--border);background:var(--panel2);border-radius:15px;padding:13px;min-width:0}.fr-chart>small{display:block;color:var(--muted);margin-top:3px}
+ .fr-chart-bars{display:flex;align-items:flex-end;justify-content:space-around;gap:5px;min-height:130px;margin-top:14px;padding-bottom:3px}.fr-chart-column{min-width:0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:4px}.fr-chart-val{font-size:.72rem;font-variant-numeric:tabular-nums}.fr-chart-bar{width:min(90%,25px);background:var(--accent);border-radius:5px 5px 2px 2px}.fr-chart-column small{font-size:.68rem;color:var(--muted)}
+ `;document.head.appendChild(st);
+}
 function render(){
  const home=document.getElementById('frRankHome'),detail=document.getElementById('frRankFull');if(!home||!detail)return;
  const x=tally();checkRankUp(x.xp);const base='<div class="fr-rank-row"><span class="fr-rank-icon">'+x.icon+'</span><div><small>FORMA ROTA RANK</small><strong>'+x.title+'</strong><small>'+x.xp.toLocaleString('tr-TR')+' XP · Sonraki seviye için '+x.remaining.toLocaleString('tr-TR')+' XP</small></div></div><div class="fr-rank-track"><span style="width:'+x.percent+'%"></span></div>';
  home.innerHTML=base+'<small>Gelişimde ayrıntıları gör →</small>';
- detail.innerHTML=base+'<div class="fr-rank-grid">'+Object.entries(x.categories).map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+' XP</strong></div>').join('')+'</div>';
+ detail.innerHTML=base+'<div class="fr-rank-grid">'+Object.entries(x.categories).map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+' XP</strong></div>').join('')+'</div>';ensureProgressStyles();const progress=historySummary();detail.insertAdjacentHTML('beforeend',achievementMarkup(progress.stats)+graphMarkup(progress.weeks));
 }
 function init(){const h=document.getElementById('frRankHome');if(!h)return;
  const open=()=>{if(typeof showView==='function')showView('progress');document.getElementById('frRankProgress')?.scrollIntoView({block:'start',behavior:'smooth'})};
