@@ -50,5 +50,5 @@ test('service worker refreshes PWA manifest and retains GIF precache',()=>{
  assert.ok(shell.includes("'./manifest.webmanifest'"));
  const gifs=shell.match(/const GIFS=\[([^\]]+)\]/)?.[1];
  assert.ok(gifs);
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
