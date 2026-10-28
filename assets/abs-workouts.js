@@ -48,7 +48,7 @@
  function choose(program){
   if(!['fullbody','abs'].includes(program))return;
   if(program!=='abs')pauseWatch();
-  root.localStorage.setItem(KEY.choice,program);
+  try{root.localStorage.setItem(KEY.choice,program)}catch{}
   updateSelection();
   refresh();
  }
@@ -264,6 +264,7 @@
   const note=$('absProgressNote');if(note)note.textContent=done===12?'12/12 set hazır · ABS seansını bitirip kaydet':
    active?done+'/12 set kaydedildi · '+(12-done)+' set kaldı':'Dört hareket · 12 set · doğru form öncelikli';
   const button=$('absStart');if(button){button.disabled=Boolean(active);button.textContent=active?'✓ ABS seansı açık':'▶ ABS antrenmanını başlat';}
+  const hero=$('absHeroAction');if(hero)hero.textContent=active?'↗ ABS setlerine git':'▶ ABS antrenmanına başla';
   const finishBtn=$('absFinish');if(finishBtn)finishBtn.disabled=!active||done!==12;
   const stopBtn=$('absStop');if(stopBtn)stopBtn.disabled=!active||done===0;
   const state=$('absSessionState');if(state)state.textContent=active?'● ABS devam ediyor':'● ABS programı hazır';
@@ -332,6 +333,7 @@
    btn.addEventListener('click',()=>choose(btn.dataset.workoutChoice));
   }
   $('absStart')?.addEventListener('click',start);
+  $('absHeroAction')?.addEventListener('click',()=>{if(!current())start();$('absWorkoutPanel')?.scrollIntoView({block:'start',behavior:root.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})});
   $('absFinish')?.addEventListener('click',()=>finish(true));
   $('absStop')?.addEventListener('click',()=>finish(false));
   $('absWatchStart')?.addEventListener('click',startWatch);
