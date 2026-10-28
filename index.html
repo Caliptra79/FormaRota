@@ -751,16 +751,23 @@ function routeFromHash(){const raw=decodeURIComponent(location.hash.replace(/^#\
 function showView(view,scroll=true,updateURL=true){
  window.FormaRotaLuxe?.viewChange?.(view);
  window.FormaRotaDateMasthead?.refresh();
- const motionViewChanged=currentView!==view;
+ const previousView=currentView;
  if(view==='foods')view='nutrition';
  if(!Object.hasOwn(VIEW_PATHS,view))view='home';
+ const motionViewChanged=previousView!==view;
+ const routeOrder=['home','nutrition','dinner','recipes','fitness','fitness-history','progress','insights','settings'];
+ document.documentElement.dataset.frRouteDirection=routeOrder.indexOf(view)<routeOrder.indexOf(previousView)?'back':'forward';
  currentView=view;
  const fitnessPage=view==='fitness'||view==='fitness-history';
+ let animatedSectionIndex=0;
  document.querySelectorAll('main > section[data-view]').forEach(section=>{
   const match=(section.dataset.view===view && !(section.id==='searchPanel' && section.classList.contains('meal-editor-closed')))||(fitnessPage&&section.id==='fitnessRoot');
   section.classList.toggle('hidden',!match);
   section.classList.remove('fr-motion-enter');
-  if(match&&motionViewChanged&&window.matchMedia?.('(prefers-reduced-motion: no-preference)').matches)section.classList.add('fr-motion-enter');
+  if(match&&motionViewChanged&&window.matchMedia?.('(prefers-reduced-motion: no-preference)').matches){
+   section.style.setProperty('--fr-enter-step',String(Math.min(animatedSectionIndex++,4)));
+   section.classList.add('fr-motion-enter');
+  }
  });
  document.querySelectorAll('#fitnessRoot>[data-fit-page]').forEach(section=>section.classList.toggle('hidden',section.dataset.fitPage!==(view==='fitness-history'?'history':'workout')));
  const nutritionPage=['nutrition','dinner','recipes'].includes(view);
