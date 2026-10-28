@@ -48,11 +48,12 @@
   const total=name=>valid.reduce((sum,x)=>sum+Math.max(0,safeNumber(x[name])),0);
   const current=read(key.current,null);
   const ids=workoutIds();
+  const abs=root.FormaRotaABS?.selectedProgress?.();
   return [
    metrics.progress(total('kcal'),safeNumber(byId('goalKcal')?.value,2600)||2600),
    metrics.progress(total('protein'),safeNumber(byId('goalProtein')?.value,160)||160),
    metrics.progress(safeNumber(safeMap(read(key.water,{}))[today]),safeNumber(byId('waterGoal')?.value,2500)||2500),
-   metrics.progress(metrics.workoutSets(current,ids),39)
+   abs?.selected==='abs'?metrics.progress(abs.count,12):metrics.progress(metrics.workoutSets(current,ids),39)
   ];
  }
  function buildRing(config,measurement){
@@ -78,11 +79,12 @@
  function renderRings(){
   const host=byId('spProgressRings');if(!host)return;
   const progress=nutritionToday();
-  const signature=day()+'|'+progress.map(x=>x.value+':'+x.goal).join('|');
+  const absSelected=root.FormaRotaABS?.selectedProgress?.()?.selected==='abs';
+  const signature=day()+'|'+String(absSelected)+'|'+progress.map(x=>x.value+':'+x.goal).join('|');
   if(signature===lastRingSignature&&host.childElementCount===4)return;
   lastRingSignature=signature;
   const fragment=doc.createDocumentFragment();
-  progress.forEach((measure,i)=>fragment.append(buildRing(ringConfig[i],measure)));
+  progress.forEach((measure,i)=>fragment.append(buildRing(i===3&&absSelected?{...ringConfig[i],name:'ABS'}:ringConfig[i],measure)));
   host.replaceChildren(fragment);
  }
  function weeklyData(){
