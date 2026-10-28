@@ -35,7 +35,7 @@ test('The workout controls, original schedule and thirteen exercise GIFs stay us
  assert.ok(css.includes('#fitnessRoot #fitExercisePanel{order:2}'));
  assert.ok(css.includes('grid-template-columns:minmax(180px,240px) minmax(0,1fr)!important'));
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
 test('Themes retain their distinct hero palettes and primary labels have a consistent readable foreground',()=>{
  for(const theme of ['night','ocean','light','sand','neon','volt','sunset']){
