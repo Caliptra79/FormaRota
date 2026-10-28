@@ -76,3 +76,28 @@ html[data-theme="volt"] .mobile-tabbar button.active{
   scroll-behavior:auto!important;
  }
 }
+
+/* App launch and route transitions: subtle travel with a short stagger. */
+@keyframes fr-app-arrive{
+ from{opacity:.35;transform:translateY(12px) scale(.992)}
+ to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes fr-route-arrive{
+ from{opacity:.18;transform:translate3d(15px,7px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes fr-route-arrive-back{
+ from{opacity:.18;transform:translate3d(-15px,7px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:no-preference){
+ body main{animation:fr-app-arrive 420ms cubic-bezier(.16,.8,.24,1) both}
+ main>section.fr-motion-enter:not(.hidden){
+  animation:fr-route-arrive 290ms cubic-bezier(.2,.78,.2,1) both;
+  animation-delay:calc(var(--fr-enter-step,0) * 32ms);
+ }
+ html[data-fr-route-direction="back"] main>section.fr-motion-enter:not(.hidden){
+  animation-name:fr-route-arrive-back;
+ }
+ .mobile-tabbar button.active{transition:background-color 220ms ease,color 220ms ease,box-shadow 220ms ease,transform 190ms ease}
+}
