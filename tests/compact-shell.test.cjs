@@ -34,7 +34,8 @@ test('root navigation keeps menu hidden outside meal and fitness routes',()=>{
 });
 test('home summary does not present a redundant Solo badge',()=>{
  assert.ok(html.includes('id="homeSessionTag" aria-live="polite"'));
- assert.ok(html.includes("badge.classList.toggle('hidden',!fitCurrent&&!basketballDay)"));
+ assert.ok(html.includes("badge.classList.toggle('hidden',!fitCurrent)"));
+ assert.ok(!html.includes("🏀 Basketbol + Karın"));
  assert.ok(html.includes('id="homeKcal"'));
  assert.ok(html.includes('id="homeProtein"'));
  assert.ok(html.includes('id="homeDateLabel"'));
