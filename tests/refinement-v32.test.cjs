@@ -28,7 +28,7 @@ test('original fitness program, exercise GIFs and records remain',()=>{
  assert.ok(html.includes('fitMarkSet(move.id,n)'));
  for(const value of ['kocluk-fitness-history-v1','kocluk-fitness-current-v1','kocluk-food-log-v2','kocluk-weight-v1'])assert.ok(html.includes(value));
  const list=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1];
- assert.equal((list.match(/'/g)||[]).length/2,15);
+ assert.equal((list.match(/'/g)||[]).length/2,19);
 });
 test('large original exercise GIF dimensions are not reduced',()=>{
  assert.ok(previousCss.includes('width:min(100%,240px)'));
