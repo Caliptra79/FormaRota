@@ -26,6 +26,7 @@
     "files": [
       "desktop/main.cjs",
       "desktop/security.cjs",
+      "desktop/formarota-window.png",
       "desktop/app/**/*",
       "package.json"
     ],
