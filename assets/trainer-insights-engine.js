@@ -20,8 +20,8 @@ function performance({history=[],move,variant,asOf,coach}={}){
   const maxKg=Math.max(...sets.map(s=>s.kg));
   // Epley estimated 1RM only for plausible 1–10 repetition resistance sets.
   // Never claim a true maximum and never infer bodyweight or unlogged limb counts.
-  const candidates=sets.filter(s=>s.kg>0&&s.reps>=1&&s.reps<=10)
-   .map(s=>s.kg*(1+s.reps/30));
+  const suitable=sets.every(s=>s.kg>0&&s.reps>=1&&s.reps<=10&&Math.abs(s.kg-sets[0].kg)<0.0001);
+  const candidates=suitable?sets.map(s=>s.kg*(1+s.reps/30)):[];
   const e1rm=candidates.length?round(Math.max(...candidates)):null;
   const entry={date:record.date,variant,sets,totalReps,maxKg,volume,e1rm};
   if(days.length&&days[days.length-1].date===entry.date)days[days.length-1]=entry;
