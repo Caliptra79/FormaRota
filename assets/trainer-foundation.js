@@ -36,39 +36,27 @@ function weeklyVolume({fullHistory=[],absHistory=[],start,end}={}){
  }
  return {start,end,physicalSets,secondaryCredits,byMuscle,days,interpretation:'Bunlar kaydedilen geçerli setlerdir; kas gelişimi veya toparlanma ölçümü değildir. Yardımcı katkılar ayrı tutulur.'};
 }
-function doubleProgression({moveId,variant,history=[],range=[8,12],step=2.5,asOf,minimumDays=2}={}){
- if(!FULL_IDS.includes(moveId)||!Array.isArray(history)||!Array.isArray(range)||range.length!==2||!Number.isInteger(range[0])||!Number.isInteger(range[1])||range[0]<1||range[1]>100||range[0]>=range[1]||![1,2.5,5].includes(step)||!validDate(asOf))
-  return {status:'invalid',reason:'Hareket, tekrar aralığı, artış kademesi veya tarih geçersiz.'};
- const results=[];
- history.forEach((session,index)=>{
-  if(!session||!validDate(session.date)||session.date>asOf||!['finished','stopped'].includes(session.status))return;
-  const rows=session.items?.[moveId];if(!Array.isArray(rows))return;
-  const selected=rows.filter(s=>s?.done===true&&(s.name||variant)===variant);
-  if(!selected.length)return;
-  results.push({date:session.date,index,at:session.endedAt||session.startedAt||'',valid:selected.length===3&&selected.every(validFullSet)&&session.status==='finished',invalid:selected.some(s=>!validFullSet(s)),partial:session.status!=='finished'||selected.length!==3,sets:selected});
+const STEPS=Object.freeze([0.5,1,2.5,5]);
+function validateSettings(settings){
+ if(!settings||typeof settings!=='object'||Array.isArray(settings))return false;
+ const keys=Object.keys(settings);if(keys.length>40)return false;
+ return keys.every(key=>{
+  const separator=key.indexOf('|'),id=key.slice(0,separator),variant=key.slice(separator+1),v=settings[key];
+  return separator>0&&FULL_IDS.includes(id)&&variant.length>0&&variant.length<=100&&
+   v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).every(k=>['min','max','step'].includes(k))&&
+   Number.isInteger(v.min)&&Number.isInteger(v.max)&&v.min>=1&&v.max<=100&&v.min<v.max&&STEPS.includes(v.step);
  });
- results.sort((a,b)=>a.date.localeCompare(b.date)||a.at.localeCompare(b.at)||a.index-b.index);
- const latest=results.at(-1);
- if(!latest)return {status:'insufficient',reason:'Henüz yeterli veri yok; önce üç geçerli set kaydet.'};
- if(latest.invalid||latest.partial)return {status:'caution',reason:'Son antrenman eksik veya geçersiz. Ağırlık artışı önerilmiyor.',lastDate:latest.date};
- const unique=[];for(const entry of results.filter(x=>x.valid)){if(unique.at(-1)?.date===entry.date)unique[unique.length-1]=entry;else unique.push(entry);}
- const last=unique.at(-1),prior=unique.at(-2);
- const age=(a,b)=>(Date.parse(b+'T12:00:00Z')-Date.parse(a+'T12:00:00Z'))/86400000;
- if(age(last.date,asOf)>28||prior&&age(prior.date,last.date)>28)return {status:'stale',reason:'Veriler güncel değil; yeni tam antrenman kaydı gerekli.'};
- if(unique.length<minimumDays)return {status:'insufficient',reason:'En az iki farklı günde tam hareket kaydı gerekli.'};
- const max=range[1],min=range[0],atMax=entry=>entry.sets.every(x=>Number(x.reps)>=max);
- const sameWeight=entry=>entry.sets.every(x=>Number(x.weight)===Number(entry.sets[0].weight));
- const kg=Number(last.sets[0].weight),same=kg>0&&sameWeight(last)&&sameWeight(prior)&&Number(prior.sets[0].weight)===kg;
- const basis={previous:{date:prior.date,sets:prior.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)}))},latest:{date:last.date,sets:last.sets.map(s=>({weight:Number(s.weight),reps:Number(s.reps)}))}};
- if(last.sets.some(s=>Number(s.reps)<min))return {status:'hold',reason:'En az bir set alt tekrar sınırının altında. Mevcut yükü koruyup formu değerlendir.',basis};
- if(moveId==='calf'&&kg===0)return {status:'hold',reason:'Vücut ağırlığı hareketinde kilogram artışı hesaplanmıyor.',basis};
- if(same&&atMax(prior)&&atMax(last)){
-  if(step/kg>0.10)return {status:'hold',reason:'Seçili ekipman kademesi mevcut ağırlığın %10’undan fazla; artış önerilmiyor.',basis};
-  return {status:'consider_increase',currentKg:kg,suggestedKg:kg+step,nextTargetReps:min,basis,requiresApproval:true,reason:'İki ayrı tam antrenman gününde bütün setler üst tekrara ulaştı. Form, yorgunluk ve ekipman uygunluğunu kontrol ederek artışı değerlendirebilirsin.'};
- }
- return {status:'hold',currentKg:kg,basis,reason:'Üst tekrar sınırına henüz iki ayrı günde ulaşılmadı. Aynı ağırlıkla kontrollü tekrar gelişimini sürdür.'};
 }
-const api=Object.freeze({FULL_IDS,ABS_IDS,MUSCLES,validFullSet,validAbsSet,validDate,weeklyVolume,doubleProgression});
+function resolveSetting(move,variant,settings,globalStep){
+ const parsed=(String(move?.reps||'8–12').match(/\\d+/g)||[]).map(Number);
+ const defaultMin=parsed[0]||8,defaultMax=parsed[1]||12;
+ const dumbbell=/dumbbell|dambıl|dambill/i.test(variant||'')||['lateral','zottman'].includes(move?.id);
+ const fallbackStep=dumbbell?1:STEPS.includes(globalStep)?globalStep:2.5;
+ const key=move?.id+'|'+variant;
+ const custom=validateSettings(settings)?settings[key]:null;
+ return {min:custom?.min??defaultMin,max:custom?.max??defaultMax,step:custom?.step??fallbackStep,key,custom:!!custom};
+}
+const api=Object.freeze({FULL_IDS,ABS_IDS,MUSCLES,validFullSet,validAbsSet,validDate,weeklyVolume,STEPS,validateSettings,resolveSetting});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.FormaRotaTrainerFoundation=api;
 })(typeof window!=='undefined'?window:globalThis);
