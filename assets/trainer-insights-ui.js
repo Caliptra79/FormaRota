@@ -40,7 +40,7 @@ E.report=function(...args){
  const recovery=readRecovery(today());
  if(recovery.allowIncrease)return report;
  const messages=report.messages.filter(m=>!m.includes('artışını değerlendirebilirsin'));
- messages.push('Toparlanma: '+recovery.headline+'. '+recovery.advice);
+ messages.unshift('Toparlanma: '+recovery.headline+'. '+recovery.advice);
  return {...report,messages:messages.slice(0,3)};
 };
 function currentVariant(move){
