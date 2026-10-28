@@ -19,7 +19,7 @@ test('user-approved ABS plan has exactly four moves, three reps-based and timed 
  assert.equal(moves[2].defaultValue,20);
  assert.equal(moves[3].defaultValue,0);
  assert.ok(moves.every(x=>x.source.startsWith('https://fitnessprogramer.com/exercise/')));
- assert.ok(moves.every(x=>x.gif.startsWith('https://fitnessprogramer.com/wp-content/uploads/')));
+ assert.deepEqual(moves.map(x=>x.gif),['./assets/abs-floor-crunch.gif','./assets/abs-reverse-crunch.gif','./assets/abs-heel-touch.gif','./assets/abs-plank.gif']);
 });
 test('ABS complete requires 12 VALID sets, measured plank seconds and distinct history',()=>{
  const s=round();
@@ -95,7 +95,8 @@ test('choosing ABS is not blocked on Wednesdays; original Full Body IDs, GIF cou
  assert.ok(html.includes('window.formaRotaFitnessCatalog=FIT_MOVES'));
  assert.ok(html.includes('id="globalTodayDate"'));
  const gifs=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifs.match(/'/g)||[]).length/2,15);
+ for(const name of ['abs-floor-crunch','abs-reverse-crunch','abs-heel-touch','abs-plank'])assert.ok(gifs.includes("'"+name+"'"));
+ assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
 test('ABS backup data is exported and safely validated before restore; older backups remain valid',()=>{
  assert.ok(html.includes("absWorkouts:{selected:localStorage.getItem('formarota-workout-choice-v1')"));
