@@ -151,13 +151,13 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/contrast-guard.css"/>
 <link rel="stylesheet" href="./assets/studio-plus.css"/>
 <link rel="stylesheet" href="./assets/abs-workouts.css"/><style id="fr-splash-style">
-html{background:#0d2028}
-#fr-launch{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#1b4650 0%,#0d2933 45%,#091923 100%);color:#e8fff8;opacity:1;visibility:visible;transition:opacity .36s ease,visibility .36s ease}
+html{background:var(--bg,#101216)}
+#fr-launch{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--accent) 12%,var(--bg)) 0%,var(--bg) 68%);color:var(--text);opacity:1;visibility:visible;transition:opacity .36s ease,visibility .36s ease}
 #fr-launch.fr-launch-done{opacity:0;visibility:hidden;pointer-events:none}
 .fr-launch-center{display:flex;flex-direction:column;align-items:center;gap:17px;padding:24px;text-align:center}
 .fr-launch-icon{width:clamp(94px,25vw,132px);height:auto;border-radius:25%;box-shadow:0 14px 42px #0005;animation:fr-logo-pop .76s cubic-bezier(.16,1,.3,1) both}
 .fr-launch-wordmark{font-size:1.42rem;font-weight:800;letter-spacing:.045em;animation:fr-title-in .7s .13s both}
-.fr-launch-rule{width:54px;height:3px;border-radius:5px;background:#77e7c4;transform-origin:center;animation:fr-rule-in .8s .28s both}
+.fr-launch-rule{width:54px;height:3px;border-radius:5px;background:var(--accent);transform-origin:center;animation:fr-rule-in .8s .28s both}
 @keyframes fr-logo-pop{0%{opacity:0;transform:translateY(24px) scale(.75) rotate(-7deg)}60%{opacity:1;transform:translateY(-5px) scale(1.045) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 @keyframes fr-title-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fr-rule-in{from{opacity:0;transform:scaleX(.05)}to{opacity:1;transform:scaleX(1)}}
