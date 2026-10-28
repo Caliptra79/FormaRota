@@ -387,3 +387,30 @@ html[data-theme] .abs-history-panel{
  .abs-exercise.abs-set-pulse,.abs-exercise.abs-complete-pulse{animation:none!important}
  .abs-choice-pills button{transition:none!important}
 }
+
+/* Higher specificity than the universal Studio editorial heading skin. */
+html[data-theme] main>.route-heading#absWorkoutHero{
+ min-height:290px;
+ background:radial-gradient(ellipse 44% 73% at 88% 6%,color-mix(in srgb,var(--studio-pop-2) 30%,transparent),transparent 80%),
+ linear-gradient(125deg,var(--studio-bg),var(--studio-bg-deep))!important;
+ padding:25px 22px 19px!important;
+ color:var(--studio-ink)!important;
+}
+html[data-theme] main>.route-heading#absWorkoutHero h2{
+ font-size:clamp(2.4rem,7.7vw,3.9rem)!important;
+ color:var(--studio-ink)!important;
+ line-height:1.04!important;
+ letter-spacing:-.075em!important;
+}
+html[data-theme] #absHeroAction{
+ background:var(--studio-pop)!important;
+ color:#102b31!important;
+ -webkit-text-fill-color:#102b31!important;
+ padding:10px 16px;min-height:47px;
+ border:1px solid transparent;border-radius:13px;
+ width:auto;font-size:.84rem;font-weight:800;
+}
+html[data-theme] #absWorkoutPanel button:focus-visible,
+html[data-theme] #workoutProgramChooser button:focus-visible{
+ outline:3px solid var(--accent);outline-offset:3px;
+}
