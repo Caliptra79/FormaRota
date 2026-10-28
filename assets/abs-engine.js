@@ -3,10 +3,10 @@
 (function(scope){
  'use strict';
  const MOVES=Object.freeze([
-  Object.freeze({id:'floor-crunch',name:'Floor Crunch',tr:'Yarım Mekik',group:'Üst karın',kind:'reps',suggested:'12–15 tekrar',defaultValue:12,source:'https://fitnessprogramer.com/exercise/floor-crunch/',gif:'https://fitnessprogramer.com/wp-content/uploads/2021/05/Floor-Crunch.gif',tip:'Kürek kemiklerini kontrollü kaldır, boynunu çekme.'}),
-  Object.freeze({id:'reverse-crunch',name:'Reverse Crunch',tr:'Ters Mekik',group:'Alt karın',kind:'reps',suggested:'12–15 tekrar',defaultValue:12,source:'https://fitnessprogramer.com/exercise/reverse-crunch/',gif:'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Crunch-1.gif',tip:'Kalçanı hafifçe kaldır; hareketi savurarak yapma.'}),
-  Object.freeze({id:'heel-touch',name:'Heel Touch',tr:'Topuklara Dokunma',group:'Yan karın (oblik)',kind:'reps',suggested:'20 toplam (10+10)',defaultValue:20,source:'https://fitnessprogramer.com/exercise/heel-touch/',gif:'https://fitnessprogramer.com/wp-content/uploads/2021/02/Heel-Touch.gif',tip:'Sağ ve sol dönüşleri toplam say, belini zorlamadan ilerle.'}),
-  Object.freeze({id:'plank',name:'Forearm Plank',tr:'Düz Plank',group:'Core',kind:'seconds',suggested:'Doğru formla mümkün olduğunca uzun',defaultValue:0,source:'https://fitnessprogramer.com/exercise/plank/',gif:'https://fitnessprogramer.com/wp-content/uploads/2021/02/plank.gif',tip:'Belini çökertmeden, nefes tutmadan form bozulana kadar sürdür.'})
+  Object.freeze({id:'floor-crunch',name:'Floor Crunch',tr:'Yarım Mekik',group:'Üst karın',kind:'reps',suggested:'12–15 tekrar',defaultValue:12,source:'https://fitnessprogramer.com/exercise/floor-crunch/',gif:'./assets/abs-floor-crunch.gif',tip:'Kürek kemiklerini kontrollü kaldır, boynunu çekme.'}),
+  Object.freeze({id:'reverse-crunch',name:'Reverse Crunch',tr:'Ters Mekik',group:'Alt karın',kind:'reps',suggested:'12–15 tekrar',defaultValue:12,source:'https://fitnessprogramer.com/exercise/reverse-crunch/',gif:'./assets/abs-reverse-crunch.gif',tip:'Kalçanı hafifçe kaldır; hareketi savurarak yapma.'}),
+  Object.freeze({id:'heel-touch',name:'Heel Touch',tr:'Topuklara Dokunma',group:'Yan karın (oblik)',kind:'reps',suggested:'20 toplam (10+10)',defaultValue:20,source:'https://fitnessprogramer.com/exercise/heel-touch/',gif:'./assets/abs-heel-touch.gif',tip:'Sağ ve sol dönüşleri toplam say, belini zorlamadan ilerle.'}),
+  Object.freeze({id:'plank',name:'Forearm Plank',tr:'Düz Plank',group:'Core',kind:'seconds',suggested:'Doğru formla mümkün olduğunca uzun',defaultValue:0,source:'https://fitnessprogramer.com/exercise/plank/',gif:'./assets/abs-plank.gif',tip:'Belini çökertmeden, nefes tutmadan form bozulana kadar sürdür.'})
  ]);
  const ids=MOVES.map(x=>x.id);
  const iso=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
