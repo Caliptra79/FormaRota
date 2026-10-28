@@ -67,12 +67,33 @@ function recovery({asOf,fullHistory=[],absHistory=[],sleepLog={},moves=[],coach,
  const hours=validSleep.find(x=>x.hours!=null&&Number.isFinite(x.hours)&&x.hours>=0.5&&x.hours<=16);
  const energy=validSleep.find(x=>x.energy!=null&&Number.isInteger(x.energy)&&x.energy>=1&&x.energy<=5);
  const lowSleep=!!hours&&hours.hours<6,lowEnergy=!!energy&&energy.energy<=2;
- const frequent=daysSince!==null&&daysSince<=1&&dates.length>=2;
+ const foundation=root.FormaRotaTrainerFoundation;
+ const worked={};
+ if(foundation?.MUSCLES){
+  for(const [history,kind] of [[fullHistory,'full'],[absHistory,'abs']]){
+   for(const entry of arr(history)){
+    if(!entry||!validDate(entry.date)||!['finished','stopped'].includes(entry.status)||
+       diff(entry.date,asOf)<0||diff(entry.date,asOf)>7)continue;
+    const ids=kind==='full'?foundation.FULL_IDS:foundation.ABS_IDS;
+    for(const id of ids){
+     const rows=entry.items?.[id];if(!Array.isArray(rows))continue;
+     const valid=rows.slice(0,3).some(s=>kind==='full'?foundation.validFullSet(s):foundation.validAbsSet(s,id));
+     if(!valid)continue;
+     if(!worked[entry.date])worked[entry.date]=new Set();
+     worked[entry.date].add(foundation.MUSCLES[id].primary);
+    }
+   }
+  }
+ }
+ const workedDays=Object.keys(worked).sort(),recent=workedDays.slice(-2);
+ const overlapping=recent.length===2&&diff(recent[0],recent[1])<=1&&diff(recent[1],asOf)<=2
+  ?[...worked[recent[0]]].filter(m=>worked[recent[1]].has(m)):[];
+ const frequent=overlapping.length>0;
  const drops=coach?.records?lastPerformances({history:fullHistory,moves,asOf,coach}):{comparable:0,declineCount:0};
  const reasons=[],signals=[];
  if(lowSleep){reasons.push('Son kayıtlı uyku '+hours.hours+' saat (6 saatin altında).');signals.push('sleep');}
  if(lowEnergy){reasons.push('Son kayıtlı enerji düzeyi '+energy.energy+'/5.');signals.push('energy');}
- if(frequent){reasons.push('Son günlerde birden fazla antrenman günü kaydedilmiş.');signals.push('frequency');}
+ if(frequent){reasons.push('Son iki yakın antrenman gününde '+overlapping.slice(0,3).join(', ')+' kas grupları yeniden çalıştırılmış.');signals.push('muscle-interval');}
  if(drops.declineCount){reasons.push(drops.declineCount+' harekette aynı ağırlıkta son üç farklı günde toplam tekrar azalmış.');signals.push('performance');}
  if(painReported)reasons.unshift('Ağrı veya sakatlık belirtisi olduğunu işaretledin.');
  let status='normal',headline='Ek uyarı saptanmadı';
