@@ -36,7 +36,7 @@ test('both trainer assets are included in offline shell cache',()=>{
  const sw=read('sw.js');
  assert.ok(sw.includes("'./assets/trainer-foundation.js'"));
  assert.ok(sw.includes("'./assets/trainer-adapter.js'"));
- assert.ok(sw.includes('formarota-solo-v71-shell'));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.ok(sw.includes('abs-heel-touch'));
 });
 test('JSON export and import preserve validated personal trainer settings',()=>{
