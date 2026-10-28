@@ -20,5 +20,5 @@ html=html.replaceAll('iPhone Dosyalar','Windows İndirilenler').replaceAll('bu t
 fs.writeFileSync(index,html);
 const bundled=fs.readdirSync(path.join(dest,'assets'));
 const gifCount=bundled.filter(x=>x.endsWith('.gif')).length;
-if(gifCount!==15)throw Error('Unexpected workout GIF count: '+gifCount);
+if(gifCount!==19)throw Error('Unexpected workout GIF count: '+gifCount);
 console.log('Desktop bundle ready. Exercise GIFs:',gifCount);
