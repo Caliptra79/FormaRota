@@ -20,7 +20,7 @@ test('original 13 moves, 15 GIF and 7 themes still exist',()=>{
  assert.equal([...moves.matchAll(/\bid:'[^']+',name:/g)].length,13);
  assert.ok(html.includes('figure.append(picture)'));
  for(const theme of ['night','ocean','light','sand','neon','volt','sunset'])assert.ok(html.includes('value="'+theme+'"'));
- assert.equal((sw.match(/const GIFS=\[([^\]]+)\]/)?.[1].match(/'/g)||[]).length/2,15);
+ assert.equal((sw.match(/const GIFS=\[([^\]]+)\]/)?.[1].match(/'/g)||[]).length/2,19);
  assert.ok(load('assets/theme-minimal-v26.css').includes('width:min(100%,240px)'));
 });
 test('old weekly report uses exactly the coach full-workout validator',()=>{
