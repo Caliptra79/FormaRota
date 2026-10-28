@@ -113,7 +113,7 @@ test('scripts parse, offline shell bundles both Luxe assets, and original workou
  assert.ok(sw.includes("'./assets/luxe-ui.css'"));
  assert.ok(sw.includes("'./assets/luxe-ui.js'"));
  const gifList=sw.match(/const GIFS=\[([^\]]+)\]/)?.[1]||'';
- assert.equal((gifList.match(/'/g)||[]).length/2,15);
+ assert.equal((gifList.match(/'/g)||[]).length/2,19);
  assert.ok(html.includes('id="globalTodayDate"'));
  assert.equal(JSON.parse(read('manifest.webmanifest')).name,'FormaRota');
 });
