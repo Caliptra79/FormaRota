@@ -5,20 +5,24 @@ const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fa
 const iso=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d);
 function day(row){for(const key of ['date','endedAt','completedAt','finishedAt']){const v=row?.[key];if(typeof v==='string'&&iso(v.slice(0,10)))return v.slice(0,10)}return ''}
 function week(s){const a=s.split('-').map(Number),d=new Date(a[0],a[1]-1, a[2],12);d.setDate(d.getDate()-((d.getDay()+6)%7));return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+const waterTarget=()=>{const n=Number(localStorage.getItem('formarota-water-goal-v1'));return n>=250&&n<=7000?n:2500};
+const XP_GOALS_KEY='formarota-rank-goals-snapshot-v1';
+function snapshotGoals(){let g=read(XP_GOALS_KEY,null);if(!g||!(Number(g.kcal)>0)||!(Number(g.protein)>0)){g={kcal:Number(document.getElementById('goalKcal')?.value)||2600,protein:Number(document.getElementById('goalProtein')?.value)||160};try{localStorage.setItem(XP_GOALS_KEY,JSON.stringify(g))}catch(e){}}return g}
+function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='full')return Array.isArray(row.items)&&row.items.length>=13;return true}
 function tally(){
  const days=new Map(),entry=d=>{if(!days.has(d))days.set(d,{food:[],walk:0,water:0,full:0,abs:0});return days.get(d)};
  const foods=read('kocluk-food-log-v2',[]);if(Array.isArray(foods))foods.forEach(x=>{if(iso(x?.date)&&Number(x.amount)>0)entry(x.date).food.push(x)});
  for(const [key,col] of [['formarota-walks-v1','walk'],['formarota-water-v1','water']]){const obj=read(key,{});if(obj&&typeof obj==='object'&&!Array.isArray(obj))for(const [d,n] of Object.entries(obj))if(iso(d))entry(d)[col]=Math.max(0,Number(n)||0)}
- for(const [key,col] of [['kocluk-fitness-history-v1','full'],['formarota-abs-history-v1','abs']]){const rows=read(key,[]);if(Array.isArray(rows))rows.forEach(x=>{const d=day(x);if(d&&x.status==='finished')entry(d)[col]++})}
+ for(const [key,col] of [['kocluk-fitness-history-v1','full'],['formarota-abs-history-v1','abs']]){const rows=read(key,[]);if(Array.isArray(rows))rows.forEach(x=>{const d=day(x);if(d&&isCompleted(x,col))entry(d)[col]++})}
  const weeks=new Map();days.forEach((v,d)=>{const w=week(d);if(!weeks.has(w))weeks.set(w,[]);weeks.get(w).push(v)});
  const categories={Fitness:0,Beslenme:0,Aktivite:0,Düzenlilik:0};
- const kcalGoal=Number(document.getElementById('goalKcal')?.value)||0,proteinGoal=Number(document.getElementById('goalProtein')?.value)||0;
+ const goals=snapshotGoals(),kcalGoal=goals.kcal,proteinGoal=goals.protein;
  weeks.forEach(rows=>{let full=0,abs=0,active=0;for(const r of rows){
   if(r.food.length||r.full||r.abs||r.walk)active++;
   if(r.food.length){categories.Beslenme+=25;const meals=new Set(r.food.map(x=>x.meal)),k=r.food.reduce((n,x)=>n+(Number(x.kcal)||0),0),p=r.food.reduce((n,x)=>n+(Number(x.protein)||0),0);
    if(meals.size>=3&&kcalGoal>0&&proteinGoal>0&&k>=.85*kcalGoal&&k<=1.15*kcalGoal&&p>=.9*proteinGoal)categories.Beslenme+=15}
   if(r.walk>=5)categories.Aktivite+=25;
-  if(r.water>=2500)categories.Aktivite+=10;
+  if(r.water>=waterTarget())categories.Aktivite+=10;
   if(r.full&&full<3){categories.Fitness+=80;full++}
   if(r.abs&&abs<3){categories.Fitness+=35;abs++}
  }if(active>=5)categories.Düzenlilik+=60});
@@ -122,7 +126,7 @@ function historySummary(){
  const dayMap=new Map(),get=d=>{if(!dayMap.has(d))dayMap.set(d,{food:false,walk:0,workouts:0,kcal:0,protein:0});return dayMap.get(d)};
  if(Array.isArray(foods))for(const x of foods){if(!iso(x?.date)||!(Number(x.amount)>0))continue;const v=get(x.date);v.food=true;v.kcal+=Math.max(0,Number(x.kcal)||0);v.protein+=Math.max(0,Number(x.protein)||0)}
  if(walks&&typeof walks==='object'&&!Array.isArray(walks))for(const [d,n] of Object.entries(walks))if(iso(d))get(d).walk=Math.max(0,Number(n)||0);
- for(const rows of [full,abs])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&x.status==='finished')get(d).workouts++}
+ for(const [rows,type] of [[full,'full'],[abs,'abs']])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&isCompleted(x,type))get(d).workouts++}
  const weeks=new Map();dayMap.forEach((v,d)=>{const key=week(d);if(!weeks.has(key))weeks.set(key,{workouts:0,walk:0,foodDays:0,activeDays:0,protein:0,proteinDays:0});const w=weeks.get(key);w.workouts+=v.workouts;w.walk+=v.walk;if(v.food){w.foodDays++;w.protein+=v.protein;w.proteinDays++}if(v.food||v.walk>0||v.workouts>0)w.activeDays++});
  const stats={workouts:0,km:0,foodDays:0,activeWeeks:0};dayMap.forEach(v=>{stats.workouts+=v.workouts;stats.km+=v.walk;if(v.food)stats.foodDays++});weeks.forEach(w=>{if(w.activeDays>=3)stats.activeWeeks++});
  return {stats,weeks};
