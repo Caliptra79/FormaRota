@@ -157,7 +157,7 @@ function reportVolume(){
  inner.append(create('p','muted',data.interpretation));wrapper.append(inner);wrapper.open=open;
 }
 function init(){
- settingsUI();reportVolume();
+ settingsUI();reportVolume();refreshCoach();
  const report=document.getElementById('coachReport');
  if(report&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>reportVolume()).observe(report,{childList:true});}
 }
