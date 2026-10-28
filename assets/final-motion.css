@@ -77,27 +77,35 @@ html[data-theme="volt"] .mobile-tabbar button.active{
  }
 }
 
-/* App launch and route transitions: subtle travel with a short stagger. */
+/* FormaRota polished app entrance and directional page navigation.
+   GPU-friendly transforms, safe on iOS and all seven themes. */
 @keyframes fr-app-arrive{
- from{opacity:.35;transform:translateY(12px) scale(.992)}
- to{opacity:1;transform:translateY(0) scale(1)}
+ 0%{opacity:.15;transform:translate3d(0,18px,0) scale(.986);filter:blur(3px)}
+ 65%{opacity:1;filter:blur(0)}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
 }
 @keyframes fr-route-arrive{
- from{opacity:.18;transform:translate3d(15px,7px,0)}
- to{opacity:1;transform:translate3d(0,0,0)}
+ 0%{opacity:.05;transform:translate3d(22px,10px,0) scale(.988)}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
 @keyframes fr-route-arrive-back{
- from{opacity:.18;transform:translate3d(-15px,7px,0)}
- to{opacity:1;transform:translate3d(0,0,0)}
+ 0%{opacity:.05;transform:translate3d(-22px,10px,0) scale(.988)}
+ 100%{opacity:1;transform:translate3d(0,0,0) scale(1)}
 }
 @media(prefers-reduced-motion:no-preference){
- body main{animation:fr-app-arrive 420ms cubic-bezier(.16,.8,.24,1) both}
+ body main{animation:fr-app-arrive 560ms cubic-bezier(.16,1,.3,1) both}
  main>section.fr-motion-enter:not(.hidden){
-  animation:fr-route-arrive 290ms cubic-bezier(.2,.78,.2,1) both;
-  animation-delay:calc(var(--fr-enter-step,0) * 32ms);
+  animation:fr-route-arrive 340ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay:calc(var(--fr-enter-step,0) * 24ms);
+  will-change:transform,opacity;
  }
  html[data-fr-route-direction="back"] main>section.fr-motion-enter:not(.hidden){
   animation-name:fr-route-arrive-back;
  }
- .mobile-tabbar button.active{transition:background-color 220ms ease,color 220ms ease,box-shadow 220ms ease,transform 190ms ease}
+ .mobile-tabbar button.active{
+  transition:background-color 240ms ease,color 240ms ease,box-shadow 240ms ease,transform 200ms ease;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ body main,main>section.fr-motion-enter:not(.hidden){animation:none!important;filter:none!important}
 }
