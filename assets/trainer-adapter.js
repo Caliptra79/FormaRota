@@ -5,7 +5,7 @@
 const E=root.FormaRotaCoachEngine,F=root.FormaRotaTrainerFoundation;
 if(!E||!F)return;
 const SETTINGS_KEY='formarota-trainer-settings-v1';
-const STEPS=[0.5,1,2.5,5];
+const STEPS=[1,2.5,5];
 const catalog=()=>Array.isArray(root.formaRotaFitnessCatalog)?root.formaRotaFitnessCatalog:[];
 const read=(key,fallback)=>{try{const x=JSON.parse(localStorage.getItem(key));return x===null?fallback:x}catch{return fallback}};
 function validateSettings(x){
