@@ -414,3 +414,21 @@ html[data-theme] #absWorkoutPanel button:focus-visible,
 html[data-theme] #workoutProgramChooser button:focus-visible{
  outline:3px solid var(--accent);outline-offset:3px;
 }
+
+
+/* Circular progress typography: keep labels centered inside small iPhone rings. */
+.sp-goal-ring,.studio-progress-ring{min-width:0;min-height:0;flex-shrink:0;box-sizing:border-box}
+.sp-goal-center,.studio-progress-inner{min-width:0;min-height:0;max-width:100%;max-height:100%;box-sizing:border-box;overflow:hidden;text-align:center;padding:3px}
+.sp-goal-percent{display:block;max-width:100%;font-size:clamp(.72rem,2.5vw,1.08rem);line-height:1.12;letter-spacing:-.035em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sp-goal-emoji{font-size:clamp(.7rem,2.6vw,1rem);line-height:1.1}
+.studio-progress-inner strong{display:block;max-width:100%;font-size:clamp(1.5rem,5vw,2.85rem);line-height:1.05;letter-spacing:-.05em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.studio-progress-caption{max-width:100%;font-size:clamp(.52rem,1.55vw,.7rem);line-height:1.2;letter-spacing:.06em;overflow-wrap:anywhere}
+@media(max-width:480px){
+ .sp-goal-ring{padding:5px}
+ .sp-goal-center{padding:2px}
+ .sp-goal-percent{font-size:clamp(.68rem,2.9vw,.88rem)}
+ .sp-goal-emoji{font-size:.77rem}
+ .studio-progress-inner strong{font-size:clamp(1.35rem,7vw,2.15rem)}
+ .abs-hero-meter .studio-progress-inner strong{font-size:clamp(1.28rem,6vw,1.85rem)}
+ .studio-progress-icon{font-size:.85rem}
+}
