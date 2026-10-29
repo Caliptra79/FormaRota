@@ -262,6 +262,15 @@ setTimeout(function(){hide(seq)},4000);
 <section class="route-heading wide" data-view="settings" aria-label="Uygulama ayarları"><div class="eyebrow">AYARLAR</div><h2>Uygulama ayarları</h2><p>Tema, veri koruma ve yerel yedekleme.</p></section>
 <section class="panel wide" data-view="settings" id="preferencesPanel"><div class="split"><h2>Görünüm</h2><span class="tag">Kişisel tercihler</span></div>
 <div class="settings-theme"><label for="themeSelect">Renk teması</label><select aria-label="Görünüm teması" id="themeSelect"><option value="night">🌙 Gece · Lime</option><option value="ocean">🌊 Okyanus · Turkuaz</option><option value="light">☀️ Gün ışığı · Yeşil</option><option value="sand">🏜 Kum · Bakır</option><option value="neon">⚡ Neon Mor · Cyber</option><option value="volt">💚 Volt · Elektrik</option><option value="sunset">🔥 Sunset · Turuncu</option></select><button id="luxeThemeLaunch" class="luxe-theme-launch" type="button" aria-haspopup="dialog"><span><strong id="luxeThemeName">Temaları keşfet</strong><small>7 paleti canlı önizle · Dokun ve seç</small></span><span class="luxe-preview-dots" aria-hidden="true"><i style="--dot:var(--luxe-coral)"></i><i style="--dot:var(--luxe-violet)"></i><i style="--dot:var(--luxe-blue)"></i><i style="--dot:var(--luxe-mint)"></i></span></button></div>
+<div class="frh-motion-settings" role="group" aria-labelledby="frhMotionLabel">
+<label id="frhMotionLabel" for="frhMotionSelect">Animasyon ve hareket</label>
+<select id="frhMotionSelect" aria-describedby="frhMotionDescription">
+<option value="normal">Normal — animasyonlar açık</option>
+<option value="reduced">Azaltılmış — minimum hareket</option>
+<option value="system">Sistem — cihaz tercihine göre</option>
+</select>
+<p id="frhMotionDescription" role="status" aria-live="polite">Yumuşak geçişler, ilerleme halkaları ve kısa tamamlanma animasyonları açık.</p>
+</div>
 <div class="privacy-note"><strong>🔒 Yalnızca bu cihazda</strong><p>Beslenme, su, yürüyüş ve antrenman kayıtların bu cihazda saklanır. Kayıtlarını korumak veya başka bir cihaza taşımak için aşağıdan JSON yedeği al.</p></div>
 </section>
 <section class="panel wide" data-view="settings" id="informationPanel"><details class="app-information"><summary>ℹ️ Uygulama hakkında ve bilgilendirme</summary><p>Besin değerleri hazırlama yöntemi ve ürüne göre değişebilir. Bu uygulama tıbbi öneri yerine geçmez.</p></details></section>
