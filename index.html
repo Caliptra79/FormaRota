@@ -696,12 +696,87 @@ $('frDinnerPreference')?.addEventListener('change',()=>{
  renderDinnerRecommendations();
  if(typeof v21SmartDinner==='function')v21SmartDinner();
 });
-function renderResults(items,root=$('results')){root.innerHTML='';if(!items.length){root.innerHTML='<div class="empty">Sonuç bulunamadı. Farklı bir kelime veya barkod deneyebilirsin.</div>';return}items.forEach(food=>{const el=document.createElement('div');el.className='result';const left=document.createElement('div');const name=document.createElement('strong');name.textContent=food.name;const info=document.createElement('p');info.textContent=`${food.kcal==null?'Kalori yok':fmt(food.kcal)+' kcal'} · ${food.protein==null?'Protein yok':fmt(food.protein)+' g protein'} / 100 g`;const macro=document.createElement('p');macro.textContent=`Karb. ${food.carbs==null?'Bilinmiyor':fmt(food.carbs)+' g'} · Yağ ${food.fat==null?'Bilinmiyor':fmt(food.fat)+' g'} / 100 g`;const tag=document.createElement('span');tag.className='tag';tag.textContent=food.source||food.kind||'Kaynak belirtilmemiş';left.append(name,info,macro,tag);const btn=document.createElement('button');btn.textContent='Ekle';btn.disabled=!nutritionMacrosValid(food);btn.onclick=()=>addFood(food);el.append(left,btn);root.append(el)})}
+function renderResults(items,root=$('results')){
+ root.innerHTML='';
+ if(!items.length){
+  root.innerHTML='<div class="empty">Sonuç bulunamadı. Farklı bir kelime veya barkod deneyebilirsin.</div>';
+  return;
+ }
+ items.forEach(food=>{
+  const measure=window.FormaRotaFoodUnits;
+  const unit=measure?.unit(food)||food.unit||'g',reference=measure?.basis(food)||{text:'100 g',approximate:false};
+  const el=document.createElement('div');el.className='result';
+  const left=document.createElement('div');left.className='food-result-copy';
+  const name=document.createElement('strong');name.textContent=food.name;
+  const info=document.createElement('p');
+  info.textContent=(food.kcal==null?'Kalori yok':fmt(food.kcal)+' kcal')+' · '+
+   (food.protein==null?'Protein yok':fmt(food.protein)+' g protein')+' / '+reference.text;
+  const macro=document.createElement('p');
+  macro.textContent='Karb. '+(food.carbs==null?'Bilinmiyor':fmt(food.carbs)+' g')+
+   ' · Yağ '+(food.fat==null?'Bilinmiyor':fmt(food.fat)+' g')+' / '+reference.text;
+  const tag=document.createElement('span');tag.className='tag';
+  tag.textContent=food.source||food.kind||'Kaynak belirtilmemiş';
+  left.append(name,info,macro,tag);
+  if(reference.approximate){
+   const warning=document.createElement('small');warning.className='food-unit-estimate';
+   warning.textContent='Yaklaşık hacim hesabı: 1 ml ≈ 1 g. Ürün etiketindeki 100 ml değerleri daha doğrudur.';
+   left.append(warning);
+  }
+  const controls=document.createElement('div');controls.className='food-result-controls';
+  const label=document.createElement('label');label.className='food-quantity-label';
+  label.textContent='Miktar ('+unit+')';
+  const input=document.createElement('input');input.type='number';input.min='0.1';input.max='3000';input.step='0.1';
+  input.value=unit==='ml'?'200':'180';input.setAttribute('aria-label',food.name+' miktarı ('+unit+')');
+  label.append(input);
+  const btn=document.createElement('button');btn.type='button';btn.textContent='Ekle';
+  btn.disabled=!nutritionMacrosValid(food);btn.onclick=()=>addFood(food,input.value);
+  controls.append(label,btn);el.append(left,controls);root.append(el);
+ });
+}
 function localSearch(q){const terms=norm(q).split(/\s+/).filter(Boolean);return [...seedFoods,...getCustom()].filter(f=>{const hay=norm([f.name,...(f.aliases||[])].join(' '));return terms.every(t=>hay.includes(t))}).map(f=>({...f,source:f.source||'Kişisel besin'}))}
 function nutritionMacrosValid(f){if(!f||f.kcal==null||f.protein==null||f.kcal===''||f.protein==='')return false;const k=Number(f.kcal),p=Number(f.protein);return Number.isFinite(k)&&k>=0&&k<=1000&&Number.isFinite(p)&&p>=0&&p<=100;}
-function offProductToFood(p){const n=p.nutriments||{};const get=(...keys)=>{for(const k of keys){const v=Number(n[k]);if(n[k]!==undefined&&n[k]!==null&&n[k]!==''&&Number.isFinite(v))return v}return null};const kcal=get('energy-kcal_100g');const protein=get('proteins_100g');if(!nutritionMacrosValid({kcal,protein}))return null;return{id:'off-'+(p.code||('p'+Date.now())),name:[p.product_name,p.brands].filter(Boolean).join(' — ')||'İsimsiz paketli ürün',kcal,protein,carbs:get('carbohydrates_100g'),fat:get('fat_100g'),kind:'Paketli ürün',source:'Open Food Facts (etiket kontrolü gerekli)',code:p.code,verified:false}}
+function offProductToFood(p){
+ const n=p.nutriments||{};
+ const get=(...keys)=>{for(const k of keys){const v=Number(n[k]);if(n[k]!==undefined&&n[k]!==null&&n[k]!==''&&Number.isFinite(v))return v}return null};
+ const name=[p.product_name,p.brands].filter(Boolean).join(' — ')||'İsimsiz paketli ürün';
+ const measurement=typeof window!=='undefined'?window.FormaRotaFoodUnits:null;
+ const unit=measurement?.unit({name})||'g';
+ const mlKcal=get('energy-kcal_100ml'),mlProtein=get('proteins_100ml');
+ const useMl=unit==='ml'&&nutritionMacrosValid({kcal:mlKcal,protein:mlProtein});
+ const suffix=useMl?'100ml':'100g',kcal=get('energy-kcal_'+suffix),protein=get('proteins_'+suffix);
+ if(!nutritionMacrosValid({kcal,protein}))return null;
+ return {id:'off-'+(p.code||('p'+Date.now())),name,kcal,protein,
+  carbs:get('carbohydrates_'+suffix),fat:get('fat_'+suffix),unit,
+  nutritionBasis:suffix,kind:'Paketli ürün',source:'Open Food Facts (etiket kontrolü gerekli)',code:p.code,verified:false};
+}
 async function search(){const q=$('query').value.trim(),src=$('source').value;if(!q){$('status').textContent='Önce bir yiyecek adı yaz.';return}$('searchBtn').disabled=true;$('status').textContent='Aranıyor…';let found=[];if(src!=='off')found=localSearch(q);if(src!=='local'){try{const url='https://world.openfoodfacts.org/cgi/search.pl?'+new URLSearchParams({search_terms:q,search_simple:'1',action:'process',json:'1',page_size:'15',fields:'code,product_name,brands,nutriments'});const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Servis yanıt vermedi');const data=await res.json();const remote=(data.products||[]).map(offProductToFood).filter(Boolean);found=src==='off'?remote:[...found,...remote]}catch(e){$('status').textContent='Paketli ürün servisine ulaşılamadı; yerel sonuçlar gösteriliyor.'}}const seen=new Set();found=found.filter(f=>{const k=f.id||f.name;if(seen.has(k))return false;seen.add(k);return true});$('status').textContent=found.length?`${found.length} sonuç. Paketli ürünlerin etiketini kontrol et.`:'Sonuç bulunamadı veya veri kaynağına ulaşılamadı.';renderResults(found);$('searchBtn').disabled=false}
-function addFood(food){const amount=Number($('amount').value);if(!nutritionMacrosValid(food)){$('status').textContent='Kalori ve protein değeri doğrulanamıyor; eksik besin eklenmedi.';return}if(!Number.isFinite(amount)||amount<=0||amount>3000){$('status').textContent='1–3000 g arasında gramaj gir.';return}const val=k=>food[k]==null?null:Number(food[k])*amount/100;const logs=getLogs();logs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date:$('date').value,meal:$('meal').value,foodId:food.id,name:food.name,amount,kcal:val('kcal')??0,protein:val('protein')??0,carbs:val('carbs'),fat:val('fat'),source:food.source||food.kind||'Kişisel',baseKcal:food.kcal,baseProtein:food.protein,baseCarbs:food.carbs,baseFat:food.fat});write(logKey,logs);renderTotals();$('status').textContent=`✓ ${food.name}, ${fmt(amount)} g olarak ${$('meal').value.toLocaleLowerCase('tr')} öğününe kaydedildi. Günlük kalori ve protein güncellendi.`;typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(`${food.name} · ${fmt(amount)} g kaydedildi`)}
+function addFood(food,chosenAmount){
+ const amount=Number(chosenAmount===undefined?$('amount').value:chosenAmount);
+ const measurement=typeof window!=='undefined'?window.FormaRotaFoodUnits:null;
+ const unit=measurement?.unit(food)||food.unit||'g';
+ if(!nutritionMacrosValid(food)){
+  $('status').textContent='Kalori ve protein değeri doğrulanamıyor; eksik besin eklenmedi.';return;
+ }
+ if(!Number.isFinite(amount)||amount<=0||amount>3000){
+  $('status').textContent='0–3000 '+unit+' arasında geçerli miktar gir.';return;
+ }
+ // Existing local food tables use per-100-g numbers. For old drink values,
+ // 1 ml ≈ 1 g is an explicitly approximate conversion, not a known density.
+ const approximateVolume=unit==='ml'&&food.nutritionBasis!=='100ml';
+ const val=k=>food[k]==null?null:Number(food[k])*amount/100;
+ const logs=getLogs();
+ logs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
+  date:$('date').value,meal:$('meal').value,foodId:food.id,name:food.name,
+  amount,unit,nutritionBasis:food.nutritionBasis||'100g',approximateVolume,
+  kcal:val('kcal')??0,protein:val('protein')??0,carbs:val('carbs'),fat:val('fat'),
+  source:food.source||food.kind||'Kişisel',
+  baseKcal:food.kcal,baseProtein:food.protein,baseCarbs:food.carbs,baseFat:food.fat});
+ write(logKey,logs);renderTotals();
+ $('status').textContent='✓ '+food.name+', '+fmt(amount)+' '+unit+' olarak '+
+  $('meal').value.toLocaleLowerCase('tr')+' öğününe kaydedildi.'+
+  (approximateVolume?' Kalori hesabı yaklaşık (1 ml ≈ 1 g).':' Günlük kalori ve protein güncellendi.');
+ typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(food.name+' · '+fmt(amount)+' '+unit+' kaydedildi');
+}
 async function barcodeSearch(){const code=$('barcode').value.trim();if(!/^\d{8,14}$/.test(code)){$('barcodeStatus').textContent='8–14 haneli sayısal bir barkod gir.';return}$('barcodeBtn').disabled=true;$('barcodeStatus').textContent='Barkod sorgulanıyor…';$('barcodeResult').innerHTML='';try{const res=await fetch('https://world.openfoodfacts.org/api/v3/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,brands,nutriments');if(!res.ok)throw new Error();const data=await res.json();if(data.status!==1||!data.product)throw new Error('Ürün bulunamadı');const food=offProductToFood(data.product);if(!food)throw new Error('Ürünün kalori/protein verisi eksik');renderResults([food],$('barcodeResult'));$('barcodeStatus').textContent='Ürün bulundu. Etiket bilgileriyle karşılaştır.'}catch(e){$('barcodeStatus').textContent=e.message==='Ürün bulunamadı'||e.message==='Ürünün kalori/protein verisi eksik'?e.message:'Barkod servisine ulaşılamadı.'}finally{$('barcodeBtn').disabled=false}}
 function renderCustomFoods(){const root=$('customFoods');root.innerHTML='';const foods=getCustom();if(!foods.length){root.innerHTML='<div class="empty">Henüz kişisel besin eklemedin.</div>';return}foods.forEach(f=>{const el=document.createElement('div');el.className='entry';const left=document.createElement('div');const b=document.createElement('strong');b.textContent=f.name;const p=document.createElement('p');p.textContent=`${fmt(f.kcal)} kcal · ${fmt(f.protein)} g protein / 100 ${f.unit==='ml'?'ml':'g'}`;left.append(b,p);const del=document.createElement('button');del.className='danger';del.textContent='Sil';del.onclick=()=>{write(customKey,getCustom().filter(x=>x.id!==f.id));renderCustomFoods();renderRecipeOptions()};el.append(left,del);root.append(el)})}
 let recipeItems=[];
