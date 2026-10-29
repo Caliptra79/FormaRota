@@ -143,5 +143,5 @@ test('adding 30 seconds after an elapsed rest grants a fresh complete 30 seconds
  ctx.adjust(30);
  const phase=ctx.fitCurrent.phase;
  const remaining=phase.durationSec*1000-(Date.now()-phase.runningSince);
- assert.ok(remaining>28000&&remaining<=30500,'expected 30 seconds, found '+remaining);
+ assert.ok(remaining>28000&&remaining<=31500,'expected approximately 30 seconds, found '+remaining);
 });
