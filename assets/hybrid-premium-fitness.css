@@ -1,0 +1,386 @@
+/* FormaRota / Hybrid Premium • Fitness + Personal Trainer
+ * Additive design layer; original sets, coach decisions, GIFs and themes own their data.
+ * Loaded after previous seven-theme and first-stage hybrid styles. */
+html[data-theme]{
+ --frhf-coach-glow:color-mix(in srgb,var(--luxe-violet) 10%,transparent);
+ --frhf-success:var(--luxe-mint);
+ --frhf-stage-border:color-mix(in srgb,var(--accent) 27%,var(--border));
+ --frhf-soft-shadow:0 6px 22px color-mix(in srgb,var(--bg) 27%,transparent);
+}
+html[data-theme] #fitnessRoot:not(.hidden){gap:clamp(12px,2.4vw,18px)}
+html[data-theme] #fitnessRoot #coachOverview{
+ position:relative;isolation:isolate;overflow:hidden;
+ border-radius:24px!important;
+ padding:clamp(15px,2.5vw,23px)!important;
+ border:1px solid color-mix(in srgb,var(--luxe-violet) 32%,var(--border))!important;
+ background:
+  radial-gradient(ellipse 38% 55% at 100% 0%,var(--frhf-coach-glow),transparent 95%),
+  var(--panel)!important;
+ box-shadow:var(--frhf-soft-shadow)!important;
+ gap:12px;
+}
+html[data-theme] #coachOverview .coach-top{
+ display:flex;align-items:center;
+ gap:12px;margin:0 0 2px;
+}
+#coachOverview .frhf-coach-kicker,
+#fitSessionPanel .frhf-kicker,
+#fitExercisePanel .frhf-kicker{
+ display:inline-flex;align-items:center;gap:7px;
+ margin:0 0 5px;
+ color:var(--accent);font-size:.67rem;line-height:1.35;
+ font-weight:850;letter-spacing:.13em;
+}
+html[data-theme] #coachOverview .coach-top h2{
+ font-size:clamp(1.38rem,4vw,1.75rem)!important;
+ line-height:1.18;letter-spacing:-.046em;
+ margin:0;
+}
+html[data-theme] #coachOverview .coach-week-info{
+ padding:11px 13px;
+ background:var(--panel2);
+ border:1px solid var(--frhf-stage-border);
+ border-radius:15px;
+ display:grid;gap:4px;
+ align-items:start;justify-content:stretch;
+}
+html[data-theme] #coachOverview .coach-week-info strong{
+ color:var(--text);font-size:.8rem;
+}
+html[data-theme] #coachOverview #coachWeekSummary{
+ color:var(--muted);font-size:.83rem;
+ line-height:1.52;font-variant-numeric:tabular-nums;
+}
+html[data-theme] #coachOverview .coach-week-strip{
+ grid-template-columns:repeat(7,minmax(0,1fr));
+ gap:6px;min-width:0;
+}
+html[data-theme] #coachOverview .coach-day{
+ min-height:63px;
+ border-radius:13px;
+ background:var(--panel2);
+ border:1px solid var(--border);
+ padding:9px 3px;
+ gap:4px;
+}
+html[data-theme] #coachOverview .coach-day.coach-done{
+ background:color-mix(in srgb,var(--frhf-success) 11%,var(--panel2));
+ border-color:color-mix(in srgb,var(--frhf-success) 50%,var(--border));
+}
+html[data-theme] #coachOverview .coach-day.coach-planned{
+ border-color:var(--accent);
+}
+html[data-theme] #coachOverview .coach-day-label{
+ color:var(--muted);font-size:.7rem;font-weight:760;
+}
+html[data-theme] #coachOverview .coach-day-icon{
+ font-size:1.05rem;font-weight:830;
+}
+html[data-theme] #coachOverview .coach-main-tip{
+ display:grid;gap:5px;
+ padding:17px!important;
+ border-radius:18px;
+ border:1px solid var(--frhf-stage-border);
+ border-left:4px solid var(--accent);
+ background:
+  radial-gradient(circle at 100% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 72%),
+  var(--panel2);
+ min-width:0;
+}
+html[data-theme] #coachOverview .coach-main-tip strong{
+ font-size:.73rem;line-height:1.3;letter-spacing:.08em;
+ text-transform:uppercase;margin:0;
+ color:var(--accent);font-weight:830;
+}
+html[data-theme] #coachOverview #coachMainTip{
+ font-size:clamp(.91rem,2.5vw,1.03rem);
+ line-height:1.55;color:var(--text);
+ margin:0;overflow-wrap:anywhere;
+}
+html[data-theme] #coachOverview .coach-actions{
+ display:grid;grid-template-columns:minmax(0,1fr);
+}
+html[data-theme] #coachOverview .coach-actions button{
+ width:100%;max-width:100%;
+ min-height:46px;border-radius:13px;
+ font-size:.86rem;font-weight:770;
+}
+html[data-theme] #coachOverview :is(.coach-options,#trainerMoveSettings,#trainerRecovery){
+ background:var(--panel2);
+ border:1px solid var(--border);
+ border-radius:15px;
+ margin:0;
+ padding:0 12px;
+ min-width:0;
+}
+html[data-theme] #coachOverview :is(.coach-options,#trainerMoveSettings,#trainerRecovery)>summary{
+ min-height:48px;
+ padding:10px 1px;
+ font-size:.85rem;font-weight:760;
+ color:var(--text);cursor:pointer;
+ line-height:1.45;
+}
+html[data-theme] #coachOverview .coach-options-body{
+ padding:2px 0 14px;
+}
+html[data-theme] #coachOverview :is(.coach-options,#trainerMoveSettings,#trainerRecovery)[open]>summary{
+ color:var(--accent);
+ border-bottom:1px solid var(--border);
+ margin-bottom:9px;
+}
+html[data-theme] #coachOverview .coach-options-body select,
+html[data-theme] #coachOverview #trainerMoveSettings select,
+html[data-theme] #coachOverview #trainerMoveSettings input{
+ width:100%;max-width:100%;min-width:0;
+ min-height:44px;
+ border-radius:11px;
+}
+html[data-theme] #coachOverview .coach-disclaimer{
+ line-height:1.53;font-size:.77rem;
+ padding:0 2px;color:var(--muted);
+}
+html[data-theme] #fitnessRoot #fitSessionPanel,
+html[data-theme] #fitnessRoot #fitExercisePanel{
+ border-radius:24px!important;
+ padding:clamp(14px,2.8vw,23px)!important;
+ border:1px solid var(--frhf-stage-border)!important;
+ box-shadow:var(--frhf-soft-shadow)!important;
+ min-width:0;
+}
+html[data-theme] #fitSessionPanel h2,
+html[data-theme] #fitExercisePanel .fit-headline h2{
+ font-size:clamp(1.27rem,3.8vw,1.7rem)!important;
+ letter-spacing:-.04em;line-height:1.22;
+ margin:0;
+}
+html[data-theme] #fitSessionPanel .fit-timerbox{
+ border-radius:20px!important;
+}
+html[data-theme] #fitSessionPanel #fitMainClock,
+html[data-theme] #fitSessionPanel #fitPhaseClock{
+ font-variant-numeric:tabular-nums;
+}
+html[data-theme] #fitSessionPanel .fit-toolbar button{
+ min-height:48px;min-width:0;
+ font-size:clamp(.8rem,2.2vw,.94rem);
+ border-radius:13px!important;
+ overflow-wrap:anywhere;
+}
+html[data-theme] #fitExercisePanel>.fit-headline{
+ gap:10px;align-items:center;
+}
+html[data-theme] #fitExercisePanel #fitCompletedText{
+ min-height:36px;
+ border-radius:99px;
+ font-variant-numeric:tabular-nums;
+}
+html[data-theme] #fitExerciseList{
+ display:grid;grid-template-columns:minmax(0,1fr);
+ gap:clamp(12px,2.5vw,17px);
+}
+html[data-theme] #fitExercisePanel .fit-card{
+ --frhf-move-color:var(--accent);
+ position:relative;min-width:0;
+ border-radius:21px!important;
+ padding:clamp(12px,2.5vw,18px)!important;
+ border:1px solid var(--frhf-stage-border)!important;
+ background:var(--panel2)!important;
+ box-shadow:none!important;
+ gap:clamp(11px,2vw,20px);
+}
+html[data-theme] #fitExercisePanel .fit-card.sp-move-card{
+ border-left:4px solid var(--sp-muscle,var(--accent))!important;
+}
+html[data-theme] #fitExercisePanel .fit-card.current{
+ outline:2px solid var(--accent)!important;
+ outline-offset:1px;
+ border-color:var(--accent)!important;
+ box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 8%,transparent)!important;
+}
+html[data-theme] #fitExercisePanel .fit-card[data-frhf-progress="complete"]{
+ border-color:color-mix(in srgb,var(--frhf-success) 46%,var(--border))!important;
+ background:linear-gradient(145deg,
+  color-mix(in srgb,var(--frhf-success) 9%,var(--panel2)),
+  var(--panel2) 74%)!important;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+ width:100%;max-width:260px;
+ aspect-ratio:1/1;min-width:0;
+ border-radius:16px!important;
+ overflow:hidden;
+ border:1px solid color-mix(in srgb,var(--border) 80%,var(--accent));
+ margin-inline:auto;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview img{
+ width:100%!important;height:100%!important;
+ max-height:none!important;object-fit:contain!important;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-nametop{
+ gap:8px;flex-wrap:wrap;
+ min-width:0;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-nametop strong{
+ font-size:clamp(1.1rem,3.3vw,1.46rem);
+ line-height:1.23;font-weight:830;letter-spacing:-.035em;
+ overflow-wrap:anywhere;
+}
+html[data-theme] #fitExercisePanel .sp-move-heading{
+ align-items:center;gap:8px;
+ margin-bottom:11px;
+}
+html[data-theme] #fitExercisePanel .sp-move-label{
+ line-height:1.36;font-size:.69rem;
+ font-weight:830;
+}
+html[data-theme] #fitExercisePanel .sp-move-count{
+ border-radius:99px;
+ padding:5px 9px;
+ background:color-mix(in srgb,var(--sp-muscle,var(--accent)) 12%,var(--panel));
+ border:1px solid color-mix(in srgb,var(--sp-muscle,var(--accent)) 28%,var(--border));
+ font-variant-numeric:tabular-nums;
+ white-space:nowrap;
+ font-size:.72rem;
+}
+html[data-theme] #fitExercisePanel .sp-move-dots{
+ margin:10px 0 13px;gap:7px;
+}
+html[data-theme] #fitExercisePanel .sp-move-dot{
+ min-height:7px;
+ border-radius:99px;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-settable{
+ min-width:0;overflow:visible;
+ border-top:1px solid var(--border);
+ padding-top:13px;
+ margin-top:13px;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set-head{
+ font-size:.72rem;letter-spacing:.02em;
+ color:var(--muted);
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set{
+ min-width:0;
+ border-radius:12px;
+ padding:7px 6px;
+ border:1px solid var(--border);
+ margin:6px 0;
+ background:var(--panel);
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set.done{
+ background:color-mix(in srgb,var(--frhf-success) 10%,var(--panel));
+ border-color:color-mix(in srgb,var(--frhf-success) 30%,var(--border));
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set :is(input,select,button){
+ min-width:0;
+ min-height:44px;
+ border-radius:10px;
+ font-size:16px;
+}
+html[data-theme] #fitExercisePanel .fit-card :is(.coach-inline-tip,.coach-technique){
+ min-width:0;overflow-wrap:anywhere;
+}
+html[data-theme] #fitExercisePanel .fit-card .coach-inline-tip{
+ padding:12px!important;
+ border-radius:13px;
+ border:1px solid var(--frhf-stage-border);
+ border-left:3px solid var(--accent);
+ background:color-mix(in srgb,var(--accent) 6%,var(--panel));
+ font-size:.84rem;
+ margin:12px 0;
+ line-height:1.55;
+}
+html[data-theme] #fitExercisePanel .fit-card .coach-reason>summary,
+html[data-theme] #fitExercisePanel .fit-card .coach-technique>summary{
+ min-height:44px;display:flex;align-items:center;
+ color:var(--accent);
+}
+html[data-theme] #coachReport,
+html[data-theme] #coachAnalysis{
+ border-radius:17px;
+ padding:15px;
+ background:var(--panel2);
+ border:1px solid var(--frhf-stage-border);
+ overflow-wrap:anywhere;
+}
+html[data-theme] #coachReport{
+ border-left:4px solid var(--accent);
+}
+html[data-theme] #coachReport h3{
+ font-weight:830;letter-spacing:-.03em;
+ font-size:1.02rem;
+}
+html[data-theme] #coachAnalysis .coach-analysis-note{
+ padding:9px 11px;
+ border-left:3px solid var(--accent);
+ border-radius:0 10px 10px 0;
+ background:color-mix(in srgb,var(--accent) 6%,var(--panel));
+}
+html[data-theme] #trainerMuscleVolume{
+ border-radius:15px;min-width:0;
+ background:var(--panel2);
+}
+html[data-theme] #trainerRecovery .trainer-recovery-result,
+html[data-theme] #trainerMoveSettings .trainer-setting-fields{
+ line-height:1.55;
+}
+html[data-theme] #fitnessRoot :is(button,summary,input,select):focus-visible{
+ outline:2px solid var(--accent);outline-offset:2px;
+}
+@media(min-width:690px){
+ html[data-theme] #fitExercisePanel .fit-card{
+  display:grid!important;
+  grid-template-columns:minmax(150px,215px) minmax(0,1fr)!important;
+  align-items:start;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+  width:100%;max-width:215px;
+ }
+}
+@media(max-width:690px){
+ html[data-theme] #fitnessRoot #coachOverview{padding:15px!important}
+ html[data-theme] #coachOverview .coach-week-strip{gap:4px}
+ html[data-theme] #coachOverview .coach-day{
+  min-height:60px;padding:8px 2px;
+ }
+ html[data-theme] #fitExercisePanel .fit-card{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+  width:min(100%,270px);height:auto;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-set{
+  padding:6px 4px;gap:5px;
+ }
+}
+@media(max-width:380px){
+ html[data-theme] #fitnessRoot #fitSessionPanel,
+ html[data-theme] #fitnessRoot #fitExercisePanel{
+  padding:12px!important;
+ }
+ html[data-theme] #coachOverview .coach-week-strip{gap:3px}
+ html[data-theme] #coachOverview .coach-day-label{font-size:.64rem}
+ html[data-theme] #coachOverview .coach-day-icon{font-size:.95rem}
+ html[data-theme] #fitExercisePanel .fit-card{
+  padding:10px!important;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-set :is(input,select,button){
+  font-size:16px;
+ }
+ html[data-theme] #fitExercisePanel .sp-move-heading{gap:5px}
+ html[data-theme] #fitExercisePanel .sp-move-label{font-size:.63rem}
+}
+@media(prefers-reduced-motion:no-preference){
+ html[data-fr-motion="system"] #fitExercisePanel .fit-card.current,
+ html[data-fr-motion="system"] #coachOverview .coach-main-tip{
+  transition:border-color 210ms ease,box-shadow 210ms ease;
+ }
+}
+html[data-fr-motion="normal"] #fitExercisePanel .fit-card.current,
+html[data-fr-motion="normal"] #coachOverview .coach-main-tip{
+ transition:border-color 210ms ease,box-shadow 210ms ease;
+}
+html[data-fr-motion="reduced"] #fitnessRoot *,
+html[data-fr-motion="reduced"] #fitnessRoot *::before,
+html[data-fr-motion="reduced"] #fitnessRoot *::after{
+ animation:none!important;transition:none!important;
+}
