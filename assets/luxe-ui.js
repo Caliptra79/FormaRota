@@ -4,6 +4,9 @@
  const doc=root.document;
  if(!doc)return;
  const THEMES=[
+  {id:'oled-black',name:'OLED Black',subtitle:'True Black · Mint',bg:'#000000',ink:'#f6f6f7',accent:'#91e6be',dots:['#6e987f','#aaaaaf','#e2c18b']},
+  {id:'oled-neon',name:'OLED Neon',subtitle:'True Black · Electric',bg:'#000000',ink:'#f8f9ff',accent:'#bcff4c',dots:['#44d9ff','#c18aff','#ff6fa3']},
+  {id:'oled-ember',name:'OLED Ember',subtitle:'True Black · Copper',bg:'#000000',ink:'#fff6ee',accent:'#ffaf67',dots:['#f17d65','#ffc16b','#b69a8b']},
   {id:'night',name:'Gece',subtitle:'Graphite Mint',bg:'#0c141a',ink:'#f1f6f6',accent:'#83ddba',dots:['#ffa083','#b9a6f9','#77c9ef']},
   {id:'ocean',name:'Okyanus',subtitle:'Ocean Luxe',bg:'#091821',ink:'#f0f8fa',accent:'#77d8d1',dots:['#76dcf4','#bcb3ff','#ffa888']},
   {id:'light',name:'Gün Işığı',subtitle:'Soft Studio',bg:'#f4f6f7',ink:'#18282e',accent:'#17634e',dots:['#be634f','#7762b8','#257ba2']},
