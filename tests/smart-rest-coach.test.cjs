@@ -127,3 +127,21 @@ test('new UI is accessible and cached offline with no changes to backup version'
  assert.ok(sw.includes("formarota-solo-v79-shell"));
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(f=>f.endsWith('.gif')).length,19);
 });
+
+test('adding 30 seconds after an elapsed rest grants a fresh complete 30 seconds',()=>{
+ const html=src('index.html');
+ const start=html.indexOf('function fitRestForMove(id){');
+ const end=html.indexOf('function fitStartSession(){',start);
+ const ctx={window:{FormaRotaSmartRest:engine()},
+  FIT_MOVES:[{id:'lat'}],
+  fitCurrent:{activeExercise:0,status:'running',phase:null},
+  fitConf:()=>({restSeconds:90,workSeconds:75}),fitSaveCurrent:()=>{},
+  fitSyncClock:()=>{},fitPhaseMs:()=>0,fitStopPhase:()=>{}};
+ vm.runInNewContext(html.slice(start,end)+'\nthis.start=fitStartPhase;this.adjust=fitAdjustRest;',ctx);
+ ctx.start('rest','lat');
+ ctx.fitCurrent.phase.runningSince=Date.now()-152000;
+ ctx.adjust(30);
+ const phase=ctx.fitCurrent.phase;
+ const remaining=phase.durationSec*1000-(Date.now()-phase.runningSince);
+ assert.ok(remaining>28000&&remaining<=30500,'expected 30 seconds, found '+remaining);
+});
