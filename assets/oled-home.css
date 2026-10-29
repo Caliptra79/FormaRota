@@ -372,3 +372,6 @@ html[data-fr-motion="reduced"] #homePanel.oled-home *::after{
 
 /* Route visibility always wins: home content must never appear on another tab. */
 html[data-theme] #homePanel.oled-home.hidden{display:none!important}
+
+/* Fail-safe for every routed top-level section, including Nutrition/Fitness. */
+html[data-theme] body.compact-app-shell main > section[data-view].hidden{display:none!important}
