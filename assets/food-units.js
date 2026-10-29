@@ -13,7 +13,7 @@
   if(DRINK_IDS.has(String(food?.id||'')))return 'ml';
   const name=String(food?.name||'').toLocaleLowerCase('tr-TR');
   if(/(?:meyve|portakal|elma|domates|üzüm|nar|vişne) suyu|maden suyu|içme suyu|soğuk çay|ice tea|iced tea/i.test(name))return 'ml';
-  if(/^(?:su|water)(?:\s|$)/i.test(name))return 'ml';
+  if(/^(?:su|water)(?:\s*\(|$)/i.test(name))return 'ml';
   return drinkTerms.test(name)?'ml':'g';
  }
  function basis(food){
