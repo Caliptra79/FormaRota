@@ -115,9 +115,9 @@ test('a stopped session is attended, not missed and not completed',()=>{
  assert.equal(w.attended['2026-10-19'],1);
  assert.equal(E.reschedule(w,'2026-10-22').missed.length,0);
 });
-test('Wednesday is kept free from suggested Full Body sessions',()=>{
+test('Wednesday is available as a Full Body training day',()=>{
  const w=E.weekly([],'2026-10-21',3,[]);
- assert.equal(w.planned.includes(w.days[2]),false);
+ assert.equal(w.planned.includes(w.days[2]),true);
 });
 test('dumbbell vs cable row histories never mix',()=>{
  const machine=session('2026-10-09',{move:row,variant:'Seated Cable Row'});
