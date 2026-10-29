@@ -49,7 +49,7 @@ test('packaged products stay in a bounded offline cache without changing meal re
  assert.equal(f.cache.saveMany(items),true);
  assert.equal(f.cache.all().length,120);
  assert.equal(f.cache.find('Ayran 134').length,1);
- assert.equal(f.cache.find('Ayran 0').length,0);
+ assert.equal(f.cache.all().some(x=>x.id==='off-10000000'),false);
  assert.equal(f.store.getItem('meal-logs'),'important records');
  const entry=f.cache.find('Ayran 134')[0];
  assert.equal(entry.nutritionBasis,'100ml');
@@ -63,12 +63,12 @@ test('local foods render before the pending network request resolves',async()=>{
  const f=searchFixture({fetcher:()=>new Promise(resolve=>{finish=resolve;})});
  const pending=f.ctx.runSearch();
  assert.equal(f.renders.length,1);
- assert.deepEqual(f.renders[0].map(x=>x.id),['tr-ayran']);
+ assert.deepEqual(Array.from(f.renders[0],x=>x.id),['tr-ayran']);
  assert.match(f.nodes.status.textContent,/arka planda/);
  finish({ok:true,json:async()=>({products:[apiProduct()]})});
  await pending;
  assert.equal(f.renders.length,2);
- assert.deepEqual(f.renders[1].map(x=>x.id),['tr-ayran','off-12345678']);
+ assert.deepEqual(Array.from(f.renders[1],x=>x.id),['tr-ayran','off-12345678']);
  assert.equal(f.cache.find('Ayran').length,1);
 });
 test('offline mode shows cached products and never calls Open Food Facts',async()=>{
@@ -78,12 +78,12 @@ test('offline mode shows cached products and never calls Open Food Facts',async(
  f.nodes.source.value='off';
  await f.ctx.runSearch();
  assert.equal(calls,0);
- assert.deepEqual(f.renders[0].map(x=>x.id),['off-12345678']);
+ assert.deepEqual(Array.from(f.renders[0],x=>x.id),['off-12345678']);
  assert.match(f.nodes.status.textContent,/çevrimdışı/);
  f.nodes.source.value='local';
  await f.ctx.runSearch();
  assert.equal(calls,0);
- assert.deepEqual(f.renders[1].map(x=>x.id),['tr-ayran','off-12345678']);
+ assert.deepEqual(Array.from(f.renders[1],x=>x.id),['tr-ayran','off-12345678']);
 });
 test('old network responses never overwrite a newer search',async()=>{
  const callbacks=[];
@@ -97,7 +97,7 @@ test('old network responses never overwrite a newer search',async()=>{
  callbacks[0]({ok:true,json:async()=>({products:[apiProduct('Ayran','11111111')]})});
  await first;
  assert.equal(f.renders.length,count);
- assert.equal(f.cache.find('Ayran 11111111').length,0);
+ assert.equal(f.cache.all().some(x=>x.id==='off-11111111'),false);
  assert.equal(f.cache.find('Süt').length,1);
 });
 test('save button retains packaged food in the existing backed-up custom food store',()=>{
