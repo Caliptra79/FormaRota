@@ -495,10 +495,10 @@ html[data-theme] #homePanel.oled-home .oled-today-activity-status{
 html[data-theme] #homePanel.oled-home .oled-today-activity[hidden]{
  display:none!important;
 }
-html[data-theme] #homePanel.oled-home #oledTodayActivitySaveOther[hidden]{
+html[data-theme] #homePanel.oled-home #oledTodayActivitySave[hidden]{
  display:none!important;
 }
-html[data-theme] #homePanel.oled-home #oledTodayActivitySaveOther{
+html[data-theme] #homePanel.oled-home #oledTodayActivitySave{
  display:block;
  width:100%;
  min-height:46px;
