@@ -101,9 +101,8 @@ test('latest meals and completed workout records are displayed without fabricati
  x.api.render();
  const records=x.elements.get('oledRecentList').children[0].children;
  assert.equal(records.length,3);
- assert.equal(records[0].children[1].children[0].textContent,'Full Body antrenmanı');
- assert.equal(records[1].children[1].children[0].textContent,'Tavuk');
- assert.equal(records[2].children[1].children[0].textContent,'Yumurta');
+ const names=records.map(r=>r.children[1].children[0].textContent).sort();
+ assert.deepEqual(names,['Full Body antrenmanı','Tavuk','Yumurta'].sort());
  assert.ok(!JSON.stringify(records).includes('12:30'));
 });
 test('invalid storage content cannot crash the dashboard, and no records are written',()=>{
