@@ -151,7 +151,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/studio-relaunch.css"/>
 <link rel="stylesheet" href="./assets/contrast-guard.css"/>
 <link rel="stylesheet" href="./assets/studio-plus.css"/>
-<link rel="stylesheet" href="./assets/abs-workouts.css"/><link rel="stylesheet" href="./assets/hybrid-premium-v1.css"/><link rel="stylesheet" href="./assets/hybrid-premium-fitness.css"/><style id="fr-splash-style">
+<link rel="stylesheet" href="./assets/abs-workouts.css"/><link rel="stylesheet" href="./assets/hybrid-premium-v1.css"/><link rel="stylesheet" href="./assets/hybrid-premium-fitness.css"/><link rel="stylesheet" href="./assets/visual-identity-2-home.css"/><style id="fr-splash-style">
 html{background:var(--bg,#101216)}
 #fr-launch{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--accent) 12%,var(--bg)) 0%,var(--bg) 68%);color:var(--text);opacity:1;visibility:visible;transition:opacity .36s ease,visibility .36s ease}
 #fr-launch.fr-launch-done{opacity:0;visibility:hidden;pointer-events:none}
@@ -200,29 +200,73 @@ setTimeout(function(){hide(seq)},4000);
 <button type="button" data-go="fitness">🏋️ Antrenman</button><button type="button" data-go="fitness-history">🕓 Geçmiş</button>
 </div>
 </div>
-<main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide" data-view="home" id="homePanel">
-<div class="home-intro studio-home-intro">
- <div class="studio-home-copy">
-  <div class="eyebrow"><span class="studio-spark" aria-hidden="true">✦</span> GÜNLÜK ROTA</div>
-  <h2>Her gün<br/><em>kendine yatırım.</em></h2>
-  <p>Bir öğün, bir set, bir adım. Her küçük hareket hedefine doğru ilerler.</p>
-  <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
-  <div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div>
- </div>
- <div class="studio-home-art" aria-hidden="true">
-  <div class="studio-art-orbit orbit-one"></div><div class="studio-art-orbit orbit-two"></div>
-  <div class="studio-art-star">✦</div><div class="studio-art-mark">FR<span>↗</span></div>
- </div>
-</div>
-<div id="frRankHome" class="fr-rank-card" role="button" tabindex="0" aria-label="Rank ayrıntılarına git"></div>
-<div id="spProgressRings" class="sp-rings" role="group" aria-label="Günlük hedef halkaları"></div>
-<div class="home-stats"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span> <small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div>
-<div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span> <small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
-<div class="sp-week-teaser" id="spWeekTeaser" aria-label="Haftalık gelişim önizlemesi"></div>
-<div class="mini-panel"><h3 class="subheading">Öğünlerim</h3><div class="daily-steps" id="homeChecklist" hidden style="display:none!important"></div><div class="home-actions"><button id="homeBreakfast" type="button">🥚 Kahvaltı</button><button class="secondary" id="homeLunch" type="button">🍽 Öğle yemeği</button><button class="secondary" id="homeDinner" type="button">🌙 Akşam yemeği</button><button class="secondary" id="homeSnack" type="button">🍎 Ara öğün</button><button class="secondary" id="homeWorkout" type="button">🏋️ Fitness'a git</button></div></div>
-<div class="tracker-pair" style="margin-top:12px"><div class="tracker"><div class="muted">💧 Su takibi</div><span class="count" id="waterCount">0 / 2500 ml</span><div class="buttons"><button class="secondary" id="waterMinus" type="button">−250 ml</button><button id="waterPlus" type="button">+250 ml</button></div><label class="goalfield">Günlük hedef <input aria-label="Günlük su hedefi mililitre" id="waterGoal" max="7000" min="250" step="250" type="number" value="2500"/> ml</label></div><div class="tracker"><div class="muted">🚶 Günlük yürüyüş</div><span class="count" id="walkCount">0 / 5 km</span><div class="buttons"><button id="walkToggle" type="button">5 km tamamlandı</button></div><div class="muted">İstersen kendin de gir:</div><input aria-label="Yürüyüş mesafesi kilometre" id="walkKm" max="100" min="0" step="0.1" type="number" value="0"/></div></div>
-<div class="backup-alert" id="homeBackupAlert" role="status"></div>
-<div class="mini-panel"><div class="split"><h3 class="subheading">Kısa yollar</h3><span class="muted">Günlük araçlar ve kayıtlar</span></div><div class="row"><button class="secondary" id="homeTrends" type="button">📈 Gelişimim</button><button class="secondary" id="homeBackup" type="button">⬇️ Yedeklemeye git</button></div></div>
+<main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide fr2-home" data-view="home" id="homePanel">
+  <div class="fr2-stage">
+    <div class="fr2-stage-top">
+      <div class="fr2-brand"><span class="fr2-brand-emblem" aria-hidden="true">F<span>↗</span></span><span>FORMAROTA <span class="fr2-brand-divider" aria-hidden="true">/</span> GÜNLÜK PANEL</span></div>
+      <span class="fr2-stage-indicator"><span aria-hidden="true" class="fr2-stage-spark"></span> SENİN ROTAN</span>
+    </div>
+    <div class="fr2-stage-layout">
+      <div class="fr2-stage-copy">
+        <div class="fr2-stage-eyebrow">BUGÜN / YENİ BİR ADIM</div>
+        <h2>İlerlemeni<br><em>sen yönet.</em></h2>
+        <p>Beslenme, hareket ve alışkanlıkların tek bir kontrol merkezinde. Küçük adımlar, gerçek kayıtlar.</p>
+        <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
+        <div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div>
+        <div class="fr2-stage-actions">
+          <button id="homeWorkout" type="button" class="fr2-workout-cta">Antrenmana geç <span aria-hidden="true">↗</span></button>
+          <span class="fr2-cta-note">Programın ve kayıtların hazır.</span>
+        </div>
+      </div>
+      <div class="fr2-stage-art" aria-hidden="true">
+        <div class="fr2-art-track"></div>
+        <div class="fr2-art-orbit"></div>
+        <div class="fr2-art-core">FR<span>↗</span></div>
+        <div class="fr2-art-foot">01 <span>/</span> BUGÜN</div>
+      </div>
+    </div>
+  </div>
+  <div class="fr2-dashboard">
+    <section class="fr2-metrics" aria-labelledby="frhDailyHeadingTitle">
+      <div class="fr2-section-head frh-section-head" id="frhDailyHeading">
+        <div><span class="frh-eyebrow">CANLI GÖSTERGELER</span><h3 id="frhDailyHeadingTitle">Bugünün özeti</h3></div>
+        <p>Gerçek kayıtlarınla güncellenir.</p>
+      </div>
+      <div id="spProgressRings" class="sp-rings" role="group" aria-labelledby="frhDailyHeadingTitle"></div>
+      <div class="home-stats"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span> <small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div>
+      <div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span> <small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
+    </section>
+    <section class="mini-panel fr2-meals" aria-labelledby="fr2MealsTitle">
+      <div class="fr2-section-head"><div><span class="fr2-small-overline">HIZLI KAYIT</span><h3 id="fr2MealsTitle">Öğün ekle</h3></div><span class="fr2-small-chip">4 öğün</span></div>
+      <div class="daily-steps" id="homeChecklist" hidden style="display:none!important"></div>
+      <div class="home-actions">
+        <button id="homeBreakfast" type="button"><span aria-hidden="true">🥚</span> Kahvaltı</button>
+        <button class="secondary" id="homeLunch" type="button"><span aria-hidden="true">🍽</span> Öğle</button>
+        <button class="secondary" id="homeDinner" type="button"><span aria-hidden="true">🌙</span> Akşam</button>
+        <button class="secondary" id="homeSnack" type="button"><span aria-hidden="true">🍎</span> Ara öğün</button>
+      </div>
+      <p class="fr2-meal-foot">Öğüne dokunarak mevcut besin günlüğünü aç.</p>
+    </section>
+  </div>
+  <div class="fr2-lower">
+    <section class="fr2-habits" aria-labelledby="fr2HabitsTitle">
+      <div class="fr2-section-head"><div><span class="fr2-small-overline">GÜNLÜK ALIŞKANLIKLAR</span><h3 id="fr2HabitsTitle">Rutinin</h3></div><span class="fr2-small-chip">Bugün</span></div>
+      <div class="tracker-pair">
+        <div class="tracker"><div class="muted">💧 Su takibi</div><span class="count" id="waterCount">0 / 2500 ml</span><div class="buttons"><button class="secondary" id="waterMinus" type="button">−250 ml</button><button id="waterPlus" type="button">+250 ml</button></div><label class="goalfield">Günlük hedef <input aria-label="Günlük su hedefi mililitre" id="waterGoal" max="7000" min="250" step="250" type="number" value="2500"/> ml</label></div>
+        <div class="tracker"><div class="muted">🚶 Günlük yürüyüş</div><span class="count" id="walkCount">0 / 5 km</span><div class="buttons"><button id="walkToggle" type="button">5 km tamamlandı</button></div><div class="muted">İstersen kendin de gir:</div><input aria-label="Yürüyüş mesafesi kilometre" id="walkKm" max="100" min="0" step="0.1" type="number" value="0"/></div>
+      </div>
+    </section>
+    <section class="fr2-story" aria-labelledby="fr2StoryTitle">
+      <div class="fr2-section-head"><div><span class="fr2-small-overline">BÜYÜK RESİM</span><h3 id="fr2StoryTitle">Rotanın izi</h3></div><span class="fr2-small-chip">Bu hafta</span></div>
+      <div class="sp-week-teaser" id="spWeekTeaser" aria-label="Haftalık gelişim önizlemesi"></div>
+      <div id="frRankHome" class="fr-rank-card" role="button" tabindex="0" aria-label="Rank ayrıntılarına git"></div>
+    </section>
+  </div>
+  <div class="backup-alert" id="homeBackupAlert" role="status"></div>
+  <div class="fr2-bottom-tools">
+    <span class="fr2-small-overline">DİĞER ARAÇLAR</span>
+    <div class="row"><button class="secondary" id="homeTrends" type="button">📈 Gelişimim</button><button class="secondary" id="homeBackup" type="button">⬇️ Yedeklemeye git</button></div>
+  </div>
 </section>
 <section class="route-heading wide studio-nutrition-hero" data-view="nutrition" aria-label="Öğün günlüğün">
  <div class="studio-nutrition-copy">
