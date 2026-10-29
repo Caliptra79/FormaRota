@@ -127,7 +127,11 @@ function setupOverview(){
  optionWrap.append(lbl,sel,text('p','muted','Yalnızca öneri miktarını değiştirir. Setlerine yazılan ağırlık değişmez.'));
  details.append(optionWrap);
  const disclaimer=text('p','coach-disclaimer','Ağrı veya teknik bozulması varsa ağırlık artırma. Öneriler kayıt bazlıdır.');
- card.append(top,stats,strip,reschedule,tipBox,foot,details,disclaimer);
+ const guide=text('details','coach-guide');
+ guide.append(text('summary','','Koçum ne diyor? · Öneriler nasıl hesaplanıyor?'),
+  text('p','muted','Aynı hareket ve alternatif için iki farklı günün geçerli 3 seti karşılaştırılır. Geçersiz, eski veya yarım kayıtlarla otomatik ağırlık artışı önerilmez.'),
+  text('p','muted','Hareket kartındaki “Koçum ne diyor?” bölümünü açarak önceki ve son setleri görebilirsin. Kayıt yoksa neden değerlendirme yapılamadığı açıklanır. Ağrı ve teknik zorluklarını yalnızca sen değerlendirebilirsin.'));
+ card.append(top,stats,strip,reschedule,tipBox,foot,details,guide,disclaimer);
  timer.before(card);
  refreshOverview();
 }
@@ -162,16 +166,17 @@ function updateInlineHints(){
   const old=card.querySelector('.coach-inline-tip');
   const result=assessMove(move);
   if(old){
-   if(!result.records){old.remove();return}
    const line=old.querySelector('.coach-inline-value');
    if(line)line.textContent=result.short;
+   old.dataset.coachStatus=result.status;
    let details=old.querySelector('.coach-reason');
    if(!details){details=text('details','coach-reason');old.append(details)}
    updateReason(details,result);
-  }else if(result.records){
+  }else{
    const body=card.querySelector('.fit-nametop')?.parentElement;if(!body)return;
    const hint=text('div','coach-inline-tip');
-   hint.append(text('span','coach-tip-dot','↗'),text('span','coach-inline-value',result.short));
+   hint.dataset.coachStatus=result.status;
+   hint.append(text('span','coach-tip-dot',result.status==='increase'?'↗':result.records?'●':'?'),text('span','coach-inline-value',result.short));
    const details=text('details','coach-reason');
    updateReason(details,result);hint.append(details);
    const table=body.querySelector('.fit-settable');
