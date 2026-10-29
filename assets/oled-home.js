@@ -136,7 +136,15 @@ function renderRecent(data){
  }
  host.replaceChildren(frag);
 }
-let pendingOther=false;
+// A pre-existing Fitness weekly choice is not the same as confirming the
+// today's home shortcut. Confirmation is UI-only; the workout plan remains
+// stored in its existing backup-compatible weekly schedule.
+const HOME_CONFIRMED_DAY='formarota-home-activity-confirmed-day-v1';
+let draftType=null, draftDay=null;
+function confirmedToday(day){
+ try{return root.localStorage?.getItem(HOME_CONFIRMED_DAY)===day;}
+ catch{return false}
+}
 const getActivity=day=>root.FormaRotaWeeklyPlan?.getDay?.(day)||null;
 const activityLabel=type=>root.FormaRotaWeeklyPlan?.types?.find(x=>x.value===type)?.label||'Etkinlik';
 function renderActivity(data){
@@ -145,22 +153,22 @@ function renderActivity(data){
  if(!picker||!card)return;
  const selected=getActivity(data.day);
  if(!selected)return;
- // A saved choice belongs in Fitness's weekly planner, not in the nutrition-focused home.
- // Preserve the editor only when a custom activity is being drafted.
- card.hidden=Boolean(selected.explicit)&&!pendingOther;
+ if(draftDay!==data.day){draftType=null;draftDay=data.day;}
+ // Only an explicit confirmation from this home shortcut dismisses the card.
+ // Fitness's previously saved schedule must not hide an unconfirmed day.
+ card.hidden=confirmedToday(data.day);
  const date=new Date(data.day+'T12:00:00');
  if(dateNode&&!Number.isNaN(date.getTime()))
   dateNode.textContent=date.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
  const noteLabel=byId('oledTodayActivityNoteLabel'),note=byId('oledTodayActivityNote');
- const saveOther=byId('oledTodayActivitySaveOther');
- if(!pendingOther&&picker.value!==selected.type)picker.value=selected.type;
- if(noteLabel)noteLabel.hidden=!pendingOther;
- if(saveOther)saveOther.hidden=!pendingOther;
- if(note&&!pendingOther&&note.value!==selected.note)note.value=selected.note;
+ const activeType=draftType||selected.type;
+ if(picker.value!==activeType)picker.value=activeType;
+ if(noteLabel)noteLabel.hidden=activeType!=='other';
+ if(note&&draftType===null&&note.value!==selected.note)note.value=selected.note;
  const status=byId('oledTodayActivityStatus');
  if(!status)return;
- if(pendingOther){
-  status.textContent='Etkinliğini yazıp “Etkinliği kaydet” düğmesine dokun.';
+ if(draftType!==null){
+  status.textContent='Seçimin hazır · “Bugünün planını kaydet” düğmesine dokun.';
   return;
  }
  if(!selected.explicit){
@@ -204,26 +212,27 @@ function init(){
   const status=byId('oledTodayActivityStatus');
   try{
    plan.setDay(day,type,note);
-   pendingOther=false;
+   // A separate day-local confirmation avoids hiding previously prepared
+   // weekly workouts before the user has had a chance to confirm today's plan.
+   root.localStorage?.setItem(HOME_CONFIRMED_DAY,day);
+   draftType=null;draftDay=day;
    render();
   }catch{
-   render();if(status)status.textContent='Bugünkü plan kaydedilemedi. Cihaz depolamasını kontrol et.';
+   render();if(status)status.textContent='Plan veya ana ekran tercihi kaydedilemedi. Cihaz depolamasını kontrol et.';
   }
  }
  activitySelect?.addEventListener('change',()=>{
-  if(activitySelect.value==='other'){
-   pendingOther=true;
-   renderActivity(snapshot());
-  }else{
-   pendingOther=false;
-   storeActivity(activitySelect.value);
-  }
+  draftDay=localDay();
+  draftType=activitySelect.value;
+  if(draftType!=='other'&&activityNote)activityNote.value='';
+  renderActivity(snapshot());
  });
- byId('oledTodayActivitySaveOther')?.addEventListener('click',()=>{
-  if(pendingOther&&activitySelect?.value==='other')storeActivity('other',activityNote?.value||'');
+ byId('oledTodayActivitySave')?.addEventListener('click',()=>{
+  if(activitySelect)storeActivity(activitySelect.value,
+   activitySelect.value==='other'?activityNote?.value||'':'');
  });
  activityNote?.addEventListener('keydown',event=>{
-  if(event.key==='Enter'&&pendingOther){
+  if(event.key==='Enter'&&activitySelect?.value==='other'){
    event.preventDefault();
    storeActivity('other',activityNote.value);
   }
