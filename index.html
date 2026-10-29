@@ -210,7 +210,7 @@ setTimeout(function(){hide(seq)},4000);
     <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
     <span class="muted hidden" id="homeDateLabel" aria-hidden="true"></span>
   </div>
-  <section class="oled-today-activity" aria-labelledby="oledTodayActivityTitle">
+  <section class="oled-today-activity" aria-labelledby="oledTodayActivityTitle" id="oledTodayActivityCard" hidden>
     <div class="oled-today-activity-header">
       <div>
         <span class="oled-overline">BUGÜNÜN ANTRENMAN PLANI</span>
@@ -233,6 +233,7 @@ setTimeout(function(){hide(seq)},4000);
       <label for="oledTodayActivityNote" id="oledTodayActivityNoteLabel" hidden>Etkinlik açıklaması
         <input id="oledTodayActivityNote" type="text" maxlength="80" placeholder="Örn. yüzme, hafif yürüyüş"/>
       </label>
+      <button id="oledTodayActivitySaveOther" type="button" class="oled-today-save-other" hidden>Etkinliği kaydet</button>
     </div>
     <p id="oledTodayActivityHelp" class="oled-today-activity-help">Seçimin haftalık programına kaydedilir; antrenman tamamlandı sayılmaz.</p>
     <p id="oledTodayActivityStatus" class="oled-today-activity-status" role="status" aria-live="polite">Bugünkü etkinliğin hazırlanıyor.</p>
