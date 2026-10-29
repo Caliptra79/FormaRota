@@ -646,7 +646,7 @@ function selectDinnerMenu(menu,date){
  for(const [id,amount] of menu.items){
   const food=foodById(id);
   if(!food||!Number.isFinite(amount)||amount<=0){alert('Menüde eksik besin bulunuyor; plan kaydedilmedi.');return false}
-  ingredients.push({id,name:food.name,amount,unit:window.FormaRotaFoodUnits?.unit(food)||'g',nutritionBasis:'100g',baseKcal:food.kcal,baseProtein:food.protein,
+  ingredients.push({id,name:food.name,amount,unit:typeof window!=='undefined'?(window.FormaRotaFoodUnits?.unit(food)||'g'):'g',nutritionBasis:'100g',baseKcal:food.kcal,baseProtein:food.protein,
     baseCarbs:food.carbs,baseFat:food.fat});
  }
  const next={...plans,[date]:{name:menu.name,createdAt:new Date().toISOString(),eaten:false,
