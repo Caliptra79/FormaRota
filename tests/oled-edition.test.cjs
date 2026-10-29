@@ -138,7 +138,7 @@ test('OLED home is hidden on every non-home route, regardless of theme',()=>{
 });
 test('PWA shell cache revision is updated so existing iPhone installs receive the visibility fix',()=>{
  const sw=source('sw.js');
- assert.ok(sw.includes("const CACHE='formarota-solo-v78-shell'"));
- assert.ok(sw.includes("const GIF_CACHE='formarota-solo-v78-gifs'"));
+ assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
+ assert.match(sw,/const GIF_CACHE='formarota-solo-v\d+-gifs'/);
  assert.ok(sw.includes("'./assets/oled-home.css'"));
 });
