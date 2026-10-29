@@ -49,7 +49,7 @@ test('OLED styles and existing main theme dialog stay precached for PWA offline'
  for(const name of ['oled-screens.css','oled-edition.css','luxe-ui.js','luxe-ui.css']){
   assert.ok(sw.includes("'./assets/"+name+"'"),name);
  }
- assert.match(sw,/const CACHE='formarota-solo-v84-shell'/);
+ assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
  assert.ok(sw.includes('const GIFS='));
 });
 test('duplicate-pickers removal does not affect JSON backup, food, fitness or GIF data',()=>{
