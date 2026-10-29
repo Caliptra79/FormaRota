@@ -84,12 +84,12 @@ test('rest +30, -15 and Skip change active timer but never workout progress reco
   FIT_MOVES:[{id:'lat'}],fitCurrent:{activeExercise:0,status:'running',phase:null,items:{lat:[{done:true,weight:50,reps:10}]}},
   fitConf:()=>({restSeconds:90,workSeconds:75}),
   fitSaveCurrent:()=>{saves++},fitSyncClock:()=>{changes++},
-  fitPhaseMs:()=>10*1000,fitStopPhase:()=>{ctx.fitCurrent.phase=null;skips++}};
+  fitPhaseMs:()=>45*1000,fitStopPhase:()=>{ctx.fitCurrent.phase=null;skips++}};
  vm.runInNewContext(html.slice(start,end)+'\nthis.start=fitStartPhase;this.adjust=fitAdjustRest;',ctx);
  ctx.start('rest','lat');ctx.adjust(30);
  assert.equal(ctx.fitCurrent.phase.durationSec,150);
  ctx.adjust(-15);assert.equal(ctx.fitCurrent.phase.durationSec,135);
- ctx.adjust(-15);assert.equal(ctx.fitCurrent.phase,null);assert.equal(skips,1);
+ ctx.adjust(0);assert.equal(ctx.fitCurrent.phase,null);assert.equal(skips,1);
  assert.equal(ctx.fitCurrent.items.lat[0].weight,50);
  assert.ok(saves>=3&&changes>=4);
 });
@@ -104,7 +104,8 @@ test('coach tips are visible even if there are no completed records',()=>{
  const ui=src('assets/coach-ui-v33.js');
  assert.ok(ui.includes('}else{\n   const body=card.querySelector'));
  assert.ok(!ui.includes('if(!result.records){old.remove();return}'));
- assert.ok(ui.includes("details.append(text('summary','','Koçum ne diyor? · Gerekçe ve kayıtlar'));"));
+ assert.ok(ui.includes("details.append(text('summary','','Bu öneri neden verildi?'));"));
+ assert.ok(ui.includes('Koçum ne diyor? · Öneriler nasıl hesaplanıyor?'));
  assert.ok(ui.includes("result.status==='increase'?'↗':result.records?'●':'?'"));
  assert.ok(ui.includes('Kayıt durumu: '));
  assert.ok(ui.includes('Önceki: '));
