@@ -136,22 +136,33 @@ function renderRecent(data){
  }
  host.replaceChildren(frag);
 }
+let pendingOther=false;
 const getActivity=day=>root.FormaRotaWeeklyPlan?.getDay?.(day)||null;
 const activityLabel=type=>root.FormaRotaWeeklyPlan?.types?.find(x=>x.value===type)?.label||'Etkinlik';
 function renderActivity(data){
  const picker=byId('oledTodayActivitySelect'),dateNode=byId('oledTodayActivityDate');
- if(!picker)return;
+ const card=byId('oledTodayActivityCard');
+ if(!picker||!card)return;
  const selected=getActivity(data.day);
  if(!selected)return;
+ // A saved choice belongs in Fitness's weekly planner, not in the nutrition-focused home.
+ // Preserve the editor only when a custom activity is being drafted.
+ card.hidden=Boolean(selected.explicit)&&!pendingOther;
  const date=new Date(data.day+'T12:00:00');
  if(dateNode&&!Number.isNaN(date.getTime()))
   dateNode.textContent=date.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
  const noteLabel=byId('oledTodayActivityNoteLabel'),note=byId('oledTodayActivityNote');
- if(picker.value!==selected.type)picker.value=selected.type;
- if(noteLabel)noteLabel.hidden=selected.type!=='other';
- if(note&&note.value!==selected.note)note.value=selected.note;
+ const saveOther=byId('oledTodayActivitySaveOther');
+ if(!pendingOther&&picker.value!==selected.type)picker.value=selected.type;
+ if(noteLabel)noteLabel.hidden=!pendingOther;
+ if(saveOther)saveOther.hidden=!pendingOther;
+ if(note&&!pendingOther&&note.value!==selected.note)note.value=selected.note;
  const status=byId('oledTodayActivityStatus');
  if(!status)return;
+ if(pendingOther){
+  status.textContent='Etkinliğini yazıp “Etkinliği kaydet” düğmesine dokun.';
+  return;
+ }
  if(!selected.explicit){
   status.textContent='Henüz bir etkinlik seçilmedi · Dinlenme varsayılan görünümdür.';
   return;
@@ -193,15 +204,29 @@ function init(){
   const status=byId('oledTodayActivityStatus');
   try{
    plan.setDay(day,type,note);
+   pendingOther=false;
    render();
   }catch{
    render();if(status)status.textContent='Bugünkü plan kaydedilemedi. Cihaz depolamasını kontrol et.';
   }
  }
- activitySelect?.addEventListener('change',()=>storeActivity(activitySelect.value,
-  activitySelect.value==='other'?activityNote?.value||'':''));
- activityNote?.addEventListener('change',()=>{
-  if(activitySelect?.value==='other')storeActivity('other',activityNote.value);
+ activitySelect?.addEventListener('change',()=>{
+  if(activitySelect.value==='other'){
+   pendingOther=true;
+   renderActivity(snapshot());
+  }else{
+   pendingOther=false;
+   storeActivity(activitySelect.value);
+  }
+ });
+ byId('oledTodayActivitySaveOther')?.addEventListener('click',()=>{
+  if(pendingOther&&activitySelect?.value==='other')storeActivity('other',activityNote?.value||'');
+ });
+ activityNote?.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&pendingOther){
+   event.preventDefault();
+   storeActivity('other',activityNote.value);
+  }
  });
  byId('oledTodayOpenWeek')?.addEventListener('click',()=>{
   // Fitness planner is folded in the compact UI, so expand it first.

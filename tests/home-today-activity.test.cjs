@@ -18,7 +18,7 @@ function setup(type='rest',explicit=false,note=''){
   'oledCarbs','oledFat','oledProtein','oledCarbsNote','oledFatNote','oledProteinBar',
   'oledTodayPlan','oledRecentList','oledTodayActivitySelect','oledTodayActivityDate',
   'oledTodayActivityNote','oledTodayActivityNoteLabel','oledTodayActivityStatus',
-  'oledTodayOpenWeek','oledRecentAll','goalKcal','goalProtein','waterGoal'];
+  'oledTodayOpenWeek','oledTodayActivityCard','oledTodayActivitySaveOther','oledRecentAll','goalKcal','goalProtein','waterGoal'];
  ids.forEach(id=>nodes.set(id,new E()));
  nodes.get('oledTodayActivitySelect').value='rest';
  const section=new E();section.fold={open:false};nodes.set('fitSchedulePanel',section);
@@ -55,12 +55,14 @@ test('home shortcut is an accessible own card, not repeated on other routed scre
  const next=html.indexOf('<section class="route-heading wide studio-nutrition-hero"',homeStart);
  const card=html.indexOf('id="oledTodayActivityTitle"');
  assert.ok(card>homeStart&&card<next);
- for(const id of ['oledTodayActivitySelect','oledTodayActivityNote','oledTodayActivityStatus','oledTodayOpenWeek'])
+ for(const id of ['oledTodayActivityCard','oledTodayActivitySaveOther','oledTodayActivitySelect','oledTodayActivityNote','oledTodayActivityStatus','oledTodayOpenWeek'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.ok(css.includes('#homePanel.oled-home .oled-today-activity'));
  assert.ok(css.includes('#homePanel.oled-home #oledTodayActivitySelect'));
  assert.ok(css.includes('color:var(--text)!important'));
  assert.ok(css.includes('#oledTodayActivityNoteLabel[hidden]'));
+ assert.ok(css.includes('.oled-today-activity[hidden]'));
+ assert.ok(css.includes('display:none!important'));
  assert.ok(!css.includes('#homePanel.oled-home{display:grid!important'));
 });
 test('selecting Full Body records a plan but never touches workout completion records',()=>{
@@ -81,16 +83,50 @@ test('basketball remains unverified and does not fabricate attended training',()
  picker.value='basket';picker.handlers.change();
  assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/Basketbol katılımı otomatik doğrulanmaz/);
 });
-test('custom activity description is visible, editable, saved and limited by the original 80-character input',()=>{
- const x=setup('other',true,'Yüzme');
+test('custom activity stays open for a note and disappears only after explicit save',()=>{
+ const x=setup();
+ const picker=x.nodes.get('oledTodayActivitySelect');
+ picker.value='other';picker.handlers.change();
+ assert.equal(x.saves(),0,'selecting Other should not save before entering a note');
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
  assert.equal(x.nodes.get('oledTodayActivityNoteLabel').hidden,false);
- assert.equal(x.nodes.get('oledTodayActivityNote').value,'Yüzme');
+ assert.equal(x.nodes.get('oledTodayActivitySaveOther').hidden,false);
  const note=x.nodes.get('oledTodayActivityNote');
- note.value='Basketbol yerine yüzme';note.handlers.change();
+ note.value='Basketbol yerine yüzme';
+ x.nodes.get('oledTodayActivitySaveOther').handlers.click();
  assert.equal(x.record.note,'Basketbol yerine yüzme');
+ assert.equal(x.record.type,'other');
  assert.equal(x.saves(),1);
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true);
  const html=read('index.html');
  assert.ok(html.includes('id="oledTodayActivityNote" type="text" maxlength="80"'));
+});
+test('existing saved plans hide the shortcut immediately on home load, even when planned in Fitness',()=>{
+ for(const type of ['full','abs','basket','basket-abs','full-abs','other','rest']){
+  const x=setup(type,true);
+  assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true,type);
+  assert.equal(x.saves(),0);
+ }
+});
+test('fresh day without a saved plan shows the shortcut; selecting any usual choice hides it',()=>{
+ const x=setup();
+ const card=x.nodes.get('oledTodayActivityCard');
+ assert.equal(card.hidden,false);
+ const picker=x.nodes.get('oledTodayActivitySelect');
+ picker.value='full';picker.handlers.change();
+ assert.equal(x.saves(),1);
+ assert.equal(card.hidden,true);
+ x.root.FormaRotaOLEDHome.render();
+ assert.equal(card.hidden,true,'re-render must not show an already saved choice');
+});
+test('special Other draft remains visible after refresh until Save is tapped',()=>{
+ const x=setup();
+ const picker=x.nodes.get('oledTodayActivitySelect');
+ picker.value='other';picker.handlers.change();
+ x.root.FormaRotaOLEDHome.render();
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
+ assert.equal(x.nodes.get('oledTodayActivitySaveOther').hidden,false);
+ assert.equal(picker.value,'other','draft choice must not reset to rest');
 });
 test('weekly plan shortcut reveals collapsed settings and opens the Fitness page',()=>{
  const x=setup();
