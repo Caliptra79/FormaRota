@@ -382,13 +382,13 @@ setTimeout(function(){hide(seq)},4000);
 <p class="muted">13 hareket, her biri 3 set. Ağırlığını ve tekrarını kaydet; gerektiğinde hareket alternatifini seç.</p>
 
 </section>
-<section class="panel" data-fit-page="workout" id="v21WorkoutLast"><h2>Önceki antrenmandan</h2><p class="v21-mini">Hareket seçerek son tamamlanan setini ve ağırlığını gör.</p><select id="v21WorkoutMove"></select><div id="v21Previous"></div></section><section class="panel" data-fit-page="workout" id="fitSchedulePanel"><div class="fit-headline"><h2>Haftalık antrenman planım</h2><span class="tag">Çarşamba: Basketball + Abs</span></div>
+<section class="panel" data-fit-page="workout" id="v21WorkoutLast"><h2>Önceki antrenmandan</h2><p class="v21-mini">Hareket seçerek son tamamlanan setini ve ağırlığını gör.</p><select id="v21WorkoutMove"></select><div id="v21Previous"></div></section><section class="panel" data-fit-page="workout" id="fitSchedulePanel"><div class="fit-headline"><h2>Haftalık antrenman planım</h2><span class="tag">7 gün · Tamamen senin seçimin</span></div><p class="muted fit-plan-intro">Her güne ayrı bir etkinlik seç: Full Body, ABS, basketbol, birlikte çalışma, dinlenme veya kendi etkinliğin. Çarşamba dahil hiçbir gün kilitli değil. Buradaki seçimlerin planıdır; yapılan antrenman sayılmaz.</p>
 <div class="row"><div><label for="fitFrequency">Haftalık full-body sayısı</label><select id="fitFrequency"><option value="2">Başlangıç · 2 gün</option><option value="3">İleri seviye · 3 gün</option></select></div><div><label for="fitDuration">Antrenman süresi rehberi (dakika)</label><input id="fitDuration" max="240" min="20" step="5" type="number" value="120"/></div></div>
 <div class="row"><div><label for="fitWorkSec">İsteğe bağlı set sayacı (sn)</label><input id="fitWorkSec" max="600" min="15" step="5" type="number" value="75"/></div><div><label for="fitRestSec">Genel dinlenme tercihi (sn)</label><input id="fitRestSec" max="600" min="15" step="5" type="number" value="90"/></div></div>
 <div class="weeknav"><button class="secondary" id="fitWeekPrev" type="button">← Önceki hafta</button><strong id="fitWeekLabel">Bu hafta</strong><button class="secondary" id="fitWeekNext" type="button">Sonraki hafta →</button></div>
-<div aria-label="Fitness günleri seçimi" class="fitness-week" id="fitWeekDays"></div>
+<div aria-label="Haftanın yedi günü için antrenman planı" class="fit-plan-week" id="fitWeekDays"></div>
 <p aria-live="polite" class="muted" id="fitWeekStatus"></p>
-<div class="fit-banner"><b>Çarşamba · Basketbol + Karın önerisi</b><div class="muted">Bu takvim Full Body planlama günlerini gösterir. Üstteki seçimden ABS veya Full Body antrenmanını istediğin gün başlatabilirsin. Yeni ABS set kayıtları ayrıca tutulur.</div><label style="margin-top:10px"><input id="fitAbsDone" style="width:auto;margin-right:7px" type="checkbox"/>Önceki manuel basketbol + karın işaretim (yeni ABS kaydından ayrı)</label></div>
+<details class="fit-plan-legacy"><summary>Eski çarşamba işaretim (geçmişten kalan)</summary><p class="muted">Bu manuel işaret geçmişten korunuyor; haftalık programı belirlemez ve gerçek ABS set kaydının yerine geçmez.</p><label><input id="fitAbsDone" type="checkbox"/> Eski çarşamba basketbol + karın işaretini koru / düzenle</label></details>
 </section>
 <section data-fit-page="workout" class="panel" id="fitSessionPanel"><div class="studio-panel-eyebrow">01 / KONTROL MERKEZİ</div><h2>Antrenman zamanlayıcısı</h2><p class="studio-panel-sub">Seansı başlat, çalışma ve dinlenme süreni tek noktadan yönet.</p><div class="fit-timerbox">
 <div class="muted" id="fitSessionLabel">Henüz antrenman başlatılmadı.</div><div class="fit-timerrow"><div><div aria-live="off" class="fit-clock" id="fitMainClock">120:00</div><div class="muted">Toplam kalan süre · geriye sayar</div></div><div class="fit-secondarytimer"><div class="muted" id="fitPhaseLabel">Set zamanlayıcısı</div><strong id="fitPhaseClock">01:15</strong><div class="muted">Çalışma / dinlenme</div></div></div>
@@ -748,7 +748,7 @@ const FIT_MOVES=[
 window.formaRotaFitnessCatalog=FIT_MOVES;
 window.formaRotaFitnessGroupLabels=FIT_GROUP_TR;
 const FIT_KEY='kocluk-fitness-current-v1',FIT_WEEK_KEY='kocluk-fitness-weeks-v1',FIT_CONF_KEY='kocluk-fitness-config-v1',FIT_HISTORY_KEY='kocluk-fitness-history-v1';
-const FIT_ABS_KEY='kocluk-fitness-abs-v1';
+const FIT_ABS_KEY='kocluk-fitness-abs-v1',FIT_DAY_PLAN_KEY='formarota-fitness-day-plan-v1';
 const FIT_DAYS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
 let fitWeekAnchor=today();
 let fitCurrent=read(FIT_KEY,null);
@@ -761,9 +761,104 @@ function fitSaveConf(){const cfg={frequency:Number($('fitFrequency').value),dura
 function fitSaveCurrent(){write(FIT_KEY,fitCurrent)}
 function fitGetHist(){return read(FIT_HISTORY_KEY,[])}
 function fitSetHist(h){write(FIT_HISTORY_KEY,h)}
-function fitDrawWeek(){const monday=fitWeekStart(fitWeekAnchor),cfg=fitConf(),chosen=fitChosen(),days=Array.from({length:7},(_,i)=>shiftISO(monday,i));$('fitWeekLabel').textContent=`${fitDateLabel(days[0])} – ${fitDateLabel(days[6])}`;$('fitWeekDays').innerHTML='';const root=$('fitWeekDays');days.forEach((date,i)=>{const b=document.createElement('button');b.type='button';b.className='fit-day'+(i===2?' locked':chosen.includes(date)?' chosen':'');b.disabled=i===2;b.setAttribute('aria-pressed',String(chosen.includes(date)));const a=document.createElement('b');a.textContent=FIT_DAYS[i],c=document.createElement('span');c.textContent=fitDateLabel(date);const status=document.createElement('span');status.textContent=i===2?'🏀 + Abs':chosen.includes(date)?'✓ Fitness':'—';b.append(a,c,status);if(i!==2)b.addEventListener('click',()=>{let selected=fitChosen();const has=selected.includes(date);if(!has&&selected.length>=cfg.frequency){$('fitWeekStatus').textContent=`Bu program haftada ${cfg.frequency} gün. Yeni bir gün seçmeden önce mevcut seçimi kaldır.`;return}selected=has?selected.filter(d=>d!==date):[...selected,date].sort();const data=read(FIT_WEEK_KEY,{});data[monday]=selected;write(FIT_WEEK_KEY,data);fitDrawWeek()});root.append(b)});
- const valid=chosen.length===cfg.frequency;$('fitWeekStatus').textContent=`${chosen.length}/${cfg.frequency} gün seçildi${valid?' · Bu haftanın planı hazır.':' · Fitness günlerini kendin işaretle.'} Çarşamba kapalı.`;
- const abs=read(FIT_ABS_KEY,{});$('fitAbsDone').checked=Boolean(abs[shiftISO(monday,2)]);
+const FIT_DAY_TYPES=[
+ {value:'rest',label:'Dinlenme',icon:'☕'},
+ {value:'full',label:'Full Body',icon:'🏋️'},
+ {value:'abs',label:'ABS / Karın',icon:'💪'},
+ {value:'basket',label:'Basketbol',icon:'🏀'},
+ {value:'basket-abs',label:'Basketbol + ABS',icon:'🏀'},
+ {value:'full-abs',label:'Full Body + ABS',icon:'🏋️'},
+ {value:'other',label:'Başka etkinlik',icon:'✦'}
+];
+function fitWeekPlan(monday){
+ const saved=read(FIT_DAY_PLAN_KEY,{})?.[monday];
+ const prior=read(FIT_WEEK_KEY,{})?.[monday];
+ const fullDays=Array.isArray(prior)?prior:[];
+ const out={};
+ for(let i=0;i<7;i++){
+  const date=shiftISO(monday,i);
+  const old=saved&&typeof saved==='object'&&!Array.isArray(saved)?saved[date]:null;
+  const type=typeof old==='string'?old:old?.type;
+  const valid=FIT_DAY_TYPES.some(x=>x.value===type);
+  out[date]={type:valid?type:fullDays.includes(date)?'full':'rest',
+   note:valid&&type==='other'&&typeof old?.note==='string'?old.note.slice(0,80):''};
+ }
+ return out;
+}
+function fitValidDayPlans(data){
+ if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(data).length>600)return false;
+ return Object.entries(data).every(([week,days])=>
+  /^\\d{4}-\\d{2}-\\d{2}$/.test(week)&&days&&typeof days==='object'&&!Array.isArray(days)&&
+  Object.keys(days).length<=7&&Object.entries(days).every(([date,entry])=>
+   /^\\d{4}-\\d{2}-\\d{2}$/.test(date)&&
+   date>=week&&date<=shiftISO(week,6)&&entry&&typeof entry==='object'&&!Array.isArray(entry)&&
+   FIT_DAY_TYPES.some(t=>t.value===entry.type)&&
+   (entry.note===undefined||typeof entry.note==='string'&&entry.note.length<=80)));
+}
+function fitSaveWeekDay(monday,date,type,note){
+ if(!FIT_DAY_TYPES.some(x=>x.value===type))return;
+ const oldWeeks=read(FIT_WEEK_KEY,{}),oldPlans=read(FIT_DAY_PLAN_KEY,{});
+ const week=fitWeekPlan(monday);
+ week[date]={type,note:type==='other'?String(note||'').trim().slice(0,80):''};
+ const selected=Object.keys(week).filter(d=>week[d].type==='full'||week[d].type==='full-abs').sort();
+ const backupA=localStorage.getItem(FIT_DAY_PLAN_KEY),backupB=localStorage.getItem(FIT_WEEK_KEY);
+ try{
+  write(FIT_DAY_PLAN_KEY,{...oldPlans,[monday]:week});
+  write(FIT_WEEK_KEY,{...oldWeeks,[monday]:selected});
+ }catch(err){
+  try{if(backupA===null)localStorage.removeItem(FIT_DAY_PLAN_KEY);else localStorage.setItem(FIT_DAY_PLAN_KEY,backupA);
+   if(backupB===null)localStorage.removeItem(FIT_WEEK_KEY);else localStorage.setItem(FIT_WEEK_KEY,backupB)}catch{}
+  throw err;
+ }
+}
+function fitDrawWeek(){
+ const monday=fitWeekStart(fitWeekAnchor),cfg=fitConf();
+ const week=fitWeekPlan(monday),days=Array.from({length:7},(_,i)=>shiftISO(monday,i));
+ const root=$('fitWeekDays');root.replaceChildren();
+ $('fitWeekLabel').textContent=fitDateLabel(days[0])+' – '+fitDateLabel(days[6]);
+ days.forEach((date,i)=>{
+  const selection=week[date];
+  const row=document.createElement('div');row.className='fit-plan-day';
+  row.dataset.activity=selection.type;
+  const heading=document.createElement('div');heading.className='fit-plan-day-heading';
+  const day=document.createElement('strong');day.textContent=FIT_DAYS[i];
+  const dateLabel=document.createElement('small');dateLabel.textContent=fitDateLabel(date);
+  heading.append(day,dateLabel);
+  const field=document.createElement('label');field.className='fit-plan-activity';
+  const title=document.createElement('span');title.className='sr-only';title.textContent=FIT_DAYS[i]+' gününün etkinliği';
+  const select=document.createElement('select');select.setAttribute('aria-label',FIT_DAYS[i]+' '+date+' antrenman etkinliği');
+  FIT_DAY_TYPES.forEach(choice=>{
+   const opt=document.createElement('option');opt.value=choice.value;
+   opt.textContent=choice.icon+' '+choice.label;select.append(opt);
+  });
+  select.value=selection.type;
+  select.addEventListener('change',()=>{
+   try{fitSaveWeekDay(monday,date,select.value,'');fitDrawWeek();}
+   catch{$('fitWeekStatus').textContent='Haftalık plan kaydedilemedi. Cihaz depolamasını kontrol et.'}
+  });
+  field.append(title,select);row.append(heading,field);
+  if(selection.type==='other'){
+   const note=document.createElement('input');note.type='text';note.maxLength=80;
+   note.className='fit-plan-note';note.value=selection.note;
+   note.placeholder='Örn. yürüyüş, yüzme, dinlenme dışı etkinlik';
+   note.setAttribute('aria-label',FIT_DAYS[i]+' diğer etkinlik açıklaması');
+   note.addEventListener('change',()=>{
+    try{fitSaveWeekDay(monday,date,'other',note.value);fitDrawWeek()}
+    catch{$('fitWeekStatus').textContent='Etkinlik açıklaması kaydedilemedi.'}
+   });
+   row.append(note);
+  }
+  root.append(row);
+ });
+ const fullDays=days.filter(date=>['full','full-abs'].includes(week[date].type));
+ const scheduled=days.filter(date=>week[date].type!=='rest');
+ $('fitWeekStatus').textContent=fullDays.length+' / '+cfg.frequency+' Full Body günü · '+
+  scheduled.length+' planlı etkinlik · '+
+  (fullDays.length<cfg.frequency?'Full Body hedefin için '+(cfg.frequency-fullDays.length)+' gün daha seçebilirsin.':
+   fullDays.length>cfg.frequency?'Full Body günleri hedefinden fazla; karar senin.':'Full Body hedefin planlandı.')+
+  ' Plan gerçek antrenman kaydı oluşturmaz.';
+ const abs=read(FIT_ABS_KEY,{});
+ $('fitAbsDone').checked=Boolean(abs[shiftISO(monday,2)]);
 }
 function fitSvg(ex){
  const equipment=(ex.move==='leg')?'<path class="equipment" d="M24 103H116M39 105V42L60 47"/>':(ex.move==='row'?'<path class="equipment" d="M14 55H44M17 46V82M14 82H37"/>':'<path class="equipment" d="M30 116H130"/>');
@@ -967,19 +1062,19 @@ function fitSetFocus(){focusMode=false;$('fitnessRoot').classList.remove('focus-
 function fitRenderFocus(){}
 function renderPRs(){const root=$('personalRecords');root.innerHTML='';const hist=fitGetHist();const sessions=fitCurrent?[...hist,fitCurrent]:hist;let any=false;FIT_MOVES.forEach(m=>{let best=null,recent=null;for(const sess of sessions){const sets=(sess.items?.[m.id]||[]).filter(s=>s?.done);for(const s of sets){const weight=Number(s.weight);if(!Number.isFinite(weight)||weight<0)continue;if(!best||weight>best.weight)best={weight,reps:s.reps,date:sess.date};recent={weight,reps:s.reps,date:sess.date}}}if(!best)return;any=true;const row=document.createElement('div');row.className='pr-row';const left=document.createElement('div');const title=document.createElement('b');title.textContent=m.name;const desc=document.createElement('small');desc.textContent='Son set: '+fmt(recent.weight)+' kg × '+recent.reps+' · '+recent.date;left.append(title,desc);const val=document.createElement('div');val.className='pr-value';val.textContent=(best.weight===0?'Vücut ağırlığı':fmt(best.weight)+' kg')+' × '+best.reps;row.append(left,val);root.append(row)});if(!any)root.innerHTML='<div class="empty">İlk antrenmanda setleri kaydettikçe kişisel rekorların burada listelenecek.</div>'}
 function renderBackupAge(){const stamp=localStorage.getItem(BACKUP_KEY),root=$('homeBackupAlert'),meta=$('backupAge');let msg='',due=true;if(stamp&&!Number.isNaN(Date.parse(stamp))){const days=Math.floor((Date.now()-Date.parse(stamp))/86400000);due=days>=7;msg=`Son JSON yedeği: ${new Date(stamp).toLocaleDateString('tr-TR')} · ${Math.max(0,days)} gün önce` }else{msg='Henüz JSON yedeği almadın.'}root.classList.toggle('due',due);root.innerHTML='';const strong=document.createElement('strong');strong.textContent=due?'⚠️ Yedek almayı unutma':'✓ Yedek durumun güncel';const text=document.createElement('div');text.className='muted';text.textContent=msg;root.append(strong,text);if(due){const btn=document.createElement('button');btn.type='button';btn.className='secondary';btn.textContent='Yedeklemeye git';btn.onclick=()=>navigateTo('settings','backupPanel');root.append(btn)}if(meta)meta.textContent=msg+'. Yedeği Dosyalar/iCloud Drive içinde sakla.'}
-function collectBackup(){return{version:7,app:'FormaRota Solo',exportedAt:new Date().toISOString(),coach:{increment:Number(localStorage.getItem('formarota-coach-increment-v1')||2.5),settings:window.FormaRotaTrainerAdapter?.readSettings?.()||{}},fitness:{config:fitConf(),weeks:read(FIT_WEEK_KEY,{}),abs:read(FIT_ABS_KEY,{}),history:fitGetHist(),current:fitCurrent,variants:read('kocluk-fitness-variants-v1',{}),edits:read('formarota-fitness-edits-v1',[]),absWorkouts:{selected:localStorage.getItem('formarota-workout-choice-v1')==='abs'?'abs':'fullbody',current:read('formarota-abs-current-v1',null),history:read('formarota-abs-history-v1',[])}},profile:getProfile(),weights:getWeights(),logs:getLogs(),customFoods:getCustom(),nutritionEdits:read('formarota-nutrition-edits-v1',[]),goals:{kcal:$('goalKcal').value,protein:$('goalProtein').value},rank:{goalsSnapshot:read('formarota-rank-goals-snapshot-v1',null),lastSeenXp:Number(localStorage.getItem('formarota-rank-last-seen-xp-v1')||0)},dinnerPlans:getDinnerPlans(),water:read(WATER_KEY,{}),walks:read(WALK_KEY,{}),waterGoal:waterGoal(),theme:document.documentElement.dataset.theme||'night',v21:{measurements:read(V21_MEASURES,{}),sleep:read(V21_SLEEP,{}),restConfig:read(V21_RESTS,{})}}}
+function collectBackup(){return{version:7,app:'FormaRota Solo',exportedAt:new Date().toISOString(),coach:{increment:Number(localStorage.getItem('formarota-coach-increment-v1')||2.5),settings:window.FormaRotaTrainerAdapter?.readSettings?.()||{}},fitness:{config:fitConf(),weeks:read(FIT_WEEK_KEY,{}),dayPlans:read(FIT_DAY_PLAN_KEY,{}),abs:read(FIT_ABS_KEY,{}),history:fitGetHist(),current:fitCurrent,variants:read('kocluk-fitness-variants-v1',{}),edits:read('formarota-fitness-edits-v1',[]),absWorkouts:{selected:localStorage.getItem('formarota-workout-choice-v1')==='abs'?'abs':'fullbody',current:read('formarota-abs-current-v1',null),history:read('formarota-abs-history-v1',[])}},profile:getProfile(),weights:getWeights(),logs:getLogs(),customFoods:getCustom(),nutritionEdits:read('formarota-nutrition-edits-v1',[]),goals:{kcal:$('goalKcal').value,protein:$('goalProtein').value},rank:{goalsSnapshot:read('formarota-rank-goals-snapshot-v1',null),lastSeenXp:Number(localStorage.getItem('formarota-rank-last-seen-xp-v1')||0)},dinnerPlans:getDinnerPlans(),water:read(WATER_KEY,{}),walks:read(WALK_KEY,{}),waterGoal:waterGoal(),theme:document.documentElement.dataset.theme||'night',v21:{measurements:read(V21_MEASURES,{}),sleep:read(V21_SLEEP,{}),restConfig:read(V21_RESTS,{})}}}
 function downloadBackup(data,prefix='FormaRota_Solo_Yedek'){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=prefix+'_'+new Date().toISOString().slice(0,10)+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000)}
 $('exportBtn').addEventListener('click',()=>{try{downloadBackup(collectBackup());localStorage.setItem(BACKUP_KEY,new Date().toISOString());renderBackupAge();$('backupStatus').textContent='Yedek indirildi. iPhone Dosyalar içinde dosyanın gerçekten bulunduğunu kontrol et.'}catch(e){$('backupStatus').textContent='Yedek hazırlanamadı: '+e.message}});
 let pendingImportData=null,importSafetyReady=false;
 function closeImportPreview(){pendingImportData=null;importSafetyReady=false;$('importPreview').classList.add('hidden');$('confirmImport').disabled=true}
 $('importBtn').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;closeImportPreview();try{if(file.size>12*1024*1024)throw Error('Dosya 12 MB sınırını aşıyor');const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.logs)||!Array.isArray(data.customFoods)||data.logs.length>50000||data.customFoods.length>5000||data.fitness&&typeof data.fitness!=='object')throw Error('Tanımsız yedek biçimi');if(data.fitness?.history&&!Array.isArray(data.fitness.history))throw Error('Antrenman geçmişi bozuk');if(data.fitness?.edits&&(!Array.isArray(data.fitness.edits)||data.fitness.edits.length>2000))throw Error('Düzeltme geçmişi bozuk');if(data.fitness?.absWorkouts&&!window.FormaRotaABSEngine?.validateBackup?.(data.fitness.absWorkouts))throw Error('Karın (ABS) antrenman geçmişi bozuk');if(data.coach?.settings!=null&&!window.FormaRotaTrainerAdapter?.validateSettings?.(data.coach.settings))throw Error('Antrenör hedef ayarları bozuk');if(data.rank!=null&&(typeof data.rank!=='object'||Array.isArray(data.rank)||data.rank.goalsSnapshot!=null&&(!(Number(data.rank.goalsSnapshot.kcal)>0)||!(Number(data.rank.goalsSnapshot.protein)>0)||!Number.isFinite(Number(data.rank.goalsSnapshot.kcal))||!Number.isFinite(Number(data.rank.goalsSnapshot.protein)))||data.rank.lastSeenXp!=null&&(!Number.isFinite(Number(data.rank.lastSeenXp))||Number(data.rank.lastSeenXp)<0)))throw Error('Rank bilgileri bozuk');if(data.weights&&!Array.isArray(data.weights))throw Error('Tartı geçmişi bozuk');if(data.nutritionEdits&&(!Array.isArray(data.nutritionEdits)||data.nutritionEdits.length>2000))throw Error('Beslenme düzeltme geçmişi bozuk');for(const k of ['dinnerPlans','water','walks'])if(data[k]&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw Error('Günlük kayıt alanı bozuk');pendingImportData=data;$('importPreviewText').textContent=`Dosya: ${file.name}
+$('importFile').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;closeImportPreview();try{if(file.size>12*1024*1024)throw Error('Dosya 12 MB sınırını aşıyor');const data=JSON.parse(await file.text());if(!data||!Array.isArray(data.logs)||!Array.isArray(data.customFoods)||data.logs.length>50000||data.customFoods.length>5000||data.fitness&&typeof data.fitness!=='object')throw Error('Tanımsız yedek biçimi');if(data.fitness?.dayPlans!=null&&!fitValidDayPlans(data.fitness.dayPlans))throw Error('Haftalık plan verileri bozuk');if(data.fitness?.history&&!Array.isArray(data.fitness.history))throw Error('Antrenman geçmişi bozuk');if(data.fitness?.edits&&(!Array.isArray(data.fitness.edits)||data.fitness.edits.length>2000))throw Error('Düzeltme geçmişi bozuk');if(data.fitness?.absWorkouts&&!window.FormaRotaABSEngine?.validateBackup?.(data.fitness.absWorkouts))throw Error('Karın (ABS) antrenman geçmişi bozuk');if(data.coach?.settings!=null&&!window.FormaRotaTrainerAdapter?.validateSettings?.(data.coach.settings))throw Error('Antrenör hedef ayarları bozuk');if(data.rank!=null&&(typeof data.rank!=='object'||Array.isArray(data.rank)||data.rank.goalsSnapshot!=null&&(!(Number(data.rank.goalsSnapshot.kcal)>0)||!(Number(data.rank.goalsSnapshot.protein)>0)||!Number.isFinite(Number(data.rank.goalsSnapshot.kcal))||!Number.isFinite(Number(data.rank.goalsSnapshot.protein)))||data.rank.lastSeenXp!=null&&(!Number.isFinite(Number(data.rank.lastSeenXp))||Number(data.rank.lastSeenXp)<0)))throw Error('Rank bilgileri bozuk');if(data.weights&&!Array.isArray(data.weights))throw Error('Tartı geçmişi bozuk');if(data.nutritionEdits&&(!Array.isArray(data.nutritionEdits)||data.nutritionEdits.length>2000))throw Error('Beslenme düzeltme geçmişi bozuk');for(const k of ['dinnerPlans','water','walks'])if(data[k]&&(typeof data[k]!=='object'||Array.isArray(data[k])))throw Error('Günlük kayıt alanı bozuk');pendingImportData=data;$('importPreviewText').textContent=`Dosya: ${file.name}
 Yemek kaydı: ${data.logs.length} · Kişisel besin: ${data.customFoods.length}
 Tartı: ${(data.weights||[]).length} · Antrenman: ${(data.fitness?.history||[]).length}`;$('importPreview').classList.remove('hidden');$('backupStatus').textContent='Yedek önizlemesi hazır. Önce kurtarma yedeğini indir.';$('importPreview').scrollIntoView({behavior:'smooth',block:'nearest'})}catch(err){$('backupStatus').textContent='İçe aktarma hazırlanamadı: '+(err?.message||'Dosya okunamadı')}finally{e.target.value=''}});
 $('safetyDownload').addEventListener('click',()=>{if(!pendingImportData)return;try{downloadBackup(collectBackup(),'FormaRota_Kurtarma_ONCE');importSafetyReady=true;$('confirmImport').disabled=false;$('backupStatus').textContent='Kurtarma yedeği indirildi. Dosyalar içinde kaydedildiğini kontrol et; ardından geri yüklemeyi onayla.'}catch(err){$('backupStatus').textContent='Kurtarma yedeği indirilemedi: '+err.message}});
 $('cancelImport').addEventListener('click',()=>{closeImportPreview();$('backupStatus').textContent='İçe aktarma iptal edildi. Telefon kayıtları değişmedi.'});
 $('confirmImport').addEventListener('click',()=>{if(!pendingImportData||!importSafetyReady)return;const data=pendingImportData;if(!confirm('Kurtarma dosyasının iPhone Dosyalar uygulamasında bulunduğunu doğruladın mı? Bu işlem mevcut kayıtların üzerine yazacak.'))return;
-try{const changes=[[logKey,data.logs],[customKey,data.customFoods],['formarota-nutrition-edits-v1',Array.isArray(data.nutritionEdits)?data.nutritionEdits:[]]];if(data.coach&&[1,2.5,5].includes(Number(data.coach.increment)))changes.push(['formarota-coach-increment-v1',Number(data.coach.increment)]);if(data.coach?.settings!=null)changes.push(['formarota-trainer-settings-v1',data.coach.settings]);if(data.fitness){if(data.fitness.config)changes.push([FIT_CONF_KEY,data.fitness.config]);if(data.fitness.weeks)changes.push([FIT_WEEK_KEY,data.fitness.weeks]);if(data.fitness.abs)changes.push([FIT_ABS_KEY,data.fitness.abs]);if(Array.isArray(data.fitness.history))changes.push([FIT_HISTORY_KEY,data.fitness.history]);if(data.fitness.variants)changes.push(['kocluk-fitness-variants-v1',data.fitness.variants]);changes.push(['formarota-fitness-edits-v1',Array.isArray(data.fitness.edits)?data.fitness.edits:[]]);changes.push([FIT_KEY,data.fitness.current||null]);if(data.fitness.absWorkouts){const absData=data.fitness.absWorkouts;changes.push(['formarota-abs-history-v1',absData.history||[]],['formarota-abs-current-v1',absData.current||null],['formarota-workout-choice-v1',absData.selected||'fullbody'])}}if(data.profile)changes.push([profileKey,data.profile]);if(data.weights)changes.push([weightKey,data.weights]);changes.push([DINNER_PLAN_KEY,data.dinnerPlans||{}],[WATER_KEY,data.water||{}],[WALK_KEY,data.walks||{}]);if(data.waterGoal)changes.push([WATER_GOAL_KEY,data.waterGoal]);if(data.v21){for(const [field,key] of [['measurements',V21_MEASURES],['sleep',V21_SLEEP],['restConfig',V21_RESTS]])if(data.v21[field]&&typeof data.v21[field]==='object'&&!Array.isArray(data.v21[field]))changes.push([key,data.v21[field]])}const rankGoals=data.rank?.goalsSnapshot||{kcal:Number(data.goals?.kcal)||2600,protein:Number(data.goals?.protein)||160};
+try{const changes=[[logKey,data.logs],[customKey,data.customFoods],['formarota-nutrition-edits-v1',Array.isArray(data.nutritionEdits)?data.nutritionEdits:[]]];if(data.coach&&[1,2.5,5].includes(Number(data.coach.increment)))changes.push(['formarota-coach-increment-v1',Number(data.coach.increment)]);if(data.coach?.settings!=null)changes.push(['formarota-trainer-settings-v1',data.coach.settings]);if(data.fitness){if(data.fitness.config)changes.push([FIT_CONF_KEY,data.fitness.config]);if(data.fitness.weeks)changes.push([FIT_WEEK_KEY,data.fitness.weeks]);changes.push([FIT_DAY_PLAN_KEY,data.fitness.dayPlans||null]);if(data.fitness.abs)changes.push([FIT_ABS_KEY,data.fitness.abs]);if(Array.isArray(data.fitness.history))changes.push([FIT_HISTORY_KEY,data.fitness.history]);if(data.fitness.variants)changes.push(['kocluk-fitness-variants-v1',data.fitness.variants]);changes.push(['formarota-fitness-edits-v1',Array.isArray(data.fitness.edits)?data.fitness.edits:[]]);changes.push([FIT_KEY,data.fitness.current||null]);if(data.fitness.absWorkouts){const absData=data.fitness.absWorkouts;changes.push(['formarota-abs-history-v1',absData.history||[]],['formarota-abs-current-v1',absData.current||null],['formarota-workout-choice-v1',absData.selected||'fullbody'])}}if(data.profile)changes.push([profileKey,data.profile]);if(data.weights)changes.push([weightKey,data.weights]);changes.push([DINNER_PLAN_KEY,data.dinnerPlans||{}],[WATER_KEY,data.water||{}],[WALK_KEY,data.walks||{}]);if(data.waterGoal)changes.push([WATER_GOAL_KEY,data.waterGoal]);if(data.v21){for(const [field,key] of [['measurements',V21_MEASURES],['sleep',V21_SLEEP],['restConfig',V21_RESTS]])if(data.v21[field]&&typeof data.v21[field]==='object'&&!Array.isArray(data.v21[field]))changes.push([key,data.v21[field]])}const rankGoals=data.rank?.goalsSnapshot||{kcal:Number(data.goals?.kcal)||2600,protein:Number(data.goals?.protein)||160};
 changes.push(['formarota-rank-goals-snapshot-v1',rankGoals]);
 changes.push(['formarota-rank-last-seen-xp-v1',data.rank?.lastSeenXp!=null?String(data.rank.lastSeenXp):null]);
 if(data.goals?.kcal)changes.push(['kocluk-goal-kcal',data.goals.kcal]);if(data.goals?.protein)changes.push(['kocluk-goal-protein',data.goals.protein]);if(['night','ocean','light','sand','neon','volt','sunset','oled-black','oled-neon','oled-ember'].includes(data.theme))changes.push(['formarota-ui-theme',data.theme]);
