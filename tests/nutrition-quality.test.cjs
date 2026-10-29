@@ -26,7 +26,7 @@ test('reject missing calorie or protein values and implausible per-100g numbers'
  assert.equal(ctx.valid(food),false);
 });
 test('manual food logging rejects incomplete macros and saves missing optional macros as unknown',()=>{
- const fn=slice('function addFood(food){','async function barcodeSearch(){');
+ const fn=slice('function addFood(food,chosenAmount){','async function barcodeSearch(){');
  const map=[];
  const nodes={amount:{value:'125'},date:{value:'2026-10-24'},meal:{value:'Öğle yemeği'},status:{textContent:''}};
  const env={
