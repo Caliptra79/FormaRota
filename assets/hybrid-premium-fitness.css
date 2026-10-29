@@ -384,3 +384,35 @@ html[data-fr-motion="reduced"] #fitnessRoot *::before,
 html[data-fr-motion="reduced"] #fitnessRoot *::after{
  animation:none!important;transition:none!important;
 }
+
+/* Four editable set columns remain readable at 320–390px, including correction. */
+html[data-theme] #fitExercisePanel .fit-card .fit-set,
+html[data-theme] #fitExercisePanel .fit-card .fit-set-head{
+ display:grid;
+ grid-template-columns:minmax(45px,.73fr) minmax(52px,.84fr) minmax(56px,.87fr) minmax(70px,1.1fr);
+ align-items:center;
+ gap:6px;
+ min-width:0;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set>span{
+ font-size:.77rem;white-space:nowrap;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set>button{
+ width:100%;max-width:100%;
+ padding:7px 4px!important;
+ font-size:clamp(.69rem,2.1vw,.83rem)!important;
+ white-space:normal;overflow-wrap:anywhere;
+ line-height:1.28;
+}
+html[data-theme] #fitExercisePanel .fit-card .fit-set>input{
+ width:100%;max-width:100%;
+ padding:7px 5px!important;
+}
+@media(max-width:380px){
+ html[data-theme] #fitExercisePanel .fit-card .fit-set,
+ html[data-theme] #fitExercisePanel .fit-card .fit-set-head{
+  grid-template-columns:minmax(41px,.7fr) minmax(48px,.85fr) minmax(52px,.86fr) minmax(64px,1.1fr);
+  gap:4px;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-set>span{font-size:.7rem}
+}
