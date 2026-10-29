@@ -166,7 +166,7 @@ function shift(date,offset){
  const d=new Date(date+'T12:00:00');d.setDate(d.getDate()+offset);
  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
 }
-function weekly(history,weekDate,frequency,selected){
+function weekly(history,weekDate,frequency,selected,activities){
  const start=weekStart(weekDate),days=Array.from({length:7},(_,i)=>shift(start,i));
  const sessions=safeArray(history).filter(x=>['finished','stopped'].includes(x?.status)&&days.includes(x.date));
  const completed=sessions.filter(fullWorkout),partial=sessions.filter(x=>!fullWorkout(x));
@@ -174,22 +174,29 @@ function weekly(history,weekDate,frequency,selected){
  const perDay=Object.fromEntries(days.map(d=>[d,completed.filter(x=>x.date===d).length]));
  const attended=Object.fromEntries(days.map(d=>[d,sessions.filter(x=>x.date===d).length]));
  const target=Number(frequency)===3?3:2;
- const daysChosen=[...new Set(safeArray(selected).filter(d=>days.includes(d)&&d!==days[2]))];
- const planReady=daysChosen.length===target;
- const suggested=(target===3?[0,3,5]:[0,4]).map(i=>days[i]);
+ const entries=activities&&typeof activities==='object'&&!Array.isArray(activities)?activities:null;
+ const types=Object.fromEntries(days.map(d=>{
+  const value=entries?.[d],type=typeof value==='string'?value:value?.type;
+  return [d,['rest','full','abs','basket','basket-abs','full-abs','other'].includes(type)?type:
+   safeArray(selected).includes(d)?'full':'rest'];
+ }));
+ const daysChosen=days.filter(d=>['full','full-abs'].includes(types[d]));
+ const custom=daysChosen.length>0||Boolean(entries&&Object.keys(entries).length);
+ const planReady=daysChosen.length>=target;
+ const suggested=(target===3?[0,2,4]:[0,4]).map(i=>days[i]);
  return {start,days,finished:unique.size,fullSessions:completed.length,partial:partial.length,
   totalSessions:sessions.length,sets:sessions.reduce((sum,x)=>sum+countedSets(x),0),
   validSets:sessions.reduce((sum,x)=>sum+validSets(x),0),target,
-  planned:daysChosen.length?daysChosen:suggested,
-  custom:daysChosen.length>0,planReady,plannedCount:daysChosen.length,perDay,attended};
+  planned:custom?daysChosen:suggested,
+  custom,planReady,plannedCount:daysChosen.length,perDay,attended,activities:types};
 }
 function reschedule(w,todayDate){
  if(!w||!w.planReady||!validDate(todayDate)||!w.days.includes(todayDate))return {missed:[],replacement:null};
  const missed=w.planned.filter(date=>date<todayDate&&!w.attended?.[date]);
  if(!missed.length)return {missed:[],replacement:null};
- const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.attended||w.perDay).filter(d=>(w.attended||w.perDay)[d]>0),w.days[2]];
+ const used=[...w.planned.filter(date=>date>=todayDate),...Object.keys(w.attended||w.perDay).filter(d=>(w.attended||w.perDay)[d]>0),...w.days.filter(d=>w.activities?.[d]&&w.activities[d]!=='rest')];
  const candidate=w.days.find(date=>{
-  if(date<todayDate||date===w.days[2]||w.planned.includes(date)||w.attended?.[date])return false;
+  if(date<todayDate||w.planned.includes(date)||w.attended?.[date]||w.activities?.[date]&&w.activities[date]!=='rest')return false;
   const t=new Date(date+'T12:00:00').getTime();
   return used.every(other=>Math.abs(t-new Date(other+'T12:00:00').getTime())>=2*86400000);
  });
@@ -204,8 +211,8 @@ function analysis(move,variant,history,increment){
  const change=total!==null&&prior!==null?round(total-prior):null;
  return {...assessment,volume:total===null?null:round(total),volumeChange:change};
 }
-function report(history,moves,weekDate,frequency,variants,increment,selected){
- const w=weekly(history,weekDate,frequency,selected),messages=[];
+function report(history,moves,weekDate,frequency,variants,increment,selected,activities){
+ const w=weekly(history,weekDate,frequency,selected,activities),messages=[];
  if(!w.finished){
   messages.push(w.partial?'Bu hafta '+w.partial+' eksik/yarım seans kaydedildi; tam 39 setlik Full Body yok.':'Bu hafta tamamlanmış Full Body kaydı yok.');
  }else if(w.finished<w.target)messages.push(w.finished+'/'+w.target+' farklı günde tam Full Body kaydı var.');
