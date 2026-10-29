@@ -1,0 +1,44 @@
+/* Food quantities: each search result owns an accessible g/ml field. */
+#searchPanel .result{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:12px;min-width:0;
+}
+#searchPanel .result .food-result-copy,
+#searchPanel #barcodeResult .food-result-copy{
+ flex:1 1 200px;min-width:0;overflow-wrap:anywhere;
+}
+#searchPanel .food-result-controls{
+ display:flex;align-items:flex-end;gap:8px;flex:0 1 auto;
+ min-width:0;
+}
+#searchPanel .food-result-controls .food-quantity-label{
+ display:flex;flex-direction:column;gap:5px;
+ font-size:.78rem;font-weight:730;color:var(--text)!important;
+ margin:0;
+}
+#searchPanel .food-result-controls input{
+ display:block;min-width:0;width:104px;max-width:115px;
+ min-height:44px;padding:8px 10px;
+ border:1px solid var(--border)!important;
+ border-radius:10px!important;
+ background:var(--control,var(--panel2))!important;
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+ font-size:16px;
+}
+#searchPanel .food-result-controls button{
+ min-height:44px;padding:9px 14px;
+ border-radius:11px;white-space:nowrap;
+}
+#searchPanel .food-unit-estimate{
+ display:block;margin-top:6px;max-width:48ch;
+ color:var(--muted)!important;
+ font-size:.75rem;line-height:1.5;
+}
+@media(max-width:430px){
+ #searchPanel .result .food-result-copy{flex-basis:100%}
+ #searchPanel .food-result-controls{width:100%}
+ #searchPanel .food-result-controls .food-quantity-label{flex:1 1 auto}
+ #searchPanel .food-result-controls input{width:100%;max-width:none}
+ #searchPanel .food-result-controls button{min-width:85px}
+}
