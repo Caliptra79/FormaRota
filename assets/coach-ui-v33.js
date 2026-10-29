@@ -38,12 +38,19 @@ function text(tag,className,value){
  const el=document.createElement(tag);if(className)el.className=className;
  if(value!=null)el.textContent=value;return el;
 }
+function coachWeekActivities(start){
+ try{
+  const plans=typeof read==='function'?read('formarota-fitness-day-plan-v1',{}):{};
+  return plans?.[start]&&typeof plans[start]==='object'?plans[start]:undefined;
+ }catch{return undefined}
+}
 function coachWeek(){
  const d=typeof today==='function'?today():new Date().toISOString().slice(0,10);
  const cfg=typeof fitConf==='function'?fitConf():{frequency:2};
+ const key=E.weekStart(d);
  let selected=[];
- try{const key=E.weekStart(d);selected=read('kocluk-fitness-weeks-v1',{})[key]||[]}catch{}
- return E.weekly(readHistory(),d,cfg.frequency,selected);
+ try{selected=read('kocluk-fitness-weeks-v1',{})[key]||[]}catch{}
+ return E.weekly(readHistory(),d,cfg.frequency,selected,coachWeekActivities(key));
 }
 function refreshOverview(){
  const card=byId('coachOverview');
@@ -68,10 +75,24 @@ function refreshOverview(){
   w.days.forEach((date,i)=>{
    const done=w.perDay[date]>0;
    const partial=!done&&w.attended?.[date]>0;
-   const type=i===2?'ball':done?'done':partial?'partial':w.planned.includes(date)?'planned':'rest';
-   const el=text('div','coach-day coach-'+type);
-   el.title=date+' · '+(i===2?'Basketbol':done?'Tam Full Body':partial?'Yarım seans':type==='planned'?'Planlanan antrenman':'Dinlenme');
-   el.append(text('span','coach-day-label',names[i]),text('span','coach-day-icon',i===2?'🏀':done?'✓':partial?'◐':type==='planned'?'●':'·'));
+   const activity=w.activities?.[date]||'rest';
+   const scheduled=w.planned.includes(date);
+   const kind=done?'done':partial?'partial':
+    activity==='basket'||activity==='basket-abs'?'ball':
+    activity==='abs'?'abs':activity==='other'?'other':
+    scheduled?'planned':'rest';
+   const label={
+    rest:'Dinlenme',full:'Full Body',abs:'Karın / ABS',
+    basket:'Basketbol','basket-abs':'Basketbol + ABS',
+    'full-abs':'Full Body + ABS',other:'Diğer etkinlik'
+   }[activity]||'Dinlenme';
+   const status=done?'✓':partial?'◐':
+    activity==='basket'||activity==='basket-abs'?'🏀':
+    activity==='abs'?'💪':activity==='other'?'✦':
+    scheduled?'●':'·';
+   const el=text('div','coach-day coach-'+kind);
+   el.title=date+' · '+(done?'Tam Full Body kaydedildi':partial?'Yarım seans kaydedildi':'Plan: '+label);
+   el.append(text('span','coach-day-label',names[i]),text('span','coach-day-icon',status));
    strip.append(el);
   });
  }
@@ -274,7 +295,7 @@ function refreshReport(){
  if(!box){box=text('div','coach-report');box.id='coachReport';original.before(box)}
  const moves=readMoves(),date=reportDate(),week=E.weekStart(date);
  const planned=typeof read==='function'?read('kocluk-fitness-weeks-v1',{})[week]||[]:[];
- const w=E.report(readHistory(),moves,date,typeof fitConf==='function'?fitConf().frequency:2,getVariants(),getStep(),planned);
+ const w=E.report(readHistory(),moves,date,typeof fitConf==='function'?fitConf().frequency:2,getVariants(),getStep(),planned,coachWeekActivities(week));
  box.replaceChildren();
  box.append(text('h3','', 'Antrenörün haftalık değerlendirmesi'));
  box.append(text('p','coach-report-summary', w.finished+' / '+w.target+' farklı gün · '+w.fullSessions+' tam seans · '+w.sets+' set'+(w.partial?' · '+w.partial+' eksik/yarım seans':'')));

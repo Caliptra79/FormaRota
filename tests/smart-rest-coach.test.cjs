@@ -124,7 +124,7 @@ test('new UI is accessible and cached offline with no changes to backup version'
  assert.ok(css.includes('.coach-guide'));
  assert.ok(html.includes('collectBackup(){return{version:7'));
  assert.ok(html.includes('kocluk-fitness-history-v1'));
- assert.ok(sw.includes("formarota-solo-v79-shell"));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(f=>f.endsWith('.gif')).length,19);
 });
 
