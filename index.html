@@ -200,73 +200,72 @@ setTimeout(function(){hide(seq)},4000);
 <button type="button" data-go="fitness">🏋️ Antrenman</button><button type="button" data-go="fitness-history">🕓 Geçmiş</button>
 </div>
 </div>
-<main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide fr2-home" data-view="home" id="homePanel">
-  <div class="fr2-stage">
-    <div class="fr2-stage-top">
-      <div class="fr2-brand"><span class="fr2-brand-emblem" aria-hidden="true">F<span>↗</span></span><span>FORMAROTA <span class="fr2-brand-divider" aria-hidden="true">/</span> GÜNLÜK PANEL</span></div>
-      <span class="fr2-stage-indicator"><span aria-hidden="true" class="fr2-stage-spark"></span> SENİN ROTAN</span>
+<main><h1 class="sr-only">FormaRota — kişisel beslenme ve antrenman günlüğü</h1><section class="panel wide oled-home" data-view="home" id="homePanel">
+  <div class="oled-home-heading">
+    <div>
+      <span class="oled-overline">GÜNLÜK TAKİP</span>
+      <h2>Bugünkü Durum</h2>
+      <p>Bugün kaydettiklerin ve kalan hedeflerin.</p>
     </div>
-    <div class="fr2-stage-layout">
-      <div class="fr2-stage-copy">
-        <div class="fr2-stage-eyebrow">BUGÜN / YENİ BİR ADIM</div>
-        <h2>İlerlemeni<br><em>sen yönet.</em></h2>
-        <p>Beslenme, hareket ve alışkanlıkların tek bir kontrol merkezinde. Küçük adımlar, gerçek kayıtlar.</p>
-        <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
-        <div class="muted hidden" id="homeDateLabel" aria-hidden="true"></div>
-        <div class="fr2-stage-actions">
-          <button id="homeWorkout" type="button" class="fr2-workout-cta">Antrenmana geç <span aria-hidden="true">↗</span></button>
-          <span class="fr2-cta-note">Programın ve kayıtların hazır.</span>
-        </div>
-      </div>
-      <div class="fr2-stage-art" aria-hidden="true">
-        <div class="fr2-art-track"></div>
-        <div class="fr2-art-orbit"></div>
-        <div class="fr2-art-core">FR<span>↗</span></div>
-        <div class="fr2-art-foot">01 <span>/</span> BUGÜN</div>
+    <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
+    <span class="muted hidden" id="homeDateLabel" aria-hidden="true"></span>
+  </div>
+  <section class="oled-calorie-card" aria-labelledby="oledCalorieTitle">
+    <div class="oled-card-top"><h3 id="oledCalorieTitle">Kalori takibi</h3><span class="oled-mini-caption">BUGÜN</span></div>
+    <div id="oledKcalRing" class="oled-main-ring" role="progressbar" aria-label="Günlük kalori hedefi ilerlemesi" aria-valuemin="0" aria-valuemax="2600" aria-valuenow="0">
+      <div class="oled-main-ring-inner">
+        <strong id="oledKcalValue">0</strong>
+        <span id="oledKcalTarget">/ 2.600 kcal</span>
+        <small id="oledKcalState">Henüz kayıt yok</small>
       </div>
     </div>
-  </div>
-  <div class="fr2-dashboard">
-    <section class="fr2-metrics" aria-labelledby="frhDailyHeadingTitle">
-      <div class="fr2-section-head frh-section-head" id="frhDailyHeading">
-        <div><span class="frh-eyebrow">CANLI GÖSTERGELER</span><h3 id="frhDailyHeadingTitle">Bugünün özeti</h3></div>
-        <p>Gerçek kayıtlarınla güncellenir.</p>
-      </div>
-      <div id="spProgressRings" class="sp-rings" role="group" aria-labelledby="frhDailyHeadingTitle"></div>
-      <div class="home-stats"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span> <small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div>
-      <div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span> <small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
-    </section>
-    <section class="mini-panel fr2-meals" aria-labelledby="fr2MealsTitle">
-      <div class="fr2-section-head"><div><span class="fr2-small-overline">HIZLI KAYIT</span><h3 id="fr2MealsTitle">Öğün ekle</h3></div><span class="fr2-small-chip">4 öğün</span></div>
-      <div class="daily-steps" id="homeChecklist" hidden style="display:none!important"></div>
-      <div class="home-actions">
-        <button id="homeBreakfast" type="button"><span aria-hidden="true">🥚</span> Kahvaltı</button>
-        <button class="secondary" id="homeLunch" type="button"><span aria-hidden="true">🍽</span> Öğle</button>
-        <button class="secondary" id="homeDinner" type="button"><span aria-hidden="true">🌙</span> Akşam</button>
-        <button class="secondary" id="homeSnack" type="button"><span aria-hidden="true">🍎</span> Ara öğün</button>
-      </div>
-      <p class="fr2-meal-foot">Öğüne dokunarak mevcut besin günlüğünü aç.</p>
-    </section>
-  </div>
-  <div class="fr2-lower">
-    <section class="fr2-habits" aria-labelledby="fr2HabitsTitle">
-      <div class="fr2-section-head"><div><span class="fr2-small-overline">GÜNLÜK ALIŞKANLIKLAR</span><h3 id="fr2HabitsTitle">Rutinin</h3></div><span class="fr2-small-chip">Bugün</span></div>
-      <div class="tracker-pair">
-        <div class="tracker"><div class="muted">💧 Su takibi</div><span class="count" id="waterCount">0 / 2500 ml</span><div class="buttons"><button class="secondary" id="waterMinus" type="button">−250 ml</button><button id="waterPlus" type="button">+250 ml</button></div><label class="goalfield">Günlük hedef <input aria-label="Günlük su hedefi mililitre" id="waterGoal" max="7000" min="250" step="250" type="number" value="2500"/> ml</label></div>
-        <div class="tracker"><div class="muted">🚶 Günlük yürüyüş</div><span class="count" id="walkCount">0 / 5 km</span><div class="buttons"><button id="walkToggle" type="button">5 km tamamlandı</button></div><div class="muted">İstersen kendin de gir:</div><input aria-label="Yürüyüş mesafesi kilometre" id="walkKm" max="100" min="0" step="0.1" type="number" value="0"/></div>
-      </div>
-    </section>
-    <section class="fr2-story" aria-labelledby="fr2StoryTitle">
-      <div class="fr2-section-head"><div><span class="fr2-small-overline">BÜYÜK RESİM</span><h3 id="fr2StoryTitle">Rotanın izi</h3></div><span class="fr2-small-chip">Bu hafta</span></div>
-      <div class="sp-week-teaser" id="spWeekTeaser" aria-label="Haftalık gelişim önizlemesi"></div>
-      <div id="frRankHome" class="fr-rank-card" role="button" tabindex="0" aria-label="Rank ayrıntılarına git"></div>
-    </section>
-  </div>
+    <div class="oled-macros" role="group" aria-label="Günlük makro besinler">
+      <div class="oled-macro" data-kind="carbs"><span>Karbonhidrat</span><strong id="oledCarbs">—</strong><small id="oledCarbsNote">Kaydedilen miktar</small><div class="oled-macro-track"><i></i></div></div>
+      <div class="oled-macro" data-kind="fat"><span>Yağ</span><strong id="oledFat">—</strong><small id="oledFatNote">Kaydedilen miktar</small><div class="oled-macro-track"><i></i></div></div>
+      <div class="oled-macro" data-kind="protein"><span>Protein</span><strong id="oledProtein">0 / 160 g</strong><small id="oledProteinNote">Günlük hedef</small><div class="oled-macro-track"><i id="oledProteinBar"></i></div></div>
+    </div>
+    <div class="home-stats" aria-hidden="true"><div class="home-stat"><div class="muted">Kalori</div><div class="value"><span id="homeKcal">0</span><small id="homeKcalGoal">/ 2600 kcal</small></div><div class="progress"><span id="homeKcalBar"></span></div></div><div class="home-stat"><div class="muted">Protein</div><div class="value"><span id="homeProtein">0</span><small id="homeProteinGoal">/ 160 g</small></div><div class="progress"><span id="homeProteinBar"></span></div></div></div>
+  </section>
+  <section class="oled-daily-card" aria-labelledby="frhDailyHeadingTitle">
+    <div class="oled-card-top frh-section-head" id="frhDailyHeading">
+      <div><span class="oled-overline">HEDEFLERİN</span><h3 id="frhDailyHeadingTitle">Günlük ilerleme</h3></div>
+      <span class="oled-mini-caption">CANLI</span>
+    </div>
+    <div id="spProgressRings" class="sp-rings" role="group" aria-labelledby="frhDailyHeadingTitle"></div>
+  </section>
+  <section class="oled-quick-card" aria-labelledby="oledQuickTitle">
+    <div class="oled-card-top"><h3 id="oledQuickTitle">Hızlı kayıt</h3><span class="oled-mini-caption">GÜNLÜK İŞLEMLER</span></div>
+    <div class="daily-steps" id="homeChecklist" hidden style="display:none!important"></div>
+    <div class="home-actions">
+      <button id="homeBreakfast" type="button"><span aria-hidden="true">🥚</span> Kahvaltı</button>
+      <button class="secondary" id="homeLunch" type="button"><span aria-hidden="true">🍽</span> Öğle</button>
+      <button class="secondary" id="homeDinner" type="button"><span aria-hidden="true">🌙</span> Akşam</button>
+      <button class="secondary" id="homeSnack" type="button"><span aria-hidden="true">🍎</span> Ara öğün</button>
+      <button class="oled-workout-action" id="homeWorkout" type="button"><span aria-hidden="true">🏋️</span> Antrenmana git <span aria-hidden="true">↗</span></button>
+    </div>
+  </section>
+  <section class="oled-day-plan" aria-labelledby="oledDayPlanTitle">
+    <div class="oled-card-top"><h3 id="oledDayPlanTitle">Bugün neler var?</h3><span class="oled-mini-caption">YAPILAN / KALAN</span></div>
+    <div id="oledTodayPlan" class="oled-plan-list" aria-live="polite"><p class="muted">Günün kayıtları hazırlanıyor.</p></div>
+  </section>
+  <section class="oled-recent" aria-labelledby="oledRecentTitle">
+    <div class="oled-card-top"><h3 id="oledRecentTitle">Son kayıtlar</h3><button id="oledRecentAll" class="secondary oled-text-link" type="button">Tümünü gör</button></div>
+    <div id="oledRecentList" class="oled-recent-list" aria-live="polite"><p class="muted">Henüz kayıt yok.</p></div>
+  </section>
+  <section class="oled-routine" aria-labelledby="oledRoutineTitle">
+    <div class="oled-card-top"><h3 id="oledRoutineTitle">Günlük kontroller</h3><span class="oled-mini-caption">SU / YÜRÜYÜŞ</span></div>
+    <div class="tracker-pair">
+      <div class="tracker"><div class="muted">💧 Su takibi</div><span class="count" id="waterCount">0 / 2500 ml</span><div class="buttons"><button class="secondary" id="waterMinus" type="button">−250 ml</button><button id="waterPlus" type="button">+250 ml</button></div><label class="goalfield">Günlük hedef <input aria-label="Günlük su hedefi mililitre" id="waterGoal" max="7000" min="250" step="250" type="number" value="2500"/> ml</label></div>
+      <div class="tracker"><div class="muted">🚶 Günlük yürüyüş</div><span class="count" id="walkCount">0 / 5 km</span><div class="buttons"><button id="walkToggle" type="button">5 km tamamlandı</button></div><div class="muted">İstersen kendin de gir:</div><input aria-label="Yürüyüş mesafesi kilometre" id="walkKm" max="100" min="0" step="0.1" type="number" value="0"/></div>
+    </div>
+  </section>
+  <section class="oled-week" aria-labelledby="oledWeekTitle">
+    <div class="oled-card-top"><h3 id="oledWeekTitle">Haftalık görünüm</h3><span class="oled-mini-caption">GELİŞİM</span></div>
+    <div class="sp-week-teaser" id="spWeekTeaser" aria-label="Haftalık gelişim önizlemesi"></div>
+    <div id="frRankHome" class="fr-rank-card" role="button" tabindex="0" aria-label="Rank ayrıntılarına git"></div>
+  </section>
   <div class="backup-alert" id="homeBackupAlert" role="status"></div>
-  <div class="fr2-bottom-tools">
-    <span class="fr2-small-overline">DİĞER ARAÇLAR</span>
-    <div class="row"><button class="secondary" id="homeTrends" type="button">📈 Gelişimim</button><button class="secondary" id="homeBackup" type="button">⬇️ Yedeklemeye git</button></div>
-  </div>
+  <div class="oled-bottom-tools"><button class="secondary" id="homeTrends" type="button">📈 Gelişimim</button><button class="secondary" id="homeBackup" type="button">⬇️ Yedeklemeye git</button></div>
 </section>
 <section class="route-heading wide studio-nutrition-hero" data-view="nutrition" aria-label="Öğün günlüğün">
  <div class="studio-nutrition-copy">
