@@ -1,6 +1,6 @@
 /* FormaRota OLED Edition — reference-led calorie dashboard.
    Real records, high contrast, circles first; no promotional hero. */
-html[data-theme] #homePanel.oled-home{
+html[data-theme] #homePanel.oled-home:not(.hidden){
  display:grid!important;grid-template-columns:minmax(0,1fr);gap:16px;
  width:100%;min-width:0;
  padding:0 0 24px!important;margin:0;
@@ -369,3 +369,6 @@ html[data-fr-motion="reduced"] #homePanel.oled-home *::before,
 html[data-fr-motion="reduced"] #homePanel.oled-home *::after{
  transition:none!important;animation:none!important;
 }
+
+/* Route visibility always wins: home content must never appear on another tab. */
+html[data-theme] #homePanel.oled-home.hidden{display:none!important}
