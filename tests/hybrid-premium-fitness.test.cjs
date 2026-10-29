@@ -64,7 +64,7 @@ test('Hybrid fitness adds useful section kickers without removing original headi
  for(const [el,word] of [[m.coach,'KİŞİSEL ANTRENÖR'],[m.session,'ZAMANLAYICI'],[m.exercisePanel,'HAREKETLERİN']]){
   const kicker=el.querySelector('.frhf-kicker, .frhf-coach-kicker');
   assert.ok(kicker);
-  assert.match(kicker.textContent,word);
+  assert.ok(kicker.textContent.includes(word));
   assert.ok(el.querySelector('h2'));
  }
 });
