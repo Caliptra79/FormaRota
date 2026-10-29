@@ -32,4 +32,6 @@
  }
  function format(seconds){return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
  root.FormaRotaSmartRest=Object.freeze({RESTS,STORAGE_KEY,resolve,get,format});
+ // Refresh the earlier advanced timer now that the deferred module is loaded.
+ if(root.v21Ready&&typeof root.v21RestChange==='function')root.v21RestChange();
 })(window);
