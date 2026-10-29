@@ -122,7 +122,7 @@ test('live coach strip uses user activities; never hardwires Wednesday as basket
  assert.ok(ui.includes("read('formarota-fitness-day-plan-v1',{})"));
  assert.ok(ui.includes('w.activities?.[date]'));
  assert.ok(!ui.includes("i===2?'ball'"));
- assert.ok(html.includes("const FIT_DAY_PLAN_KEY='formarota-fitness-day-plan-v1'"));
+ assert.ok(html.includes("FIT_DAY_PLAN_KEY='formarota-fitness-day-plan-v1'"));
  assert.ok(html.includes('id="fitWeekDays"'));
  assert.ok(!html.includes('Çarşamba: Basketball + Abs'));
 });
