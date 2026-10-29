@@ -36,10 +36,10 @@
  const day=()=>metrics.localISO(new Date());
  let lastWeekSignature='',lastRingSignature='';
  const ringConfig=[
-  {id:'kcal',name:'Kalori',icon:'🔥',unit:'kcal',color:'coral'},
-  {id:'protein',name:'Protein',icon:'⚡',unit:'g',color:'violet'},
+  {id:'protein',name:'Protein',icon:'💪',unit:'g',color:'mint'},
   {id:'water',name:'Su',icon:'💧',unit:'ml',color:'blue'},
-  {id:'workout',name:'Antrenman',icon:'🏋️',unit:'set',color:'mint'}
+  {id:'walk',name:'Yürüyüş',icon:'🚶',unit:'km',color:'coral'},
+  {id:'workout',name:'Antrenman',icon:'🏋️',unit:'set',color:'violet'}
  ];
  function nutritionToday(){
   const today=day();
@@ -49,11 +49,17 @@
   const current=read(key.current,null);
   const ids=workoutIds();
   const abs=root.FormaRotaABS?.selectedProgress?.();
+  const full=read(key.history,[]);
+  const fullDone=Array.isArray(full)&&full.some(session=>session?.date===today&&metrics.fullSession(session,ids));
+  const fullProgress=fullDone?39:metrics.workoutSets(current?.date===today?current:null,ids);
+  const absHistory=read('formarota-abs-history-v1',[]);
+  const absDone=Array.isArray(absHistory)&&root.FormaRotaABSEngine?.completedDates?.(absHistory)?.has(today);
+  const absProgress=absDone?12:safeNumber(abs?.count);
   return [
-   metrics.progress(total('kcal'),safeNumber(byId('goalKcal')?.value,2600)||2600),
    metrics.progress(total('protein'),safeNumber(byId('goalProtein')?.value,160)||160),
    metrics.progress(safeNumber(safeMap(read(key.water,{}))[today]),safeNumber(byId('waterGoal')?.value,2500)||2500),
-   abs?.selected==='abs'?metrics.progress(abs.count,12):metrics.progress(metrics.workoutSets(current,ids),39)
+   metrics.progress(safeNumber(safeMap(read(key.walk,{}))[today]),5),
+   abs?.selected==='abs'?metrics.progress(absProgress,12):metrics.progress(fullProgress,39)
   ];
  }
  function buildRing(config,measurement){
