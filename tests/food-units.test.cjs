@@ -91,7 +91,7 @@ test('new module and styles are in the offline cache while the 10 themes and GIF
   assert.ok(html.includes('./assets/'+asset));
  }
  assert.ok(css.includes('food-result-controls'));assert.ok(css.includes('font-size:16px'));
- assert.match(sw,/const CACHE='formarota-solo-v85-shell'/);
+ assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(f=>f.endsWith('.gif')).length,19);
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });

@@ -477,6 +477,7 @@ setTimeout(function(){hide(seq)},4000);
 <button data-tab="progress" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4v16h16M7 16l5-5 3 2 5-7"/></svg></span><span>Gelişim</span></button>
 <button data-tab="settings" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span>Ayarlar</span></button></nav><script src="./assets/turkish-foods.js"></script>
 <script src="./assets/dinner-coach.js"></script><script src="./assets/food-units.js"></script>
+<script src="./assets/food-search-cache.js"></script>
 <script defer src="./assets/date-masthead.js"></script>
 <script>
 (function(){const themes={night:'#0c141a',ocean:'#091821',light:'#f4f6f7',sand:'#f7f5f0',neon:'#100b1d',volt:'#0b1011',sunset:'#190e16','oled-black':'#000000','oled-neon':'#000000','oled-ember':'#000000'};const el=document.getElementById('themeSelect');if(!el)return;const saved=document.documentElement.dataset.theme||'night';el.value=saved;const apply=t=>{if(!Object.hasOwn(themes,t))return;document.documentElement.dataset.theme=t;document.querySelector('meta[name="theme-color"]').content=themes[t];try{localStorage.setItem('formarota-ui-theme',t)}catch(e){}};el.addEventListener('change',()=>apply(el.value));apply(saved)})();
@@ -730,10 +731,36 @@ function renderResults(items,root=$('results')){
   label.append(input);
   const btn=document.createElement('button');btn.type='button';btn.textContent='Ekle';
   btn.disabled=!nutritionMacrosValid(food);btn.onclick=()=>addFood(food,input.value);
-  controls.append(label,btn);el.append(left,controls);root.append(el);
+  controls.append(label,btn);
+  if(String(food.id||'').startsWith('off-')){
+   const save=document.createElement('button');save.type='button';save.className='secondary';
+   const saved=typeof getCustom==='function'&&getCustom().some(x=>x.id===food.id);
+   save.textContent=saved?'Kaydedildi':'Sakla';save.disabled=saved;
+   save.setAttribute('aria-label',food.name+' ürününü cihazdaki besinlerime kaydet');
+   save.onclick=()=>{if(savePackagedFood(food)){save.disabled=true;save.textContent='Kaydedildi';}};
+   controls.append(save);
+  }
+  el.append(left,controls);root.append(el);
  });
 }
-function localSearch(q){const terms=norm(q).split(/\s+/).filter(Boolean);return [...seedFoods,...getCustom()].filter(f=>{const hay=norm([f.name,...(f.aliases||[])].join(' '));return terms.every(t=>hay.includes(t))}).map(f=>({...f,source:f.source||'Kişisel besin'}))}
+function localSearch(q){
+ const terms=norm(q).split(/\s+/).filter(Boolean);
+ const foods=[...seedFoods,...getCustom()];
+ const hits=foods.filter(f=>{
+  const hay=norm([f.name,...(f.aliases||[])].join(' '));
+  return terms.every(t=>hay.includes(t));
+ }).map(f=>({...f,source:f.source||'Kişisel besin'}));
+ const cached=window.FormaRotaFoodSearchCache?.find(q)||[];
+ return uniqueFoods([...hits,...cached]);
+}
+function uniqueFoods(items){
+ const seen=new Set();
+ return items.filter(f=>{
+  const k=String(f.id||f.name||'');
+  if(seen.has(k))return false;
+  seen.add(k);return true;
+ });
+}
 function nutritionMacrosValid(f){if(!f||f.kcal==null||f.protein==null||f.kcal===''||f.protein==='')return false;const k=Number(f.kcal),p=Number(f.protein);return Number.isFinite(k)&&k>=0&&k<=1000&&Number.isFinite(p)&&p>=0&&p<=100;}
 function offProductToFood(p){
  const n=p.nutriments||{};
@@ -749,7 +776,73 @@ function offProductToFood(p){
   carbs:get('carbohydrates_'+suffix),fat:get('fat_'+suffix),unit,
   nutritionBasis:suffix,kind:'Paketli ürün',source:'Open Food Facts (etiket kontrolü gerekli)',code:p.code,verified:false};
 }
-async function search(){const q=$('query').value.trim(),src=$('source').value;if(!q){$('status').textContent='Önce bir yiyecek adı yaz.';return}$('searchBtn').disabled=true;$('status').textContent='Aranıyor…';let found=[];if(src!=='off')found=localSearch(q);if(src!=='local'){try{const url='https://world.openfoodfacts.org/cgi/search.pl?'+new URLSearchParams({search_terms:q,search_simple:'1',action:'process',json:'1',page_size:'15',fields:'code,product_name,brands,nutriments'});const res=await fetch(url,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error('Servis yanıt vermedi');const data=await res.json();const remote=(data.products||[]).map(offProductToFood).filter(Boolean);found=src==='off'?remote:[...found,...remote]}catch(e){$('status').textContent='Paketli ürün servisine ulaşılamadı; yerel sonuçlar gösteriliyor.'}}const seen=new Set();found=found.filter(f=>{const k=f.id||f.name;if(seen.has(k))return false;seen.add(k);return true});$('status').textContent=found.length?`${found.length} sonuç. Paketli ürünlerin etiketini kontrol et.`:'Sonuç bulunamadı veya veri kaynağına ulaşılamadı.';renderResults(found);$('searchBtn').disabled=false}
+let foodSearchSerial=0,foodSearchAbort=null;
+function savePackagedFood(food){
+ if(!String(food?.id||'').startsWith('off-')||!nutritionMacrosValid(food))return false;
+ const items=getCustom();
+ if(items.some(item=>item.id===food.id))return true;
+ const entry={
+  id:food.id,name:food.name,kcal:food.kcal,protein:food.protein,
+  carbs:food.carbs??null,fat:food.fat??null,unit:food.unit==='ml'?'ml':'g',
+  nutritionBasis:food.nutritionBasis==='100ml'?'100ml':'100g',
+  kind:'Paketli ürün',source:'Open Food Facts · kişisel kayıt (etiket kontrolü gerekli)',
+  code:food.code||null,verified:false
+ };
+ try{
+  write(customKey,[...items,entry]);
+  renderCustomFoods();renderRecipeOptions();
+  $('status').textContent='Ürün cihazdaki kişisel besinlerine kaydedildi. Yedeklemeye dahildir; etiketi kontrol et.';
+  return true;
+ }catch{
+  $('status').textContent='Ürün saklanamadı. Cihaz depolamasını kontrol et.';
+  return false;
+ }
+}
+async function search(){
+ const request=++foodSearchSerial;
+ if(foodSearchAbort)foodSearchAbort.abort();
+ foodSearchAbort=null;
+ const q=$('query').value.trim(),src=$('source').value;
+ if(!q){$('status').textContent='Önce bir yiyecek adı yaz.';return;}
+ let found=localSearch(q);
+ if(src==='off')found=found.filter(x=>String(x.id||'').startsWith('off-'));
+ renderResults(found);
+ if(src==='local'){
+  $('status').textContent=found.length?found.length+' yerel sonuç. İnternet gerekmiyor.':'Yerel sonuç bulunamadı.';
+  return;
+ }
+ if(typeof navigator!=='undefined'&&navigator.onLine===false){
+  $('status').textContent=found.length?found.length+' çevrimdışı sonuç. Paketli ürün araması için internet gerekiyor.':'Çevrimdışı: yerel veya kayıtlı ürün bulunamadı.';
+  return;
+ }
+ $('status').textContent=(found.length?found.length+' yerel/önbellek sonucu gösteriliyor. ':'')+'Paketli ürünler arka planda aranıyor…';
+ const controller=typeof AbortController!=='undefined'?new AbortController():null;
+ foodSearchAbort=controller;
+ const timer=controller?setTimeout(()=>controller.abort(),8500):null;
+ try{
+  const url='https://world.openfoodfacts.org/cgi/search.pl?'+new URLSearchParams({
+   search_terms:q,search_simple:'1',action:'process',json:'1',page_size:'15',
+   fields:'code,product_name,brands,nutriments'
+  });
+  const res=await fetch(url,{headers:{Accept:'application/json'},...(controller?{signal:controller.signal}:{})});
+  if(!res.ok)throw new Error('Servis yanıt vermedi');
+  const data=await res.json();
+  if(request!==foodSearchSerial)return;
+  const remote=(Array.isArray(data.products)?data.products:[]).map(offProductToFood).filter(Boolean);
+  window.FormaRotaFoodSearchCache?.saveMany(remote);
+  found=uniqueFoods([...found,...remote]);
+  renderResults(found);
+  $('status').textContent=found.length?found.length+' sonuç. Paketli ürünlerin etiketini kontrol et.':'Sonuç bulunamadı.';
+ }catch{
+  if(request!==foodSearchSerial)return;
+  $('status').textContent=found.length
+   ?found.length+' yerel/önbellek sonucu gösteriliyor. İnternet araması tamamlanamadı.'
+   :'Paketli ürün servisine ulaşılamadı. İnternet bağlantını kontrol et.';
+ }finally{
+  if(timer!==null)clearTimeout(timer);
+  if(request===foodSearchSerial)foodSearchAbort=null;
+ }
+}
 function addFood(food,chosenAmount){
  const amount=Number(chosenAmount===undefined?$('amount').value:chosenAmount);
  const measurement=typeof window!=='undefined'?window.FormaRotaFoodUnits:null;
@@ -794,7 +887,7 @@ $('recipeIngredient').addEventListener('change',updateRecipeUnitLabel);
 $('recipeFinalWeight').addEventListener('input',renderRecipe);$('recipeName').addEventListener('input',renderRecipe);
 $('recipeSave').addEventListener('click',()=>{const name=$('recipeName').value.trim(),weight=Number($('recipeFinalWeight').value);if(!name||!recipeItems.length||!Number.isFinite(weight)||weight<=0){$('recipeStatus').textContent='Tarif adı, malzemeler ve pişmiş toplam ağırlık gerekli.';return}const t=recipeNutrition(),food={id:'recipe-'+Date.now(),name,kcal:t.kcal*100/weight,protein:t.protein*100/weight,carbs:t.carbs*100/weight,fat:t.fat*100/weight,kind:'Ev yemeği / tarif',source:'Tarif hesaplayıcı',verified:false,recipeIngredients:recipeItems.map(x=>({...x})),cookedWeight:weight};const foods=getCustom();foods.push(food);write(customKey,foods);renderCustomFoods();renderRecipeOptions();$('recipeStatus').textContent=`${name} kaydedildi. Arama alanından bulup porsiyonunu ekleyebilirsin.`;recipeItems=[];$('recipeName').value='';$('recipeFinalWeight').value='';renderRecipe()});
 $('customForm').addEventListener('submit',e=>{e.preventDefault();const name=$('customName').value.trim();const kcal=Number($('customKcal').value),protein=Number($('customProtein').value),carbs=$('customCarbs').value===''?0:Number($('customCarbs').value),fat=$('customFat').value===''?0:Number($('customFat').value);if(!name||![kcal,protein,carbs,fat].every(x=>Number.isFinite(x)&&x>=0)){$('customStatus').textContent='Tüm değerler sıfır veya daha büyük olmalı.';return}const foods=getCustom();foods.push({id:'custom-'+Date.now(),name,kcal,protein,carbs,fat,kind:$('customKind').value,unit:$('customUnit').value==='ml'?'ml':'g',nutritionBasis:$('customUnit').value==='ml'?'100ml':'100g',source:'Kişisel besin',verified:false});write(customKey,foods);e.target.reset();$('customStatus').textContent='Besin kaydedildi; arama alanından bulabilirsin.';renderCustomFoods();renderRecipeOptions()});
-$('searchBtn').addEventListener('click',search);$('query').addEventListener('keydown',e=>{if(e.key==='Enter')search()});$('barcodeBtn').addEventListener('click',barcodeSearch);$('barcode').addEventListener('keydown',e=>{if(e.key==='Enter')barcodeSearch()});$('clearBtn').addEventListener('click',()=>{$('query').value='';$('results').innerHTML='<div class="empty">Aramak için bir yiyecek adı yaz.</div>';$('status').textContent=''});$('date').addEventListener('change',()=>{weeklyAnchor=$('date').value;renderTotals()});$('meal').addEventListener('change',renderTotals);$('goalKcal').addEventListener('change',()=>{localStorage.setItem('kocluk-goal-kcal',$('goalKcal').value);renderTotals()});$('goalProtein').addEventListener('change',()=>{localStorage.setItem('kocluk-goal-protein',$('goalProtein').value);renderTotals()});$('goalKcal').value=localStorage.getItem('kocluk-goal-kcal')||'2600';$('goalProtein').value=localStorage.getItem('kocluk-goal-protein')||'160';
+$('searchBtn').addEventListener('click',search);$('query').addEventListener('keydown',e=>{if(e.key==='Enter')search()});$('barcodeBtn').addEventListener('click',barcodeSearch);$('barcode').addEventListener('keydown',e=>{if(e.key==='Enter')barcodeSearch()});$('clearBtn').addEventListener('click',()=>{foodSearchSerial++;if(foodSearchAbort)foodSearchAbort.abort();foodSearchAbort=null;$('query').value='';$('results').innerHTML='<div class="empty">Aramak için bir yiyecek adı yaz.</div>';$('status').textContent=''});$('date').addEventListener('change',()=>{weeklyAnchor=$('date').value;renderTotals()});$('meal').addEventListener('change',renderTotals);$('goalKcal').addEventListener('change',()=>{localStorage.setItem('kocluk-goal-kcal',$('goalKcal').value);renderTotals()});$('goalProtein').addEventListener('change',()=>{localStorage.setItem('kocluk-goal-protein',$('goalProtein').value);renderTotals()});$('goalKcal').value=localStorage.getItem('kocluk-goal-kcal')||'2600';$('goalProtein').value=localStorage.getItem('kocluk-goal-protein')||'160';
 function getProfile(){return read(profileKey,{age:25,height:196,target:96,sex:'male',activity:'1.375'})}
 function getWeights(){return read(weightKey,[])}
 function persistProfile(){const profile={age:Number($('profileAge').value),height:Number($('profileHeight').value),target:Number($('profileTarget').value),sex:$('profileSex').value,activity:$('profileActivity').value};if(profile.age<16||profile.height<100||profile.target<35)return;write(profileKey,profile);renderProfile()}

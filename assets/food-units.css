@@ -42,3 +42,11 @@
  #searchPanel .food-result-controls input{width:100%;max-width:none}
  #searchPanel .food-result-controls button{min-width:85px}
 }
+
+/* Packaged-food save action; keep quantity and actions touch-friendly. */
+#searchPanel .food-result-controls .secondary{font-size:.86rem;min-height:44px}
+@media(max-width:355px){
+ #searchPanel .food-result-controls{flex-wrap:wrap}
+ #searchPanel .food-result-controls .food-quantity-label{flex-basis:100%}
+ #searchPanel .food-result-controls button{flex:1}
+}
