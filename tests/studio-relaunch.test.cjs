@@ -13,7 +13,7 @@ test('new Studio replaces the real workout heading with action buttons and a liv
  assert.ok(!block.includes('<h2>Full Body rutinin</h2>'));
 });
 test('Home and nutrition have distinct new editorial hero markup and contextual primary actions',()=>{
- assert.ok(html.includes('class="home-intro studio-home-intro"'));
+ assert.ok(html.includes('class="fr2-stage"'));
  assert.ok(html.includes('class="studio-home-art"'));
  assert.ok(html.includes('class="route-heading wide studio-nutrition-hero"'));
  assert.ok(html.includes('id="studioMealAction"'));
