@@ -3,7 +3,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
-function setup(type='rest',explicit=false,note=''){
+function setup(type='rest',explicit=false,note='',acknowledgedDate=null){
  const record={date:'2026-10-29',week:'2026-10-26',type,note,explicit};
  const nodes=new Map(),events={};let saves=0;
  class E{
@@ -18,7 +18,7 @@ function setup(type='rest',explicit=false,note=''){
   'oledCarbs','oledFat','oledProtein','oledCarbsNote','oledFatNote','oledProteinBar',
   'oledTodayPlan','oledRecentList','oledTodayActivitySelect','oledTodayActivityDate',
   'oledTodayActivityNote','oledTodayActivityNoteLabel','oledTodayActivityStatus',
-  'oledTodayOpenWeek','oledTodayActivityCard','oledTodayActivitySaveOther','oledRecentAll','goalKcal','goalProtein','waterGoal'];
+  'oledTodayOpenWeek','oledTodayActivityCard','oledTodayActivitySave','oledRecentAll','goalKcal','goalProtein','waterGoal'];
  ids.forEach(id=>nodes.set(id,new E()));
  nodes.get('oledTodayActivitySelect').value='rest';
  const section=new E();section.fold={open:false};nodes.set('fitSchedulePanel',section);
@@ -27,9 +27,11 @@ function setup(type='rest',explicit=false,note=''){
   createElement:tag=>new E(tag),
   createDocumentFragment:()=>new E('fragment'),
   addEventListener:(k,fn)=>events[k]=fn};
+ const savedSettings=new Map();
+ if(acknowledgedDate)savedSettings.set('formarota-home-activity-confirmed-day-v1',acknowledgedDate);
  const localStore={
-  getItem:()=>null,
-  setItem(){throw Error('renderer must not write to storage directly');}
+  getItem:key=>savedSettings.get(key)??null,
+  setItem:(key,value)=>savedSettings.set(key,value)
  };
  const types=[['rest','Dinlenme'],['full','Full Body'],['abs','ABS / Karın'],
   ['basket','Basketbol'],['basket-abs','Basketbol + ABS'],['full-abs','Full Body + ABS'],
@@ -47,7 +49,7 @@ function setup(type='rest',explicit=false,note=''){
   requestAnimationFrame:fn=>fn()};
  vm.runInNewContext(read('assets/oled-home.js'),{window:root,document:doc,queueMicrotask:fn=>fn()});
  events.DOMContentLoaded();
- return {root,nodes,record,events,section,history,saves:()=>saves};
+ return {root,nodes,record,events,section,history,localStore,saves:()=>saves};
 }
 test('home shortcut is an accessible own card, not repeated on other routed screens',()=>{
  const html=read('index.html'),css=read('assets/oled-home.css');
@@ -55,7 +57,7 @@ test('home shortcut is an accessible own card, not repeated on other routed scre
  const next=html.indexOf('<section class="route-heading wide studio-nutrition-hero"',homeStart);
  const card=html.indexOf('id="oledTodayActivityTitle"');
  assert.ok(card>homeStart&&card<next);
- for(const id of ['oledTodayActivityCard','oledTodayActivitySaveOther','oledTodayActivitySelect','oledTodayActivityNote','oledTodayActivityStatus','oledTodayOpenWeek'])
+ for(const id of ['oledTodayActivityCard','oledTodayActivitySave','oledTodayActivitySelect','oledTodayActivityNote','oledTodayActivityStatus','oledTodayOpenWeek'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.ok(css.includes('#homePanel.oled-home .oled-today-activity'));
  assert.ok(css.includes('#homePanel.oled-home #oledTodayActivitySelect'));
@@ -65,35 +67,42 @@ test('home shortcut is an accessible own card, not repeated on other routed scre
  assert.ok(css.includes('display:none!important'));
  assert.ok(!css.includes('#homePanel.oled-home{display:grid!important'));
 });
-test('selecting Full Body records a plan but never touches workout completion records',()=>{
+test('selecting Full Body stages a draft and hides the card only after the Save button',()=>{
  const x=setup();
  const picker=x.nodes.get('oledTodayActivitySelect');
  picker.value='full';picker.handlers.change();
+ assert.equal(x.saves(),0);
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
+ x.nodes.get('oledTodayActivitySave').handlers.click();
  assert.equal(x.saves(),1);
  assert.equal(x.record.type,'full');
+ assert.equal(x.localStore.getItem('formarota-home-activity-confirmed-day-v1'),'2026-10-29');
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true);
  const status=x.nodes.get('oledTodayActivityStatus').textContent;
  assert.match(status,/Full Body/);
  assert.match(status,/henüz tamamlanmış kayıt yok/);
  assert.doesNotMatch(status,/antrenmanın kaydedilmiş/);
 });
-test('basketball remains unverified and does not fabricate attended training',()=>{
+test('preplanned basketball remains visible until home confirmation without inventing attendance',()=>{
  const x=setup('basket-abs',true);
+ const card=x.nodes.get('oledTodayActivityCard');
+ assert.equal(card.hidden,false);
  assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/Basketbol katılımı otomatik doğrulanmaz/);
- const picker=x.nodes.get('oledTodayActivitySelect');
- picker.value='basket';picker.handlers.change();
+ x.nodes.get('oledTodayActivitySave').handlers.click();
+ assert.equal(card.hidden,true);
+ assert.equal(x.saves(),1);
  assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/Basketbol katılımı otomatik doğrulanmaz/);
 });
-test('custom activity stays open for a note and disappears only after explicit save',()=>{
+test('custom activity remains editable until explicit save',()=>{
  const x=setup();
  const picker=x.nodes.get('oledTodayActivitySelect');
  picker.value='other';picker.handlers.change();
- assert.equal(x.saves(),0,'selecting Other should not save before entering a note');
+ assert.equal(x.saves(),0,'Other must not auto-save before the note');
  assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
  assert.equal(x.nodes.get('oledTodayActivityNoteLabel').hidden,false);
- assert.equal(x.nodes.get('oledTodayActivitySaveOther').hidden,false);
  const note=x.nodes.get('oledTodayActivityNote');
  note.value='Basketbol yerine yüzme';
- x.nodes.get('oledTodayActivitySaveOther').handlers.click();
+ x.nodes.get('oledTodayActivitySave').handlers.click();
  assert.equal(x.record.note,'Basketbol yerine yüzme');
  assert.equal(x.record.type,'other');
  assert.equal(x.saves(),1);
@@ -101,32 +110,42 @@ test('custom activity stays open for a note and disappears only after explicit s
  const html=read('index.html');
  assert.ok(html.includes('id="oledTodayActivityNote" type="text" maxlength="80"'));
 });
-test('existing saved plans hide the shortcut immediately on home load, even when planned in Fitness',()=>{
+test('a weekly Fitness plan does not pre-hide the home shortcut even if already saved',()=>{
  for(const type of ['full','abs','basket','basket-abs','full-abs','other','rest']){
   const x=setup(type,true);
-  assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true,type);
-  assert.equal(x.saves(),0);
+  assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false,type);
+  assert.equal(x.saves(),0,type);
  }
 });
-test('fresh day without a saved plan shows the shortcut; selecting any usual choice hides it',()=>{
- const x=setup();
+test('a confirmed home choice stays hidden after reload and reappears on a new date',()=>{
+ const x=setup('full',true,'','2026-10-29');
  const card=x.nodes.get('oledTodayActivityCard');
- assert.equal(card.hidden,false);
- const picker=x.nodes.get('oledTodayActivitySelect');
- picker.value='full';picker.handlers.change();
- assert.equal(x.saves(),1);
  assert.equal(card.hidden,true);
  x.root.FormaRotaOLEDHome.render();
- assert.equal(card.hidden,true,'re-render must not show an already saved choice');
+ assert.equal(card.hidden,true);
+ x.record.date='2026-10-30';
+ x.root.FormaRotaOLEDHome.render();
+ assert.equal(card.hidden,false,'next day without home acknowledgement should show the card');
 });
-test('special Other draft remains visible after refresh until Save is tapped',()=>{
+test('default Rest can be explicitly confirmed without changing the select value',()=>{
  const x=setup();
+ const picker=x.nodes.get('oledTodayActivitySelect');
+ assert.equal(picker.value,'rest');
+ assert.equal(x.saves(),0);
+ x.nodes.get('oledTodayActivitySave').handlers.click();
+ assert.equal(x.record.type,'rest');
+ assert.equal(x.saves(),1);
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true);
+});
+test('draft choice persists across rerenders, does not save on a mere selection',()=>{
+ const x=setup('basket',true);
  const picker=x.nodes.get('oledTodayActivitySelect');
  picker.value='other';picker.handlers.change();
  x.root.FormaRotaOLEDHome.render();
+ assert.equal(x.saves(),0);
  assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
- assert.equal(x.nodes.get('oledTodayActivitySaveOther').hidden,false);
- assert.equal(picker.value,'other','draft choice must not reset to rest');
+ assert.equal(picker.value,'other');
+ assert.equal(x.nodes.get('oledTodayActivityNoteLabel').hidden,false);
 });
 test('weekly plan shortcut reveals collapsed settings and opens the Fitness page',()=>{
  const x=setup();
@@ -140,6 +159,7 @@ test('after a rejected plan save, visible status reports the error rather than s
  const x=setup();
  x.root.FormaRotaWeeklyPlan.setDay=()=>{throw Error('quota');};
  const picker=x.nodes.get('oledTodayActivitySelect');picker.value='abs';picker.handlers.change();
+ x.nodes.get('oledTodayActivitySave').handlers.click();
  assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/kaydedilemedi/);
  assert.equal(x.record.type,'rest');
 });
