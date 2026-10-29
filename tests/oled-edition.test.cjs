@@ -123,3 +123,22 @@ test('ten choices have distinct OLED accents and guaranteed true-black backdrop'
  assert.ok(css.includes('html[data-theme^="oled-"] #fitnessRoot #coachOverview'));
  assert.ok(css.includes('html[data-theme^="oled-"] #preferencesPanel .luxe-theme-launch'));
 });
+
+test('OLED home is hidden on every non-home route, regardless of theme',()=>{
+ const css=source('assets/oled-home.css'),html=source('index.html');
+ const route=html.slice(html.indexOf('function showView(view,scroll=true,updateURL=true)'),html.indexOf('function navigateTo(view,id)'));
+ assert.ok(route.includes("document.querySelectorAll('main > section[data-view]')"));
+ assert.ok(route.includes("section.classList.toggle('hidden',!match)"));
+ assert.ok(css.includes('html[data-theme] #homePanel.oled-home:not(.hidden){'));
+ assert.ok(css.includes('html[data-theme] #homePanel.oled-home.hidden{display:none!important}'));
+ assert.ok(css.includes('html[data-theme] body.compact-app-shell main > section[data-view].hidden{display:none!important}'));
+ assert.ok(!css.includes('html[data-theme] #homePanel.oled-home{\\n display:grid!important;'));
+ for(const view of ['nutrition','fitness','progress','settings','dinner','recipes','insights','fitness-history'])
+  assert.ok(html.includes('data-view="'+view+'"'),view);
+});
+test('PWA shell cache revision is updated so existing iPhone installs receive the visibility fix',()=>{
+ const sw=source('sw.js');
+ assert.ok(sw.includes("const CACHE='formarota-solo-v78-shell'"));
+ assert.ok(sw.includes("const GIF_CACHE='formarota-solo-v78-gifs'"));
+ assert.ok(sw.includes("'./assets/oled-home.css'"));
+});
