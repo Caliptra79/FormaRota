@@ -210,6 +210,33 @@ setTimeout(function(){hide(seq)},4000);
     <span class="tag hidden" id="homeSessionTag" aria-live="polite"></span>
     <span class="muted hidden" id="homeDateLabel" aria-hidden="true"></span>
   </div>
+  <section class="oled-today-activity" aria-labelledby="oledTodayActivityTitle">
+    <div class="oled-today-activity-header">
+      <div>
+        <span class="oled-overline">BUGÜNÜN ANTRENMAN PLANI</span>
+        <h3 id="oledTodayActivityTitle">Bugün ne yapıyoruz?</h3>
+        <p id="oledTodayActivityDate" class="muted">Bugünün planı</p>
+      </div>
+      <button type="button" class="secondary oled-today-open-week" id="oledTodayOpenWeek">Haftalık plan</button>
+    </div>
+    <div class="oled-today-activity-controls">
+      <label for="oledTodayActivitySelect">Bugünkü etkinliğin</label>
+      <select id="oledTodayActivitySelect" aria-describedby="oledTodayActivityHelp" aria-label="Bugünün antrenman etkinliğini seç">
+        <option value="rest">☕ Dinlenme</option>
+        <option value="full">🏋️ Full Body</option>
+        <option value="abs">💪 ABS / Karın</option>
+        <option value="basket">🏀 Basketbol</option>
+        <option value="basket-abs">🏀 Basketbol + ABS</option>
+        <option value="full-abs">🏋️ Full Body + ABS</option>
+        <option value="other">✦ Başka etkinlik</option>
+      </select>
+      <label for="oledTodayActivityNote" id="oledTodayActivityNoteLabel" hidden>Etkinlik açıklaması
+        <input id="oledTodayActivityNote" type="text" maxlength="80" placeholder="Örn. yüzme, hafif yürüyüş"/>
+      </label>
+    </div>
+    <p id="oledTodayActivityHelp" class="oled-today-activity-help">Seçimin haftalık programına kaydedilir; antrenman tamamlandı sayılmaz.</p>
+    <p id="oledTodayActivityStatus" class="oled-today-activity-status" role="status" aria-live="polite">Bugünkü etkinliğin hazırlanıyor.</p>
+  </section>
   <section class="oled-calorie-card" aria-labelledby="oledCalorieTitle">
     <div class="oled-card-top"><h3 id="oledCalorieTitle">Kalori takibi</h3><span class="oled-mini-caption">BUGÜN</span></div>
     <div id="oledKcalRing" class="oled-main-ring" role="progressbar" aria-label="Günlük kalori hedefi ilerlemesi" aria-valuemin="0" aria-valuemax="2600" aria-valuenow="0">
@@ -860,6 +887,27 @@ function fitDrawWeek(){
  const abs=read(FIT_ABS_KEY,{});
  $('fitAbsDone').checked=Boolean(abs[shiftISO(monday,2)]);
 }
+// One source of truth for the home-day shortcut and the full Fitness planner.
+// Every selection goes through fitSaveWeekDay, which also keeps legacy Full Body
+// weeks synchronized for conservative coach reports and JSON backups.
+window.FormaRotaWeeklyPlan=Object.freeze({
+ types:FIT_DAY_TYPES.map(({value,label,icon})=>({value,label,icon})),
+ getDay(date){
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date))return null;
+  const week=fitWeekStart(date),selection=fitWeekPlan(week)[date];
+  const stored=read(FIT_DAY_PLAN_KEY,{})?.[week]?.[date];
+  return selection?{date,week,type:selection.type,note:selection.note||'',
+   explicit:Boolean(stored)||Boolean(read(FIT_WEEK_KEY,{})?.[week]?.includes(date))}:null;
+ },
+ setDay(date,type,note=''){
+  if(typeof date!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(date)||
+    !FIT_DAY_TYPES.some(x=>x.value===type))throw Error('Geçersiz günlük etkinlik seçimi');
+  const week=fitWeekStart(date);
+  fitSaveWeekDay(week,date,type,note);
+  fitDrawWeek(); // Coach's existing hook refreshes the 7-day strip.
+  return this.getDay(date);
+ }
+});
 function fitSvg(ex){
  const equipment=(ex.move==='leg')?'<path class="equipment" d="M24 103H116M39 105V42L60 47"/>':(ex.move==='row'?'<path class="equipment" d="M14 55H44M17 46V82M14 82H37"/>':'<path class="equipment" d="M30 116H130"/>');
  const upper='<circle cx="80" cy="35" r="11" fill="#deebf3"/><path class="figure" d="M80 49V91M80 91L59 116M80 91L100 116"/>';

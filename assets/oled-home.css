@@ -375,3 +375,117 @@ html[data-theme] #homePanel.oled-home.hidden{display:none!important}
 
 /* Fail-safe for every routed top-level section, including Nutrition/Fitness. */
 html[data-theme] body.compact-app-shell main > section[data-view].hidden{display:none!important}
+
+/* Today's activity — shared seven-day fitness plan in a compact home shortcut.
+   Avoid overriding .hidden of the routed home panel. */
+html[data-theme] #homePanel.oled-home .oled-today-activity{
+ min-width:0;
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ gap:10px;
+ background:var(--panel)!important;
+ border:1px solid var(--border)!important;
+ border-radius:22px;
+ padding:clamp(14px,2.5vw,20px)!important;
+ box-shadow:none!important;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-header{
+ display:flex;justify-content:space-between;align-items:center;
+ flex-wrap:wrap;gap:10px;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-header h3{
+ margin:3px 0;
+ color:var(--text)!important;
+ font-size:clamp(1rem,3vw,1.18rem);
+ letter-spacing:-.035em;
+ font-weight:840;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-header p{
+ margin:0;
+ color:var(--muted)!important;font-size:.76rem;line-height:1.35;
+}
+html[data-theme] #homePanel.oled-home .oled-today-open-week{
+ min-height:44px;
+ padding:9px 12px!important;
+ border:1px solid var(--border)!important;
+ border-radius:12px!important;
+ background:var(--panel2)!important;
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+ font-size:.79rem;font-weight:750;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-controls{
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ gap:7px;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-controls>label{
+ color:var(--muted)!important;
+ font-size:.75rem;font-weight:770;
+ margin:0!important;
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivitySelect,
+html[data-theme] #homePanel.oled-home #oledTodayActivityNote{
+ background:var(--panel2)!important;
+ color:var(--text)!important;
+ -webkit-text-fill-color:var(--text)!important;
+ border:1px solid color-mix(in srgb,var(--accent) 27%,var(--border))!important;
+ border-radius:12px!important;
+ min-width:0;width:100%;max-width:100%;
+ min-height:47px;
+ padding:10px 12px;
+ line-height:1.35;font-size:16px;font-weight:720;
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivitySelect option{
+ background:var(--panel);
+ color:var(--text);
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivityNoteLabel{
+ display:grid;gap:7px;margin-top:4px!important;
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivityNoteLabel[hidden]{
+ display:none!important;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-help,
+html[data-theme] #homePanel.oled-home .oled-today-activity-status{
+ margin:0;line-height:1.5;overflow-wrap:anywhere;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-help{
+ color:var(--muted)!important;
+ font-size:.74rem;
+}
+html[data-theme] #homePanel.oled-home .oled-today-activity-status{
+ color:var(--text)!important;
+ border-left:3px solid var(--accent);
+ background:var(--panel2);
+ border-radius:0 9px 9px 0;
+ padding:8px 10px;
+ font-size:.79rem;
+}
+@media(min-width:720px){
+ html[data-theme] #homePanel.oled-home .oled-today-activity{
+  grid-template-columns:minmax(0,1.15fr) minmax(180px,.85fr);
+  align-items:start;column-gap:15px;
+ }
+ html[data-theme] #homePanel.oled-home .oled-today-activity-header{
+  grid-column:1;
+ }
+ html[data-theme] #homePanel.oled-home .oled-today-activity-controls{
+  grid-column:2;
+  grid-row:1/span 2;
+ }
+ html[data-theme] #homePanel.oled-home .oled-today-activity-help,
+ html[data-theme] #homePanel.oled-home .oled-today-activity-status{grid-column:1}
+}
+@media(min-width:830px){
+ html[data-theme] #homePanel.oled-home .oled-today-activity{
+  grid-column:1/-1;
+ }
+}
+@media(max-width:390px){
+ html[data-theme] #homePanel.oled-home .oled-today-activity{
+  padding:13px!important;
+  border-radius:18px;
+ }
+ html[data-theme] #homePanel.oled-home .oled-today-open-week{padding:8px 10px!important}
+}

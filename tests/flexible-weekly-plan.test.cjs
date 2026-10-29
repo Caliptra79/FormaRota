@@ -25,13 +25,13 @@ function harness(initial={}){
  const $=id=>ids[id];
  const document={createElement:tag=>new El(tag)};
  const shiftISO=(date,shift)=>{const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+shift);return d.toISOString().slice(0,10);};
- const context={document,localStorage:store,read:readStore,write:writeStore,$,
+ const context={window:{},document,localStorage:store,read:readStore,write:writeStore,$,
   FIT_DAY_PLAN_KEY:'formarota-fitness-day-plan-v1',FIT_WEEK_KEY:'kocluk-fitness-weeks-v1',
   FIT_ABS_KEY:'kocluk-fitness-abs-v1',FIT_DAYS:['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'],
   fitWeekAnchor:'2026-10-28',fitWeekStart:()=> '2026-10-26',
   fitDateLabel:d=>d.slice(8)+'.'+d.slice(5,7),shiftISO,fitConf:()=>({frequency:2})};
  vm.runInNewContext(html.slice(a,b)+'\nthis.api={fitWeekPlan,fitDrawWeek,fitSaveWeekDay,fitValidDayPlans,FIT_DAY_TYPES};',context);
- return {api:context.api,backing,ids,store,reads:readStore,writes:()=>writes};
+ return {api:context.api,publicApi:context.window.FormaRotaWeeklyPlan,backing,ids,store,reads:readStore,writes:()=>writes};
 }
 test('all seven days including Wednesday are selectable and use real dates',()=>{
  const x=harness();x.api.fitDrawWeek();
@@ -143,8 +143,36 @@ test('contrast never uses white text over light-green day card; all ten themes a
  assert.ok(css.includes('@media(max-width:420px)'));
  assert.ok(html.includes('./assets/flexible-weekly-plan.css'));
  assert.ok(sw.includes("'./assets/flexible-weekly-plan.css'"));
- assert.ok(sw.includes("const CACHE='formarota-solo-v80-shell'"));
+ assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
  for(const theme of ['night','ocean','light','sand','neon','volt','sunset','oled-black','oled-neon','oled-ember'])
   assert.ok(html.includes('<option value="'+theme+'">'),theme);
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(x=>x.endsWith('.gif')).length,19);
+});
+
+test('home shortcut and full weekly planner share one save path, and planning never creates attendance',()=>{
+ const x=harness();
+ const first=x.publicApi.getDay('2026-10-28');
+ assert.equal(first.type,'rest');assert.equal(first.explicit,false);
+ assert.equal(x.writes(),0);
+ const selected=x.publicApi.setDay('2026-10-28','basket-abs','');
+ assert.equal(selected.type,'basket-abs');
+ assert.equal(selected.explicit,true);
+ assert.equal(x.reads('formarota-fitness-day-plan-v1',{})['2026-10-26']['2026-10-28'].type,'basket-abs');
+ assert.deepEqual(x.reads('kocluk-fitness-weeks-v1',{})['2026-10-26'],[]);
+ assert.equal(x.store.getItem('kocluk-fitness-history-v1'),null);
+ assert.equal(x.store.getItem('formarota-abs-history-v1'),null);
+ x.publicApi.setDay('2026-10-28','full','');
+ assert.equal(x.publicApi.getDay('2026-10-28').type,'full');
+ assert.deepEqual(x.reads('kocluk-fitness-weeks-v1',{})['2026-10-26'],['2026-10-28']);
+});
+test('home shortcut can save a custom activity note and rejects invalid choices',()=>{
+ const x=harness();
+ assert.equal(x.publicApi.types.length,7);
+ x.publicApi.setDay('2026-10-28','other','Yüzme');
+ assert.equal(x.publicApi.getDay('2026-10-28').note,'Yüzme');
+ x.publicApi.setDay('2026-10-28','rest','');
+ assert.equal(x.publicApi.getDay('2026-10-28').type,'rest');
+ assert.throws(()=>x.publicApi.setDay('2026-10-28','unsupported'));
+ assert.throws(()=>x.publicApi.setDay('today','full'));
+ assert.equal(x.publicApi.getDay('not-a-date'),null);
 });

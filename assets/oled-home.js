@@ -1,5 +1,5 @@
-/* FormaRota OLED Edition — read-only daily dashboard.
- * Uses the existing meal, goal, walking and workout records. No migrations. */
+/* FormaRota OLED Edition — daily dashboard and user-controlled today plan.
+ * Reads existing records; today's plan uses the shared weekly schedule API. */
 (function(root){
 'use strict';
 const doc=root.document;
@@ -136,9 +136,45 @@ function renderRecent(data){
  }
  host.replaceChildren(frag);
 }
+const getActivity=day=>root.FormaRotaWeeklyPlan?.getDay?.(day)||null;
+const activityLabel=type=>root.FormaRotaWeeklyPlan?.types?.find(x=>x.value===type)?.label||'Etkinlik';
+function renderActivity(data){
+ const picker=byId('oledTodayActivitySelect'),dateNode=byId('oledTodayActivityDate');
+ if(!picker)return;
+ const selected=getActivity(data.day);
+ if(!selected)return;
+ const date=new Date(data.day+'T12:00:00');
+ if(dateNode&&!Number.isNaN(date.getTime()))
+  dateNode.textContent=date.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+ const noteLabel=byId('oledTodayActivityNoteLabel'),note=byId('oledTodayActivityNote');
+ if(picker.value!==selected.type)picker.value=selected.type;
+ if(noteLabel)noteLabel.hidden=selected.type!=='other';
+ if(note&&note.value!==selected.note)note.value=selected.note;
+ const status=byId('oledTodayActivityStatus');
+ if(!status)return;
+ if(!selected.explicit){
+  status.textContent='Henüz bir etkinlik seçilmedi · Dinlenme varsayılan görünümdür.';
+  return;
+ }
+ const label=activityLabel(selected.type);
+ const doneFull=data.fullComplete,doneAbs=data.absComplete;
+ let completion='Planlandı · Tamamlandı sayılmaz.';
+ if(selected.type==='full')completion=doneFull?'Full Body antrenmanın kaydedilmiş.':
+  data.active?'Antrenman seansın sürüyor.':'Full Body için henüz tamamlanmış kayıt yok.';
+ else if(selected.type==='abs')completion=doneAbs?'ABS antrenmanın kaydedilmiş.':
+  data.active?'Antrenman seansın sürüyor.':'ABS için henüz tamamlanmış kayıt yok.';
+ else if(selected.type==='full-abs')completion=doneFull&&doneAbs?'Full Body ve ABS kayıtları tamamlanmış.':
+  (doneFull?'Full Body kayıtlı, ABS bekleniyor.':doneAbs?'ABS kayıtlı, Full Body bekleniyor.':'İki antrenmanın tamamlanma kaydı henüz yok.');
+ else if(selected.type==='basket'||selected.type==='basket-abs')
+  completion=(selected.type==='basket-abs'&&doneAbs?'ABS kaydedilmiş; ':'')+
+   'Basketbol katılımı otomatik doğrulanmaz.';
+ else if(selected.type==='other')completion='Diğer etkinlikler için otomatik tamamlanma kaydı yok.';
+ else if(selected.type==='rest')completion='Dinlenme seçimin kaydedildi; antrenman tamamlandı sayılmaz.';
+ status.textContent='Bugün: '+label+(selected.type==='other'&&selected.note?' · '+selected.note:'')+' — '+completion;
+}
 function render(){
  if(!byId('homePanel')||!byId('oledKcalRing'))return;
- const data=snapshot();ring(data);renderPlan(data);renderRecent(data);
+ const data=snapshot();ring(data);renderPlan(data);renderRecent(data);renderActivity(data);
 }
 let queued=false;
 function schedule(){
@@ -149,6 +185,31 @@ function schedule(){
  else queueMicrotask(perform);
 }
 function init(){
+ const activitySelect=byId('oledTodayActivitySelect'),activityNote=byId('oledTodayActivityNote');
+ function storeActivity(type,note=''){
+  const plan=root.FormaRotaWeeklyPlan;
+  if(!plan||!activitySelect)return;
+  const day=localDay();
+  const status=byId('oledTodayActivityStatus');
+  try{
+   plan.setDay(day,type,note);
+   render();
+  }catch{
+   render();if(status)status.textContent='Bugünkü plan kaydedilemedi. Cihaz depolamasını kontrol et.';
+  }
+ }
+ activitySelect?.addEventListener('change',()=>storeActivity(activitySelect.value,
+  activitySelect.value==='other'?activityNote?.value||'':''));
+ activityNote?.addEventListener('change',()=>{
+  if(activitySelect?.value==='other')storeActivity('other',activityNote.value);
+ });
+ byId('oledTodayOpenWeek')?.addEventListener('click',()=>{
+  // Fitness planner is folded in the compact UI, so expand it first.
+  const fold=byId('fitSchedulePanel')?.querySelector('details.fit-fold');
+  if(fold)fold.open=true;
+  if(typeof root.navigateTo==='function')root.navigateTo('fitness','fitSchedulePanel');
+  else doc.querySelector('.mobile-tabbar [data-tab="fitness"]')?.click();
+ });
  byId('oledRecentAll')?.addEventListener('click',()=>{
   if(typeof root.showView==='function')root.showView('nutrition');
   else doc.querySelector('.mobile-tabbar [data-tab="nutrition"]')?.click();
@@ -161,5 +222,5 @@ function init(){
 }
 if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init,{once:true});
 else init();
-root.FormaRotaOLEDHome=Object.freeze({snapshot,render,schedule,percentage});
+root.FormaRotaOLEDHome=Object.freeze({snapshot,render,renderActivity,schedule,percentage});
 })(window);
