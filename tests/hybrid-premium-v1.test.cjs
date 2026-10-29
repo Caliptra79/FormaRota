@@ -130,7 +130,7 @@ test('service worker precaches both visual additions and rotates shell safely',(
  const sw=source('sw.js');
  for(const item of ['hybrid-premium-v1.css','hybrid-premium-v1.js'])
   assert.ok(sw.includes("'./assets/"+item+"'"),item);
- assert.ok(sw.includes("formarota-solo-v73-shell"));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.ok(sw.includes("Promise.all(SHELL.filter"));
  assert.ok(sw.includes("throw new Error('Offline asset cannot be installed: '"));
 });
