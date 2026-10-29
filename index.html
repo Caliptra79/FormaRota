@@ -476,7 +476,7 @@ setTimeout(function(){hide(seq)},4000);
 <button data-tab="fitness" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M6 8v8M9 6v12M15 6v12M18 8v8M9 12h6"/></svg></span><span>Fitness</span></button>
 <button data-tab="progress" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4v16h16M7 16l5-5 3 2 5-7"/></svg></span><span>Gelişim</span></button>
 <button data-tab="settings" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span>Ayarlar</span></button></nav><script src="./assets/turkish-foods.js"></script>
-<script src="./assets/dinner-coach.js"></script>
+<script src="./assets/dinner-coach.js"></script><script src="./assets/food-units.js"></script>
 <script defer src="./assets/date-masthead.js"></script>
 <script>
 (function(){const themes={night:'#0c141a',ocean:'#091821',light:'#f4f6f7',sand:'#f7f5f0',neon:'#100b1d',volt:'#0b1011',sunset:'#190e16','oled-black':'#000000','oled-neon':'#000000','oled-ember':'#000000'};const el=document.getElementById('themeSelect');if(!el)return;const saved=document.documentElement.dataset.theme||'night';el.value=saved;const apply=t=>{if(!Object.hasOwn(themes,t))return;document.documentElement.dataset.theme=t;document.querySelector('meta[name="theme-color"]').content=themes[t];try{localStorage.setItem('formarota-ui-theme',t)}catch(e){}};el.addEventListener('change',()=>apply(el.value));apply(saved)})();
@@ -1419,4 +1419,4 @@ summarize();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
-</script><script defer src="./assets/rank-system.js"></script><script defer src="./assets/hybrid-premium-v1.js"></script><script defer src="./assets/hybrid-premium-fitness.js"></script><script defer src="./assets/oled-home.js"></script><script defer src="./assets/smart-rest.js"></script><script defer src="./assets/food-units.js"></script></body></html>
+</script><script defer src="./assets/rank-system.js"></script><script defer src="./assets/hybrid-premium-v1.js"></script><script defer src="./assets/hybrid-premium-fitness.js"></script><script defer src="./assets/oled-home.js"></script><script defer src="./assets/smart-rest.js"></script></body></html>
