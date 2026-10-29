@@ -873,7 +873,11 @@ function fitAdjustRest(seconds){
  if(!fitCurrent?.phase||fitCurrent.phase.kind!=='rest')return;
  if(seconds===0||seconds<0&&fitPhaseMs()<=-seconds*1000)fitStopPhase();
  else{
-  fitCurrent.phase.durationSec=Math.min(1200,Math.max(1,fitCurrent.phase.durationSec+seconds));
+  const phase=fitCurrent.phase;
+  const elapsed=(Math.max(0,Number(phase.elapsedMs)||0))+
+   (fitCurrent.status==='running'&&phase.runningSince?Math.max(0,Date.now()-phase.runningSince):0);
+  const base=seconds>0?Math.max(phase.durationSec,Math.ceil(elapsed/1000)):phase.durationSec;
+  phase.durationSec=Math.min(1200,Math.max(1,base+seconds));
   fitSaveCurrent();
  }
  fitSyncClock();
