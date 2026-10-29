@@ -95,3 +95,26 @@ test('new module and styles are in the offline cache while the 10 themes and GIF
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(f=>f.endsWith('.gif')).length,19);
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });
+
+test('suggested dinner menus mark ayran as ml and solids as g, with no change in nutrient bases',()=>{
+ const original=slice('function selectDinnerMenu(menu,date){','function dinnerItemTotals(');
+ const saved={};const u=units(),foods={
+  'tr-ayran':{id:'tr-ayran',name:'Ayran',kcal:38,protein:2.1,carbs:2.7,fat:1.9},
+  bulgur:{id:'bulgur',name:'Bulgur',kcal:120,protein:3.5,carbs:23,fat:1.5}};
+ const ctx={window:{FormaRotaFoodUnits:u},getDinnerPlans:()=>saved,
+  write:(key,val)=>Object.assign(saved,val),foodById:id=>foods[id],
+  DINNER_PLAN_KEY:'dinner',renderDinnerPlan:()=>{},confirm:()=>true,alert:()=>{}};
+ vm.runInNewContext(original+';this.pick=selectDinnerMenu;',ctx);
+ assert.equal(ctx.pick({name:'Bulgur ve ayran',items:[['bulgur',150],['tr-ayran',200]]},'2026-10-29'),true);
+ const items=saved['2026-10-29'].items;
+ assert.equal(items[0].unit,'g');assert.equal(items[1].unit,'ml');
+ assert.equal(items[1].amount,200);assert.equal(items[1].baseKcal,38);
+ assert.equal(items[1].nutritionBasis,'100g');
+});
+test('recipe ingredients use per-item unit, while finished recipe output remains per 100 g',()=>{
+ assert.ok(html.includes('id="recipeIngredientAmountLabel"'));
+ assert.ok(html.includes("function updateRecipeUnitLabel(){"));
+ assert.ok(html.includes("recipeItems.push({foodId:food.id,name:food.name,amount,unit:"));
+ assert.ok(html.includes("it.unit==='ml'?'ml':'g'"));
+ assert.ok(html.includes("const per100=weight>0"));
+});
