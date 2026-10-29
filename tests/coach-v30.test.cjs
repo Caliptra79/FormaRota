@@ -46,11 +46,11 @@ test('bodyweight exercises do not receive arbitrary kilogram increments',()=>{
  const history=[session('2026-10-01',calf,0,[25,25,25]),session('2026-10-08',calf,0,[25,25,25])];
  assert.equal(coach.assess(calf,calf.name,history,2.5).status,'bodyweight');
 });
-test('weekly training suggestions permit Wednesday when not reserved by user',()=>{
+test('weekly training suggestions reserve Wednesday for basketball',()=>{
  const suggested=coach.weekly([], '2026-10-21',3,[]);
  assert.equal(suggested.target,3);
  assert.equal(suggested.custom,false);
- assert.equal(suggested.planned.includes(suggested.days[2]),true);
+ assert.equal(suggested.planned.includes(suggested.days[2]),false);
  assert.equal(coach.reschedule(suggested,'2026-10-22').missed.length,0);
  const chosen=coach.weekly([],'2026-10-21',2,['2026-10-19','2026-10-23']);
  assert.equal(coach.reschedule(chosen,'2026-10-22').missed.length,1);
