@@ -282,6 +282,14 @@ setTimeout(function(){hide(seq)},4000);
   </section>
   <section class="oled-routine" aria-labelledby="oledRoutineTitle">
     <div class="oled-card-top"><h3 id="oledRoutineTitle">Günlük kontroller</h3><span class="oled-mini-caption">SU / YÜRÜYÜŞ</span></div>
+    <div class="tracker-history-date">
+      <label for="trackerDate">Su ve yürüyüş kayıt günü</label>
+      <div class="tracker-history-controls">
+        <input id="trackerDate" type="date" aria-label="Su ve yürüyüş için kayıt tarihi"/>
+        <button id="trackerToday" class="secondary" type="button">Bugün</button>
+      </div>
+      <small id="trackerDateNote" class="muted" aria-live="polite">Bu tarih yalnızca su ve yürüyüş kayıtlarını etkiler.</small>
+    </div>
     <div class="tracker-pair">
       <div class="tracker"><div class="muted">💧 Su takibi</div><span class="count" id="waterCount">0 / 2500 ml</span><div class="buttons"><button class="secondary" id="waterMinus" type="button">−250 ml</button><button id="waterPlus" type="button">+250 ml</button></div><label class="goalfield">Günlük hedef <input aria-label="Günlük su hedefi mililitre" id="waterGoal" max="7000" min="250" step="250" type="number" value="2500"/> ml</label></div>
       <div class="tracker"><div class="muted">🚶 Günlük yürüyüş</div><span class="count" id="walkCount">0 / 5 km</span><div class="buttons"><button id="walkToggle" type="button">5 km tamamlandı</button></div><div class="muted">İstersen kendin de gir:</div><input aria-label="Yürüyüş mesafesi kilometre" id="walkKm" max="100" min="0" step="0.1" type="number" value="0"/></div>
@@ -1282,10 +1290,38 @@ function renderHome(){const date=homeDay(),logs=getLogs().filter(x=>x.date===dat
 const dinnerPlan=getDinnerPlans()[date],steps=[['Kahvaltı',logs.some(x=>x.meal==='Kahvaltı'),'Bugün yediğin kahvaltılıkları kaydet'],['Öğle yemeği',logs.some(x=>x.meal==='Öğle yemeği'),'Hastanede ne yediysen onu kaydet'],['Akşam yemeği',logs.some(x=>x.meal==='Akşam yemeği'),'Plan: '+(dinnerPlan?.name||'Henüz seçilmedi')],['Ara öğün',logs.some(x=>x.meal==='Ara öğün'),'Meyve ve atıştırmalıklarını kaydet'],['5 km yürüyüş',Number(read(WALK_KEY,{})[date]||0)>=5,'Günlük rutin']];const root=$('homeChecklist');root.innerHTML='';steps.forEach(([name,done,desc])=>{const e=document.createElement('div');e.className='daily-step';const ic=document.createElement('span');ic.className=done?'ok':'pending';ic.textContent=done?'✓':'○';const text=document.createElement('div');const title=document.createElement('strong');title.textContent=name+(done?' · Tamamlandı':'');const note=document.createElement('div');note.className='muted';note.textContent=desc;text.append(title,note);e.append(ic,text);root.append(e)});const badge=$('homeSessionTag');badge.textContent=fitCurrent?'Antrenman sürüyor':'';badge.classList.toggle('hidden',!fitCurrent);window.FormaRotaABS?.renderHome?.();renderWaterWalk();renderBackupAge();window.FormaRotaStudioPlus?.refresh?.()}
 $('homeBreakfast').addEventListener('click',()=>{$('date').value=homeDay();openMealEditor('Kahvaltı')});$('homeLunch').addEventListener('click',()=>{$('date').value=homeDay();$('meal').value='Öğle yemeği';renderTotals();openMealEditor('Öğle yemeği')});$('homeDinner').addEventListener('click',()=>{$('date').value=homeDay();openMealEditor('Akşam yemeği')});$('homeSnack').addEventListener('click',()=>{$('date').value=homeDay();openMealEditor('Ara öğün')});$('homeWorkout').addEventListener('click',()=>navigateTo('fitness','workoutProgramChooser'));$('homeTrends').addEventListener('click',()=>showView('progress'));$('homeBackup').addEventListener('click',()=>navigateTo('settings','backupPanel'));
 function waterGoal(){const n=Number(localStorage.getItem(WATER_GOAL_KEY));return Number.isFinite(n)&&n>=250&&n<=7000?n:2500}
-function renderWaterWalk(){const date=homeDay(),amount=Number(read(WATER_KEY,{})[date]||0),walk=Number(read(WALK_KEY,{})[date]||0);$('waterGoal').value=waterGoal();$('waterCount').textContent=fmt(amount)+' / '+fmt(waterGoal())+' ml';$('walkCount').textContent=fmt(walk)+' / 5 km';if(document.activeElement!==$('walkKm'))$('walkKm').value=String(walk);$('walkToggle').textContent=walk>=5?'✓ 5 km tamamlandı · geri al':'✓ 5 km tamamlandı'}
-function changeWater(delta){const all=read(WATER_KEY,{}),d=homeDay();all[d]=Math.max(0,Math.min(10000,(Number(all[d])||0)+delta));write(WATER_KEY,all);renderHome()}
-$('waterPlus').addEventListener('click',()=>changeWater(250));$('waterMinus').addEventListener('click',()=>changeWater(-250));$('waterGoal').addEventListener('change',()=>{const val=Number($('waterGoal').value);if(!Number.isInteger(val)||val<250||val>7000){alert('Su hedefi 250–7000 ml arasında olmalı.');$('waterGoal').value=waterGoal();return}localStorage.setItem(WATER_GOAL_KEY,String(val));renderHome()});
-$('walkToggle').addEventListener('click',()=>{const all=read(WALK_KEY,{}),d=homeDay();all[d]=Number(all[d]||0)>=5?0:5;write(WALK_KEY,all);renderHome()});$('walkKm').addEventListener('change',()=>{const v=Number($('walkKm').value);if(!Number.isFinite(v)||v<0||v>100){alert('0–100 km arasında değer gir.');renderHome();return}const all=read(WALK_KEY,{});all[homeDay()]=Math.round(v*10)/10;write(WALK_KEY,all);renderHome()});
+// The tracker date is independent from food dates, workout dates and today's home summary.
+function trackerDay(){
+ const todayDate=homeDay(),requested=$('trackerDate').value;
+ return /^\d{4}-\d{2}-\d{2}$/.test(requested)&&requested<=todayDate&&
+  isoDate(dateFromISO(requested))===requested?requested:todayDate;
+}
+function renderWaterWalk(){
+ const todayDate=homeDay(),date=trackerDay();
+ const selected=$('trackerDate');selected.max=todayDate;selected.value=date;
+ $('trackerToday').disabled=date===todayDate;
+ $('trackerDateNote').textContent=date===todayDate
+  ?'Bugünün su ve yürüyüş kayıtları gösteriliyor.'
+  :date+' tarihli su ve yürüyüş kayıtları gösteriliyor. Üstteki günlük özet bugüne aittir.';
+ const amount=Number(read(WATER_KEY,{})[date]||0),walk=Number(read(WALK_KEY,{})[date]||0);
+ $('waterGoal').value=waterGoal();
+ $('waterCount').textContent=fmt(amount)+' / '+fmt(waterGoal())+' ml';
+ $('walkCount').textContent=fmt(walk)+' / 5 km';
+ if(document.activeElement!==$('walkKm'))$('walkKm').value=String(walk);
+ $('walkToggle').textContent=walk>=5?'✓ 5 km tamamlandı · geri al':'✓ 5 km tamamlandı';
+}
+function changeWater(delta){
+ const all=read(WATER_KEY,{}),d=trackerDay();
+ all[d]=Math.max(0,Math.min(10000,(Number(all[d])||0)+delta));
+ write(WATER_KEY,all);renderHome();
+}
+$('trackerDate').addEventListener('change',()=>renderWaterWalk());
+$('trackerToday').addEventListener('click',()=>{$('trackerDate').value=homeDay();renderWaterWalk()});
+$('waterPlus').addEventListener('click',()=>changeWater(250));
+$('waterMinus').addEventListener('click',()=>changeWater(-250));
+$('waterGoal').addEventListener('change',()=>{const val=Number($('waterGoal').value);if(!Number.isInteger(val)||val<250||val>7000){alert('Su hedefi 250–7000 ml arasında olmalı.');$('waterGoal').value=waterGoal();return}localStorage.setItem(WATER_GOAL_KEY,String(val));renderHome()});
+$('walkToggle').addEventListener('click',()=>{const all=read(WALK_KEY,{}),d=trackerDay();all[d]=Number(all[d]||0)>=5?0:5;write(WALK_KEY,all);renderHome()});
+$('walkKm').addEventListener('change',()=>{const v=Number($('walkKm').value);if(!Number.isFinite(v)||v<0||v>100){alert('0–100 km arasında değer gir.');renderHome();return}const all=read(WALK_KEY,{});all[trackerDay()]=Math.round(v*10)/10;write(WALK_KEY,all);renderHome()});
 /* Single workout view: all exercise cards are always shown. */
 function fitSetFocus(){focusMode=false;$('fitnessRoot').classList.remove('focus-mode');fitDrawExercises()}
 function fitRenderFocus(){}
