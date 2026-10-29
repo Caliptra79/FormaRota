@@ -489,3 +489,23 @@ html[data-theme] #homePanel.oled-home .oled-today-activity-status{
  }
  html[data-theme] #homePanel.oled-home .oled-today-open-week{padding:8px 10px!important}
 }
+
+/* Plan seçildiyse kart beslenme takibinden tamamen çekilir.
+   The explicit [hidden] state MUST outrank the card's display:grid styling. */
+html[data-theme] #homePanel.oled-home .oled-today-activity[hidden]{
+ display:none!important;
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivitySaveOther[hidden]{
+ display:none!important;
+}
+html[data-theme] #homePanel.oled-home #oledTodayActivitySaveOther{
+ display:block;
+ width:100%;
+ min-height:46px;
+ padding:10px 14px;
+ border:1px solid var(--accent)!important;
+ border-radius:12px;
+ color:var(--onaccent)!important;
+ background:var(--accent)!important;
+ font-size:.84rem;font-weight:810;
+}
