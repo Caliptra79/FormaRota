@@ -69,7 +69,7 @@ html[data-theme="volt"] .mobile-tabbar button.active{
  }
 }
 @media(prefers-reduced-motion:reduce){
- *,*::before,*::after{
+ html[data-fr-motion="system"] *,html[data-fr-motion="system"] *::before,html[data-fr-motion="system"] *::after{
   animation-duration:.01ms!important;
   animation-iteration-count:1!important;
   transition-duration:.01ms!important;
@@ -107,5 +107,5 @@ html[data-theme="volt"] .mobile-tabbar button.active{
  }
 }
 @media(prefers-reduced-motion:reduce){
- body main,main>section.fr-motion-enter:not(.hidden){animation:none!important;filter:none!important}
+ html[data-fr-motion="system"] body main,html[data-fr-motion="system"] main>section.fr-motion-enter:not(.hidden){animation:none!important;filter:none!important}
 }

@@ -721,7 +721,7 @@ html[data-theme] .mobile-tabbar button.active .ni{
  html[data-theme] #fitSessionPanel .fit-secondarytimer{padding:8px 6px}
 }
 @media(prefers-reduced-motion:reduce){
- .studio-hero-copy,.studio-progress-card,.studio-nutrition-copy,.studio-home-intro{
+ html[data-fr-motion="system"] .studio-hero-copy,html[data-fr-motion="system"] .studio-progress-card,html[data-fr-motion="system"] .studio-nutrition-copy,html[data-fr-motion="system"] .studio-home-intro{
   animation:none!important;transition:none!important;
  }
 }

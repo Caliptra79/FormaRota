@@ -280,8 +280,8 @@ html[data-theme] .daily-masthead{
  .sp-story-stat{padding:11px 9px}
 }
 @media(prefers-reduced-motion:reduce){
- .sp-goal-card,.sp-move-card,.sp-move-dot,
- .sp-move-card.sp-set-flash,.sp-move-card.sp-move-finished{
+ html[data-fr-motion="system"] .sp-goal-card,html[data-fr-motion="system"] .sp-move-card,html[data-fr-motion="system"] .sp-move-dot,
+ html[data-fr-motion="system"] .sp-move-card.sp-set-flash,html[data-fr-motion="system"] .sp-move-card.sp-move-finished{
   animation:none!important;transition:none!important;
  }
 }
