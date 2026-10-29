@@ -134,3 +134,15 @@ test('service worker precaches both visual additions and rotates shell safely',(
  assert.ok(sw.includes("Promise.all(SHELL.filter"));
  assert.ok(sw.includes("throw new Error('Offline asset cannot be installed: '"));
 });
+
+test('explicit Normal mode overrides legacy OS reduced preference for key app transitions',()=>{
+ const hybrid=source('assets/hybrid-premium-v1.css');
+ const final=source('assets/final-motion.css');
+ const studio=source('assets/studio-relaunch.css');
+ assert.ok(final.includes('html[data-fr-motion="system"] *'));
+ assert.ok(final.includes('html[data-fr-motion="system"] body main'));
+ assert.ok(studio.includes('html[data-fr-motion="system"] .studio-home-intro'));
+ assert.ok(hybrid.includes('html[data-fr-motion="normal"] body main'));
+ assert.ok(hybrid.includes('html[data-fr-motion="normal"] .abs-exercise.abs-set-pulse'));
+ assert.ok(hybrid.includes('html[data-fr-motion="reduced"] *'));
+});
