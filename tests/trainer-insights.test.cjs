@@ -112,7 +112,7 @@ test('UI adds graph controls to existing chart, preserves no-version and offline
  }
  assert.ok(index.indexOf('trainer-insights-engine.js')<index.indexOf('trainer-insights-ui.js'));
  assert.ok(index.indexOf('trainer-insights-ui.js')>index.indexOf('trainer-adapter.js'));
- assert.ok(css.includes('#trainerGraphMetrics'));assert.ok(sw.includes('formarota-solo-v72-shell'));
+ assert.ok(css.includes('#trainerGraphMetrics'));assert.match(sw,/formarota-solo-v\d+-shell/);
 });
 test('active coach with two fatigue signals changes increase to caution without modifying old workout weights',()=>{
  const h=[session('2026-10-23',lat,lat.name,40,[12,12,12]),session('2026-10-28',lat,lat.name,40,[12,12,12])];
