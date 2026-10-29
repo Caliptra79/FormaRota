@@ -128,7 +128,7 @@ function setupOverview(){
  details.append(optionWrap);
  const disclaimer=text('p','coach-disclaimer','Ağrı veya teknik bozulması varsa ağırlık artırma. Öneriler kayıt bazlıdır.');
  const guide=text('details','coach-guide');
- guide.append(text('summary','','Koç önerilerini nasıl yorumlamalıyım?'),
+ guide.append(text('summary','','Koçum ne diyor? · Öneriler nasıl hesaplanıyor?'),
   text('p','muted','Aynı hareket ve alternatif için iki farklı günün geçerli 3 seti karşılaştırılır. Geçersiz, eski veya yarım kayıtlarla otomatik ağırlık artışı önerilmez.'),
   text('p','muted','Hareket kartındaki “Koçum ne diyor?” bölümünü açarak önceki ve son setleri görebilirsin. Kayıt yoksa neden değerlendirme yapılamadığı açıklanır. Ağrı ve teknik zorluklarını yalnızca sen değerlendirebilirsin.'));
  card.append(top,stats,strip,reschedule,tipBox,foot,details,guide,disclaimer);
@@ -148,7 +148,7 @@ function briefSets(value){
 function updateReason(details,result){
  const wasOpen=details.open;
  details.replaceChildren();
- details.append(text('summary','','Koçum ne diyor? · Gerekçe ve kayıtlar'));
+ details.append(text('summary','','Bu öneri neden verildi?'));
  const content=text('div','coach-reason-body');
  content.append(text('p','coach-reason-meta','Kayıt durumu: '+result.evidence));
  if(result.basis?.previous)content.append(text('p','','Önceki: '+briefSets(result.basis.previous)));
