@@ -1,0 +1,229 @@
+/* FormaRota OLED Edition — ten-theme compatible visual foundation.
+   Applies globally only to the new OLED Black, OLED Neon and OLED Ember.
+   Existing seven palettes remain byte-for-byte unchanged. */
+html[data-theme="oled-black"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#171719;--panel2:#202023;--control:#141416;
+ --text:#f6f6f7;--muted:#a6a6ad;--border:#343438;--accent:#91e6be;--onaccent:#071510;
+ --danger:#ff9898;--warn:#f6c17f;--chart-protein:#64d39a;--chart-weight:#b0a3ec;
+ --svg-ink:#a6a6ad;--info-bg:#14261f;--info-fg:#c2f3dd;--info-border:#315547;
+ --warning-bg:#2a2119;--warning-border:#62503a;--art-bg:#18181a;
+ --fit-bg:#1b2220;--fit-border:#365349;--fit-banner:#16251f;--fit-banner-border:#315648;
+ --luxe-coral:#e8b8a4;--luxe-violet:#a99fd5;--luxe-blue:#8ab9de;
+ --luxe-mint:#91e6be;--luxe-amber:#e2c18b;
+ --studio-bg:#1b1d1e;--studio-bg-deep:#090a0b;--studio-ink:#f6f6f7;
+ --studio-ink-muted:#b6b6bd;--studio-pop:#91e6be;--studio-pop-2:#a99fd5;
+ --studio-sun:#f4c785;--studio-rim:#393a3e;
+}
+html[data-theme="oled-neon"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#111116;--panel2:#1b1b25;--control:#0e0e14;
+ --text:#f8f9ff;--muted:#b0b3c6;--border:#37354c;--accent:#bcff4c;--onaccent:#121700;
+ --danger:#ff789c;--warn:#ffcc64;--chart-protein:#38ecd4;--chart-weight:#d28aff;
+ --svg-ink:#bdc0d3;--info-bg:#102222;--info-fg:#baffed;--info-border:#26545c;
+ --warning-bg:#272117;--warning-border:#5e4a2b;--art-bg:#0f1020;
+ --fit-bg:#17231b;--fit-border:#435d3c;--fit-banner:#152619;--fit-banner-border:#435d3c;
+ --luxe-coral:#ff6fa3;--luxe-violet:#c18aff;--luxe-blue:#44d9ff;
+ --luxe-mint:#bcff4c;--luxe-amber:#ffd170;
+ --studio-bg:#191729;--studio-bg-deep:#08080c;--studio-ink:#f8f9ff;
+ --studio-ink-muted:#bbc3d2;--studio-pop:#bcff4c;--studio-pop-2:#44d9ff;
+ --studio-sun:#ff8ec6;--studio-rim:#3b3b52;
+}
+html[data-theme="oled-ember"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#191716;--panel2:#26211e;--control:#15120f;
+ --text:#fff6ee;--muted:#c3afa1;--border:#4d3b32;--accent:#ffaf67;--onaccent:#201006;
+ --danger:#ff8e83;--warn:#ffd28e;--chart-protein:#f6c277;--chart-weight:#e99cad;
+ --svg-ink:#cbb5a4;--info-bg:#282019;--info-fg:#ffe1bb;--info-border:#655038;
+ --warning-bg:#302017;--warning-border:#865635;--art-bg:#231a14;
+ --fit-bg:#2e201a;--fit-border:#6e4837;--fit-banner:#2b1e16;--fit-banner-border:#754935;
+ --luxe-coral:#ff9c76;--luxe-violet:#d5a0b4;--luxe-blue:#e0ab88;
+ --luxe-mint:#e7c68a;--luxe-amber:#ffc16b;
+ --studio-bg:#302018;--studio-bg-deep:#0e0a08;--studio-ink:#fff6ee;
+ --studio-ink-muted:#dbc4b2;--studio-pop:#ffaf67;--studio-pop-2:#e9a785;
+ --studio-sun:#ffda9a;--studio-rim:#65402e;
+}
+html[data-theme^="oled-"]{
+ --oled-card-radius:23px;
+ --oled-soft-glow:color-mix(in srgb,var(--accent) 9%,transparent);
+ --sp-glow:color-mix(in srgb,var(--accent) 9%,transparent);
+ --sp-coral:var(--luxe-coral);
+ --sp-violet:var(--luxe-violet);
+ --sp-blue:var(--luxe-blue);
+ --sp-mint:var(--luxe-mint);
+ background:#000;
+}
+html[data-theme^="oled-"] body{
+ background:#000!important;color:var(--text);
+ -webkit-font-smoothing:antialiased;
+}
+html[data-theme^="oled-"] body.compact-app-shell main{
+ gap:14px;
+ padding-bottom:calc(92px + env(safe-area-inset-bottom,0px));
+}
+html[data-theme^="oled-"] :is(.panel,.mini-panel,.tracker,.v21-box,.result,.entry,.stat,.weekstat,.fit-card,.coach-main-tip,.sp-week-panel){
+ border-color:var(--border);
+ border-radius:var(--oled-card-radius);
+ background:var(--panel);
+ color:var(--text);
+}
+html[data-theme^="oled-"] :is(.panel,.mini-panel,.tracker,.fit-card,.sp-week-panel){
+ box-shadow:none!important;
+}
+html[data-theme^="oled-"] .panel{
+ background-image:none!important;
+}
+html[data-theme^="oled-"] :is(.result,.entry,.stat,.v21-box,.tracker,.fit-set,.coach-analysis,.coach-report){
+ background:var(--panel2);
+}
+html[data-theme^="oled-"] :is(.panel h2,.panel h3,.route-heading h2,.fit-card strong){
+ color:var(--text);
+ letter-spacing:-.033em;
+}
+html[data-theme^="oled-"] :is(.muted,.v21-mini,.entry p,.result p,.coach-disclaimer){
+ color:var(--muted);
+}
+html[data-theme^="oled-"] :is(button.secondary,.context-links button){
+ border:1px solid var(--border);
+ color:var(--text)!important;
+ background:var(--panel2)!important;
+}
+html[data-theme^="oled-"] button:not(.secondary):not(.danger){
+ background:var(--accent);color:var(--onaccent);
+}
+html[data-theme^="oled-"] :is(button,summary,select,input,textarea):focus-visible{
+ outline:2px solid var(--accent);outline-offset:2px;
+}
+html[data-theme^="oled-"] :is(input,select,textarea){
+ background:var(--control)!important;color:var(--text)!important;
+ border:1px solid var(--border)!important;
+ min-height:44px;
+}
+html[data-theme^="oled-"] :is(.daily-masthead,.context-nav){
+ background:#08080a!important;
+ border-color:var(--border)!important;
+}
+html[data-theme^="oled-"] .mobile-tabbar{
+ background:#0b0b0d!important;
+ border-top:1px solid var(--border)!important;
+ box-shadow:none!important;
+}
+html[data-theme^="oled-"] .mobile-tabbar button{
+ background:transparent!important;color:var(--muted)!important;
+}
+html[data-theme^="oled-"] .mobile-tabbar button.active{
+ color:var(--accent)!important;
+}
+html[data-theme^="oled-"] .mobile-tabbar button.active .ni{
+ background:color-mix(in srgb,var(--accent) 13%,transparent)!important;
+}
+html[data-theme^="oled-"] .context-links button.active{
+ background:color-mix(in srgb,var(--accent) 14%,var(--panel2))!important;
+ color:var(--accent)!important;
+ border-color:var(--accent)!important;
+}
+html[data-theme^="oled-"] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero){
+ min-height:0!important;padding:18px 20px!important;
+ background:var(--panel)!important;border:1px solid var(--border);
+ border-radius:var(--oled-card-radius);box-shadow:none!important;
+}
+html[data-theme^="oled-"] main>.route-heading:not(.studio-fitness-hero):not(.studio-nutrition-hero)::before{
+ display:none!important;
+}
+html[data-theme^="oled-"] main>.route-heading h2{
+ font-size:clamp(1.35rem,4.8vw,1.9rem)!important;
+ margin:4px 0 6px!important;
+}
+html[data-theme^="oled-"] main>.studio-fitness-hero,
+html[data-theme^="oled-"] main>.studio-nutrition-hero{
+ min-height:0!important;
+ padding:19px!important;
+ background:var(--panel)!important;
+ border:1px solid var(--border)!important;
+ border-radius:var(--oled-card-radius);
+ box-shadow:none!important;
+}
+html[data-theme^="oled-"] main>.studio-fitness-hero .studio-hero-art,
+html[data-theme^="oled-"] main>.studio-nutrition-hero .studio-nutrition-art{
+ display:none!important;
+}
+html[data-theme^="oled-"] #fitnessRoot #coachOverview,
+html[data-theme^="oled-"] #fitnessRoot #fitSessionPanel,
+html[data-theme^="oled-"] #fitnessRoot #fitExercisePanel{
+ background:var(--panel)!important;
+ border-color:var(--border)!important;
+ box-shadow:none!important;
+ border-radius:var(--oled-card-radius)!important;
+}
+html[data-theme^="oled-"] #fitSessionPanel .fit-timerbox{
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+ color:var(--text)!important;
+}
+html[data-theme^="oled-"] #fitSessionPanel :is(#fitMainClock,#fitPhaseClock){
+ color:var(--text)!important;
+}
+html[data-theme^="oled-"] #fitExercisePanel .fit-card,
+html[data-theme^="oled-"] #fitExercisePanel .fit-card.sp-move-card{
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+ border-left-color:var(--sp-muscle,var(--accent))!important;
+ box-shadow:none!important;
+}
+html[data-theme^="oled-"] #fitExercisePanel .fit-card.current{
+ border-color:var(--accent)!important;
+}
+html[data-theme^="oled-"] #fitnessRoot .coach-main-tip,
+html[data-theme^="oled-"] #coachReport,
+html[data-theme^="oled-"] #coachAnalysis{
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+ border-left-color:var(--accent)!important;
+}
+html[data-theme^="oled-"] :is(.trendchart,#v21ExerciseChart,#v21WeightChart,.sp-week-teaser){
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+}
+html[data-theme^="oled-"] .fr-rank-card{
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+}
+html[data-theme^="oled-"] :is(.fr-rank-icon,.fr-level-emblem){
+ color:var(--accent);
+}
+html[data-theme^="oled-"] :is(.notice,.warning){
+ background:var(--info-bg);
+ border-color:var(--info-border);
+ color:var(--info-fg);
+}
+html[data-theme^="oled-"] .warning{
+ background:var(--warning-bg);border-color:var(--warning-border);
+ color:var(--warn);
+}
+html[data-theme^="oled-"] #preferencesPanel .luxe-theme-launch{
+ background:var(--panel2)!important;
+ border-color:var(--border)!important;
+}
+html[data-theme^="oled-"] .luxe-dialog{
+ background:var(--panel)!important;
+ border-color:var(--border)!important;
+ color:var(--text)!important;
+}
+html[data-theme^="oled-"] .luxe-theme-tile{
+ border-color:var(--border);
+}
+html[data-theme^="oled-"] .tag{
+ border-color:var(--border);
+ color:var(--muted);
+}
+/* Prevent artificially tinted surfaces from obscuring the black OLED canvas. */
+html[data-theme^="oled-"] #profilePanel,
+html[data-theme^="oled-"] #nutritionTop,
+html[data-theme^="oled-"] #homePanel{
+ background-image:none!important;
+}
+@media(max-width:420px){
+ html[data-theme^="oled-"] body.compact-app-shell main{padding-inline:10px}
+ html[data-theme^="oled-"] main>.studio-nutrition-hero,
+ html[data-theme^="oled-"] main>.studio-fitness-hero{padding:15px!important}
+}
