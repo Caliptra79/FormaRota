@@ -1,0 +1,78 @@
+/* Smart rest + visible explainable coaching; inherits all ten themes. */
+#fitSessionPanel .smart-rest-controls:not([hidden]){
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;gap:12px;
+ padding:14px;margin:12px 0 6px;
+ border:1px solid color-mix(in srgb,var(--accent) 37%,var(--border));
+ border-radius:16px;
+ background:color-mix(in srgb,var(--accent) 7%,var(--panel2));
+}
+#fitSessionPanel .smart-rest-controls[hidden]{display:none!important}
+#fitSessionPanel .smart-rest-controls strong{
+ color:var(--text);font-size:.91rem;
+}
+#fitSessionPanel #fitSmartRestHint{
+ margin:5px 0 0;line-height:1.45;font-size:.78rem;
+}
+#fitSessionPanel .smart-rest-actions{
+ display:flex;flex-wrap:wrap;gap:7px;
+}
+#fitSessionPanel .smart-rest-actions button{
+ min-height:44px;min-width:69px;flex:1 1 auto;
+ padding:9px 12px;
+ border-radius:12px;
+ font-size:.84rem;font-weight:760;
+}
+#fitSessionPanel .smart-rest-help{
+ margin:10px 0 6px;
+ font-size:.78rem;line-height:1.48;color:var(--muted);
+}
+#coachOverview .coach-guide{
+ border:1px solid var(--border);
+ background:var(--panel2);
+ border-radius:15px;
+ padding:0 12px;
+}
+#coachOverview .coach-guide summary{
+ min-height:46px;
+ display:flex;align-items:center;
+ font-weight:770;font-size:.84rem;
+ color:var(--accent);
+ cursor:pointer;
+}
+#coachOverview .coach-guide p{
+ margin:8px 0 12px;
+ font-size:.8rem;line-height:1.5;color:var(--muted);
+}
+#fitnessRoot .coach-inline-tip{
+ flex-wrap:wrap;
+ border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));
+ border-left:3px solid var(--accent);
+ border-radius:13px;
+ background:color-mix(in srgb,var(--accent) 6%,var(--panel2));
+}
+#fitnessRoot .coach-inline-tip[data-coach-status="increase"]{
+ border-left-color:var(--luxe-mint,var(--accent));
+}
+#fitnessRoot .coach-inline-tip[data-coach-status="invalid"],
+#fitnessRoot .coach-inline-tip[data-coach-status="caution"],
+#fitnessRoot .coach-inline-tip[data-coach-status="reassess"]{
+ border-left-color:var(--warn);
+}
+#fitnessRoot .coach-inline-tip .coach-inline-value{
+ min-width:0;overflow-wrap:anywhere;
+ font-size:.83rem;line-height:1.5;
+}
+#fitnessRoot .coach-reason>summary{
+ min-height:43px;
+ color:var(--accent);
+ font-weight:780;
+}
+#fitnessRoot .coach-reason-body{
+ overflow-wrap:anywhere;
+}
+@media(max-width:430px){
+ #fitSessionPanel .smart-rest-actions{width:100%}
+ #fitSessionPanel .smart-rest-actions button{flex:1 1 29%;padding:9px 7px}
+ #coachOverview .coach-guide{padding:0 10px}
+}
