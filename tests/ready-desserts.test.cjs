@@ -57,6 +57,6 @@ test('ready-desserts module is loaded before food seed initialization and offlin
   assert.ok(html.includes('.concat(window.FormaRotaReadyDesserts||[])'));
   assert.ok(html.includes("String(food.id||'').startsWith('dessert-')&&food.note"));
   assert.ok(sw.includes("'./assets/ready-desserts.js'"));
-  assert.match(sw,/const CACHE='formarota-solo-v88-shell'/);
-  assert.match(sw,/const GIF_CACHE='formarota-solo-v88-gifs'/);
+  assert.match(sw,/const CACHE='formarota-solo-v89-shell'/);
+  assert.match(sw,/const GIF_CACHE='formarota-solo-v89-gifs'/);
 });
