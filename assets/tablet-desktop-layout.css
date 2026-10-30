@@ -1,0 +1,247 @@
+/* FormaRota | tablet & desktop only.
+   Intentionally zero declarations outside large-screen media queries.
+   Phone portrait AND phone landscape retain the existing, tested layout.
+   No JS, data, theme or exercise-asset changes. */
+
+/* Tablets, and computer browser windows that are shorter than a tablet.
+   A phone in landscape (wide but short, coarse pointer) never matches. */
+@media (min-width:768px) and (min-height:640px),
+       (min-width:768px) and (hover:hover) and (pointer:fine) {
+ html[data-theme] body.compact-app-shell main{
+  width:min(calc(100% - 30px),1120px)!important;
+  max-width:1120px!important;
+  margin-inline:auto!important;
+  padding:18px 15px 54px!important;
+  row-gap:18px;
+  column-gap:18px;
+ }
+ html[data-theme] body.compact-app-shell .context-nav{
+  width:min(calc(100% - 30px),1120px)!important;
+  max-width:1120px!important;
+  margin-inline:auto!important;
+ }
+ html[data-theme] body.compact-app-shell main>section{
+  min-width:0;
+  max-width:100%;
+ }
+ html[data-theme] body.compact-app-shell main>.panel:not(#homePanel),
+ html[data-theme] body.compact-app-shell main>.route-heading{
+  scroll-margin-top:20px;
+ }
+ html[data-theme] body.compact-app-shell main>.panel:not(#homePanel){
+  padding:clamp(18px,2.1vw,27px);
+ }
+ html[data-theme] #homePanel.oled-home:not(.hidden){
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
+  align-items:start;
+  column-gap:18px!important;
+  row-gap:18px!important;
+ }
+ html[data-theme] #homePanel.oled-home>.oled-home-heading,
+ html[data-theme] #homePanel.oled-home>.oled-today-activity,
+ html[data-theme] #homePanel.oled-home>.oled-week,
+ html[data-theme] #homePanel.oled-home>.oled-bottom-tools,
+ html[data-theme] #homePanel.oled-home>#homeBackupAlert{
+  grid-column:1/-1!important;
+ }
+ html[data-theme] #homePanel.oled-home>.oled-calorie-card,
+ html[data-theme] #homePanel.oled-home>.oled-quick-card,
+ html[data-theme] #homePanel.oled-home>.oled-recent{
+  grid-column:1!important;
+ }
+ html[data-theme] #homePanel.oled-home>.oled-daily-card,
+ html[data-theme] #homePanel.oled-home>.oled-day-plan,
+ html[data-theme] #homePanel.oled-home>.oled-routine{
+  grid-column:2!important;
+ }
+ html[data-theme] #homePanel.oled-home .oled-calorie-card,
+ html[data-theme] #homePanel.oled-home .oled-daily-card,
+ html[data-theme] #homePanel.oled-home .oled-quick-card,
+ html[data-theme] #homePanel.oled-home .oled-day-plan,
+ html[data-theme] #homePanel.oled-home .oled-recent,
+ html[data-theme] #homePanel.oled-home .oled-routine,
+ html[data-theme] #homePanel.oled-home .oled-week{
+  min-width:0;
+  width:100%;
+  max-width:100%;
+  margin-inline:0;
+ }
+ html[data-theme] #homePanel.oled-home .sp-rings{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:11px;
+ }
+ html[data-theme] #homePanel.oled-home .home-actions{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:11px;
+ }
+ html[data-theme] #homePanel.oled-home .oled-routine .tracker-pair{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:10px;
+ }
+ html[data-theme] #homePanel.oled-home .oled-routine .tracker{
+  min-width:0;
+ }
+ html[data-theme] #homePanel.oled-home .oled-main-ring{
+  max-width:266px;
+ }
+ html[data-theme] #homePanel.oled-home .tracker-history-controls{
+  align-items:center;
+ }
+ html[data-theme] #homePanel.oled-home .tracker-history-controls #trackerDate{
+  max-width:none;
+ }
+ html[data-theme] #homePanel.oled-home .oled-recent-list,
+ html[data-theme] #homePanel.oled-home .oled-plan-list{
+  min-width:0;
+ }
+ html[data-theme] #nutritionTop>.row:first-child,
+ html[data-theme] #profilePanel .row:has(#weightDate){
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:16px;
+ }
+ html[data-theme] #searchPanel .meal-editor-head{
+  align-items:center;
+  gap:18px;
+ }
+ html[data-theme] #searchPanel .result,
+ html[data-theme] #searchPanel .food-result-controls,
+ html[data-theme] #searchPanel .food-result-copy,
+ html[data-theme] #foodLogPanel .entry{
+  min-width:0;
+  max-width:100%;
+ }
+ html[data-theme] #searchPanel .food-result-controls{
+  flex-wrap:wrap;
+  justify-content:flex-end;
+ }
+ html[data-theme] #searchPanel .food-result-controls button{
+  min-height:42px;
+ }
+ html[data-theme] #fitExercisePanel .fit-card{
+  min-width:0;
+  grid-template-columns:minmax(155px,210px) minmax(0,1fr)!important;
+  gap:clamp(15px,2.2vw,23px)!important;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+  max-width:210px!important;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-settable{
+  width:100%;
+  min-width:0;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-set{
+  min-width:0;
+ }
+ html[data-theme] .weeknav,
+ html[data-theme] .fit-headline,
+ html[data-theme] .meal-editor-head{
+  min-width:0;
+ }
+ html[data-theme] .mobile-tabbar{
+  width:min(720px,calc(100% - 34px));
+  max-width:720px!important;
+  margin-inline:auto;
+ }
+}
+
+/* Wide desktop: navigation becomes a compact fixed side rail, leaving
+   the content column genuinely useful on large monitors. */
+@media (min-width:1200px) {
+ html[data-theme] body.compact-app-shell{
+  --fr-desktop-content-left:max(260px,calc((100vw - 1400px)/2 + 248px));
+  padding-bottom:30px!important;
+ }
+ html[data-theme] body.compact-app-shell main{
+  width:min(1100px,calc(100vw - 330px))!important;
+  max-width:1100px!important;
+  margin-left:var(--fr-desktop-content-left)!important;
+  margin-right:auto!important;
+  padding-inline:18px!important;
+  padding-top:18px!important;
+  padding-bottom:52px!important;
+  row-gap:21px;
+ }
+ html[data-theme] body.compact-app-shell .context-nav{
+  width:min(1100px,calc(100vw - 330px))!important;
+  max-width:1100px!important;
+  margin-left:var(--fr-desktop-content-left)!important;
+  margin-right:auto!important;
+  padding-inline:18px;
+ }
+ html[data-theme] body.compact-app-shell .mobile-tabbar{
+  position:fixed!important;
+  inset:auto auto auto auto;
+  top:max(76px,env(safe-area-inset-top,0px))!important;
+  bottom:auto!important;
+  left:max(20px,calc((100vw - 1400px)/2 + 24px))!important;
+  right:auto!important;
+  width:208px!important;
+  max-width:208px!important;
+  max-height:calc(100dvh - 96px);
+  overflow-y:auto!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-auto-rows:auto;
+  gap:5px!important;
+  margin:0!important;
+  padding:10px!important;
+  border:1px solid var(--border)!important;
+  border-radius:20px!important;
+  background:var(--panel)!important;
+  box-shadow:0 10px 32px rgba(0,0,0,.14);
+ }
+ html[data-theme] body.compact-app-shell .mobile-tabbar button{
+  display:flex!important;
+  flex-direction:row!important;
+  justify-content:flex-start!important;
+  align-items:center!important;
+  min-width:0;
+  width:100%;
+  min-height:51px!important;
+  padding:9px 11px!important;
+  gap:12px!important;
+  text-align:left;
+  font-size:.88rem!important;
+  line-height:1.25;
+ }
+ html[data-theme] body.compact-app-shell .mobile-tabbar button .ni{
+  flex:0 0 36px;
+  width:36px;
+  height:32px;
+ }
+ html[data-theme] body.compact-app-shell .mobile-tabbar button:focus-visible{
+  outline-offset:-3px;
+ }
+ html[data-theme] #homePanel.oled-home:not(.hidden){
+  grid-template-columns:minmax(0,1.13fr) minmax(0,.87fr)!important;
+  gap:20px!important;
+ }
+ html[data-theme] #homePanel.oled-home .oled-main-ring{
+  width:clamp(232px,18vw,282px);
+  max-width:282px;
+ }
+ html[data-theme] #homePanel.oled-home .oled-routine .tracker-pair{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+ html[data-theme] #homePanel.oled-home .tracker .buttons{
+  flex-wrap:wrap;
+ }
+ html[data-theme] #fitExercisePanel .fit-card{
+  grid-template-columns:minmax(180px,235px) minmax(0,1fr)!important;
+  gap:24px!important;
+ }
+ html[data-theme] #fitExercisePanel .fit-card .fit-gif-preview{
+  max-width:235px!important;
+ }
+ html[data-theme] #searchPanel .meal-cards{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
+
+/* Desktop content within a shorter resized window remains scrollable. */
+@media (min-width:1200px) and (max-height:650px) {
+ html[data-theme] body.compact-app-shell .mobile-tabbar{
+  top:20px!important;
+  max-height:calc(100dvh - 40px);
+ }
+}
