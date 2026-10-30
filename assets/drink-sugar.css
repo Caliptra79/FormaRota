@@ -1,0 +1,38 @@
+/* Optional sugar choice in tea/coffee result cards; small-screen friendly. */
+.food-result-controls.with-drink-sugar{
+ display:flex;flex-wrap:wrap;align-items:end;gap:8px;
+}
+.food-result-controls.with-drink-sugar .food-quantity-label{
+ order:0;flex:1 1 112px;min-width:0;
+}
+.food-result-controls.with-drink-sugar .food-sugar-label{
+ order:1;flex:2 1 180px;min-width:0;
+ margin:0!important;
+ color:var(--text);font-weight:650;font-size:.82rem;
+}
+.food-result-controls.with-drink-sugar .food-sugar-label select{
+ width:100%;min-width:0;min-height:44px;
+ padding:9px 10px;font-size:16px;margin-top:4px;
+ color:var(--text);background:var(--panel2);border:1px solid var(--border);
+}
+.food-result-controls.with-drink-sugar .food-sugar-hint{
+ display:block;margin-top:4px;line-height:1.35;
+ font-size:.73rem;font-weight:400;color:var(--muted);
+}
+.food-result-controls.with-drink-sugar>button{
+ order:2;flex:0 1 95px;min-width:80px;min-height:44px;
+}
+.fr-nutrition-editor>label:has(select){
+ min-width:0;max-width:100%;display:block;
+}
+.fr-nutrition-editor>label:has(select) select{
+ min-width:0;width:100%;font-size:16px;min-height:44px;
+}
+@media(max-width:440px){
+ .food-result-controls.with-drink-sugar .food-sugar-label{
+  order:2;flex:1 1 100%;
+ }
+ .food-result-controls.with-drink-sugar>button{
+  order:3;flex:1 1 100%;
+ }
+}
