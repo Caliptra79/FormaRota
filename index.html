@@ -916,7 +916,7 @@ function addFood(food,chosenAmount){
   $('status').textContent='0–3000 '+unit+' arasında geçerli miktar gir.';return;
  }
  // Do not guess sugar in packaged drinks or already sweetened milk drinks.
- const sugarModule=window.FormaRotaDrinkSugar;
+ const sugarModule=typeof window!=='undefined'?window.FormaRotaDrinkSugar:null;
  const cubes=options?.sugarCubes??0;
  if(cubes!==0&&(!sugarModule?.eligible(food)||sugarModule.count(cubes)===null)){
   $('status').textContent='Şeker seçimi yalnızca şekersiz çay/kahve için geçerlidir.';return;
