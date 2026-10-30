@@ -115,7 +115,7 @@ test('offline cache script is precached for PWA, and personal food backup remain
  const sw=source('sw.js');
  assert.ok(html.includes('<script src="./assets/food-search-cache.js"></script>'));
  assert.ok(sw.includes("'./assets/food-search-cache.js'"));
- assert.ok(sw.includes("const CACHE='formarota-solo-v89-shell'"));
+ assert.ok(sw.includes("const CACHE='formarota-solo-v90-shell'"));
  assert.ok(html.includes("function collectBackup(){return{version:7"));
  assert.ok(html.includes('function savePackagedFood(food){'));
  assert.ok(html.includes("foodSearchSerial++;if(foodSearchAbort)foodSearchAbort.abort()"));
