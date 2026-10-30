@@ -142,6 +142,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 </style><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="default" name="apple-mobile-web-app-status-bar-style"/><link rel="stylesheet" href="./assets/ui-compact-v23.css"/><link rel="stylesheet" href="./assets/progress-compact-v25.css"/><link rel="stylesheet" href="./assets/theme-minimal-v26.css"/><link rel="stylesheet" href="./assets/hype-themes-v29.css"/><link rel="stylesheet" href="./assets/coach-v30.css"/><link rel="stylesheet" href="./assets/coach-fixes-v31.css"/><link rel="stylesheet" href="./assets/refinement-v32.css"/><link rel="stylesheet" href="./assets/coach-quality-v33.css"/>
 <link rel="stylesheet" href="./assets/fitness-record-editor.css"/>
 <link rel="stylesheet" href="./assets/nutrition-quality.css"/><link rel="stylesheet" href="./assets/food-units.css"/>
+<link rel="stylesheet" href="./assets/drink-sugar.css"/>
 <link rel="stylesheet" href="./assets/readability-layout.css"/>
 <link rel="stylesheet" href="./assets/compact-shell.css"/>
 <link rel="stylesheet" href="./assets/settings-disclosure.css"/>
@@ -334,7 +335,7 @@ setTimeout(function(){hide(seq)},4000);
 <section class="route-heading wide" data-view="dinner" aria-label="Akşam planın"><div class="eyebrow">BESLENME / AKŞAM</div><h2>Akşam planın</h2><p>Günün kalori ve protein dengesine göre menünü oluştur.</p></section>
 <section class="panel wide" data-view="dinner" id="v21SmartDinner"><h2>Akşam için üç seçenek</h2><p class="v21-mini">O gün kaydedilen tüm öğünlerini ve kalan günlük hedeflerini dikkate alan yaklaşık menü önerileri. Kaydetmeden önce porsiyonları düzenleyebilirsin.</p><div id="v21DinnerOptions" class="v21-list"></div></section><section class="panel" data-view="dinner" id="dinnerPanel"><h2>Akşam yemeği önerisi</h2><p class="muted">Öğlen ne yediğini kaydettikten sonra, günlük kalori ve protein hedeflerinde kalan miktara göre menü seçenekleri hesaplanır. Hastane öğle yemeği için sabit plan yok.</p><div class="fr-dinner-pref"><label for="frDinnerPreference">Menü tercihi</label><select id="frDinnerPreference"><option value="all">Tüm menüler</option><option value="vegetarian">Et ve balık içermeyen menüler</option></select></div><div class="notice" id="dinnerSummary">Öneriler için günün öğünlerini kaydet.</div><div class="results" id="dinnerSuggestions"><div class="empty">Akşam önerileri burada görünecek.</div></div><div aria-live="polite" id="dinnerPlanBox"></div><p class="muted">Değerler yaklaşık hesaptır. Porsiyonları ve yemeğin hazırlanışını dikkate al; öneriler tıbbi beslenme planı değildir.</p></section>
 
-<section class="panel wide meal-editor hidden meal-editor-closed" data-view="nutrition" id="searchPanel"><div class="meal-editor-head"><div><div class="eyebrow">ÖĞÜN KAYDI</div><h2 id="mealEditorTitle">Öğle yemeğine besin ekle</h2><p class="muted" id="mealEditorHelp">Besini bul, miktarı ayarla ve Ekle düğmesine dokun.</p></div><button type="button" id="closeMealEditor" class="secondary">✕ Kapat</button></div><h3>Besin ara</h3><div class="muted">Yerel temel besinler, Türk yemekleri ve paketli ürünler.</div><label for="query">Yemek, besin veya marka</label><input id="query" placeholder="Örn. mercimek çorbası, yoğurt, marka adı"/><div class="row"><div><label for="source">Kaynak</label><select id="source"><option value="all">Tüm kaynaklar</option><option value="local">Yerel besinler ve tarifler</option><option value="off">Paketli ürünler</option></select></div><div hidden style="display:none!important"><label for="amount">Eski miktar alanı</label><input id="amount" min="0.1" step="0.1" type="number" value="180"/></div></div><div class="searchrow"><button id="searchBtn">Ara</button><button class="secondary" id="clearBtn">Temizle</button></div><div aria-live="polite" class="muted" id="status" role="status" style="margin-top:9px"></div><div class="results" id="results"><div class="empty">Aramak için bir yiyecek adı yaz.</div></div>
+<section class="panel wide meal-editor hidden meal-editor-closed" data-view="nutrition" id="searchPanel"><div class="meal-editor-head"><div><div class="eyebrow">ÖĞÜN KAYDI</div><h2 id="mealEditorTitle">Öğle yemeğine besin ekle</h2><p class="muted" id="mealEditorHelp">Besini bul, miktarı ayarla ve Ekle düğmesine dokun.</p></div><button type="button" id="closeMealEditor" class="secondary">✕ Kapat</button></div><h3>Besin ara</h3><div class="muted">Yerel yemekler, çay/kahve, meyveler, proteinler, atıştırmalıklar ve paketli ürünler.</div><label for="query">Yemek, besin veya marka</label><input id="query" placeholder="Örn. çay, filtre kahve, muz, tavuklu pilav"/><div class="row"><div><label for="source">Kaynak</label><select id="source"><option value="all">Tüm kaynaklar</option><option value="local">Yerel besinler ve tarifler</option><option value="off">Paketli ürünler</option></select></div><div hidden style="display:none!important"><label for="amount">Eski miktar alanı</label><input id="amount" min="0.1" step="0.1" type="number" value="180"/></div></div><div class="searchrow"><button id="searchBtn">Ara</button><button class="secondary" id="clearBtn">Temizle</button></div><div aria-live="polite" class="muted" id="status" role="status" style="margin-top:9px"></div><div class="results" id="results"><div class="empty">Aramak için bir yiyecek adı yaz.</div></div>
 <hr style="border:0;border-top:1px solid var(--border);margin:18px 0"/><h2>Barkodla ürün bul</h2><div class="muted">Paketin barkod numarasını girerek ürün bilgisini sorgula.</div><div class="searchrow"><input id="barcode" inputmode="numeric" placeholder="8–14 haneli barkod"/><button id="barcodeBtn">Barkod ara</button></div><div class="muted" id="barcodeStatus" role="status" style="margin-top:8px"></div><div class="results" id="barcodeResult"></div></section>
 <section class="panel" data-view="nutrition" id="foodLogPanel"><h2><span id="mealTitle">Öğle yemeği</span> kayıtları</h2><div class="muted">Seçtiğin gün ve öğün için eklenenler. Değerler kayıt anında saklanır.</div><div class="entries" id="entries"><div class="empty">Henüz kayıt eklenmedi.</div></div></section>
 <section class="route-heading wide" data-view="recipes" aria-label="Tarif hesaplayıcı"><div class="eyebrow">BESLENME / TARİFLER</div><h2>Tarif hesaplayıcı</h2><p>Malzemelerini gir, pişmiş porsiyonların değerlerini hesapla.</p></section>
@@ -486,7 +487,9 @@ setTimeout(function(){hide(seq)},4000);
 <button data-tab="progress" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4v16h16M7 16l5-5 3 2 5-7"/></svg></span><span>Gelişim</span></button>
 <button data-tab="settings" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span>Ayarlar</span></button></nav><script src="./assets/turkish-foods.js"></script>
 <script src="./assets/ready-desserts.js"></script>
+<script src="./assets/food-variety.js"></script>
 <script src="./assets/dinner-coach.js"></script><script src="./assets/food-units.js"></script>
+<script src="./assets/drink-sugar.js"></script>
 <script src="./assets/food-search-cache.js"></script>
 <script defer src="./assets/date-masthead.js"></script>
 <script>
@@ -537,7 +540,7 @@ const seedFoods=[
 {id:"potato-fries",name:"Patates kızartması (tahmini)",aliases:["patates kızartması","kızartma"],kcal:312,protein:3.4,carbs:41,fat:15,kind:"Türk yemeği"},
 {id:"chickpeas",name:"Nohut, haşlanmış",aliases:["nohut","haşlanmış nohut"],kcal:164,protein:8.9,carbs:27.4,fat:2.6,kind:"Temel besin"},
 {id:"bulgur-raw",name:"Bulgur, kuru",aliases:["kuru bulgur"],kcal:342,protein:12.3,carbs:75.9,fat:1.3,kind:"Temel besin"}
-].map(x=>({...x,source:"Yerel referans veri",verified:false})).concat(window.FormaRotaTurkishFoods||[]).concat(window.FormaRotaReadyDesserts||[]);
+].map(x=>({...x,source:"Yerel referans veri",verified:false})).concat(window.FormaRotaTurkishFoods||[]).concat(window.FormaRotaReadyDesserts||[]).concat(window.FormaRotaVarietyFoods||[]);
 function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`} $('date').value=today();let weeklyAnchor=$('date').value;
 function read(key,fallback=[]){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}}function write(key,val){localStorage.setItem(key,JSON.stringify(val));}function getLogs(){return read(logKey,[])}function getCustom(){return read(customKey,[])}function fmt(n){return Number(n||0).toLocaleString('tr-TR',{maximumFractionDigits:1})}function norm(s){return String(s||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
 function dateFromISO(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12,0,0)}
@@ -743,8 +746,26 @@ function renderResults(items,root=$('results')){
   const input=document.createElement('input');input.type='number';input.min='0.1';input.max='3000';input.step='0.1';
   input.value=unit==='ml'?'200':'180';input.setAttribute('aria-label',food.name+' miktarı ('+unit+')');
   label.append(input);
+  const sugarModule=window.FormaRotaDrinkSugar;
+  const sugarChoice=sugarModule?.eligible(food)?document.createElement('select'):null;
+  if(sugarChoice){
+   const sugarLabel=document.createElement('label');sugarLabel.className='food-sugar-label';
+   sugarLabel.textContent='Çay/kahve şekeri';
+   sugarChoice.setAttribute('aria-label',food.name+' için ilave şeker miktarı');
+   for(let n=0;n<=sugarModule.MAX;n++){
+    const option=document.createElement('option');option.value=String(n);
+    option.textContent=n===0?'Şekersiz':n+' küp şeker (+'+(n*sugarModule.KCAL)+' kcal)';
+    sugarChoice.append(option);
+   }
+   sugarChoice.value='0';sugarLabel.append(sugarChoice);
+   const help=document.createElement('small');help.className='food-sugar-hint';
+   help.textContent='1 küp ≈ 4 g = 16 kcal · yalnızca ilave şeker';
+   sugarLabel.append(help);controls.append(sugarLabel);
+   controls.className+=' with-drink-sugar';
+  }
   const btn=document.createElement('button');btn.type='button';btn.textContent='Ekle';
-  btn.disabled=!nutritionMacrosValid(food);btn.onclick=()=>addFood(food,input.value);
+  btn.disabled=!nutritionMacrosValid(food);
+  btn.onclick=()=>addFood(food,input.value,sugarChoice?{sugarCubes:Number(sugarChoice.value)}:undefined);
   controls.append(label,btn);
   if(String(food.id||'').startsWith('off-')){
    const save=document.createElement('button');save.type='button';save.className='secondary';
@@ -857,7 +878,7 @@ async function search(){
   if(request===foodSearchSerial)foodSearchAbort=null;
  }
 }
-function addFood(food,chosenAmount){
+function addFood(food,chosenAmount,options){
  const amount=Number(chosenAmount===undefined?$('amount').value:chosenAmount);
  const measurement=typeof window!=='undefined'?window.FormaRotaFoodUnits:null;
  const unit=measurement?.unit(food)||food.unit||'g';
@@ -867,22 +888,34 @@ function addFood(food,chosenAmount){
  if(!Number.isFinite(amount)||amount<=0||amount>3000){
   $('status').textContent='0–3000 '+unit+' arasında geçerli miktar gir.';return;
  }
- // Existing local food tables use per-100-g numbers. For old drink values,
- // 1 ml ≈ 1 g is an explicitly approximate conversion, not a known density.
+ // Do not guess sugar in packaged drinks or already sweetened milk drinks.
+ const sugarModule=window.FormaRotaDrinkSugar;
+ const cubes=options?.sugarCubes??0;
+ if(cubes!==0&&(!sugarModule?.eligible(food)||sugarModule.count(cubes)===null)){
+  $('status').textContent='Şeker seçimi yalnızca şekersiz çay/kahve için geçerlidir.';return;
+ }
+ const extra=sugarModule?.eligible(food)?sugarModule.extras(cubes):null;
+ if(sugarModule?.eligible(food)&&!extra){
+  $('status').textContent='Geçerli bir şeker miktarı seç.';return;
+ }
  const approximateVolume=unit==='ml'&&food.nutritionBasis!=='100ml';
  const val=k=>food[k]==null?null:Number(food[k])*amount/100;
+ const sugarCubes=extra?.sugarCubes??0;
+ const foodName=food.name+(extra?(sugarCubes?' · '+sugarCubes+' küp şeker':' · şekersiz'):'');
  const logs=getLogs();
  logs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
-  date:$('date').value,meal:$('meal').value,foodId:food.id,name:food.name,
+  date:$('date').value,meal:$('meal').value,foodId:food.id,name:foodName,
   amount,unit,nutritionBasis:food.nutritionBasis||'100g',approximateVolume,
-  kcal:val('kcal')??0,protein:val('protein')??0,carbs:val('carbs'),fat:val('fat'),
+  kcal:(val('kcal')??0)+(extra?.kcal||0),protein:val('protein')??0,
+  carbs:val('carbs')==null?null:val('carbs')+(extra?.carbs||0),fat:val('fat'),
+  ...(extra?{sugarEligible:true,sugarCubes,sugarGrams:extra.sugarGrams,baseFoodName:food.name}:{}),
   source:food.source||food.kind||'Kişisel',
   baseKcal:food.kcal,baseProtein:food.protein,baseCarbs:food.carbs,baseFat:food.fat});
  write(logKey,logs);renderTotals();
- $('status').textContent='✓ '+food.name+', '+fmt(amount)+' '+unit+' olarak '+
+ $('status').textContent='✓ '+foodName+', '+fmt(amount)+' '+unit+' olarak '+
   $('meal').value.toLocaleLowerCase('tr')+' öğününe kaydedildi.'+
   (approximateVolume?' Kalori hesabı yaklaşık (1 ml ≈ 1 g).':' Günlük kalori ve protein güncellendi.');
- typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(food.name+' · '+fmt(amount)+' '+unit+' kaydedildi');
+ typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(foodName+' · '+fmt(amount)+' '+unit+' kaydedildi');
 }
 async function barcodeSearch(){const code=$('barcode').value.trim();if(!/^\d{8,14}$/.test(code)){$('barcodeStatus').textContent='8–14 haneli sayısal bir barkod gir.';return}$('barcodeBtn').disabled=true;$('barcodeStatus').textContent='Barkod sorgulanıyor…';$('barcodeResult').innerHTML='';try{const res=await fetch('https://world.openfoodfacts.org/api/v3/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,brands,nutriments');if(!res.ok)throw new Error();const data=await res.json();if(data.status!==1||!data.product)throw new Error('Ürün bulunamadı');const food=offProductToFood(data.product);if(!food)throw new Error('Ürünün kalori/protein verisi eksik');renderResults([food],$('barcodeResult'));$('barcodeStatus').textContent='Ürün bulundu. Etiket bilgileriyle karşılaştır.'}catch(e){$('barcodeStatus').textContent=e.message==='Ürün bulunamadı'||e.message==='Ürünün kalori/protein verisi eksik'?e.message:'Barkod servisine ulaşılamadı.'}finally{$('barcodeBtn').disabled=false}}
 function renderCustomFoods(){const root=$('customFoods');root.innerHTML='';const foods=getCustom();if(!foods.length){root.innerHTML='<div class="empty">Henüz kişisel besin eklemedin.</div>';return}foods.forEach(f=>{const el=document.createElement('div');el.className='entry';const left=document.createElement('div');const b=document.createElement('strong');b.textContent=f.name;const p=document.createElement('p');p.textContent=`${fmt(f.kcal)} kcal · ${fmt(f.protein)} g protein / 100 ${f.unit==='ml'?'ml':'g'}`;left.append(b,p);const del=document.createElement('button');del.className='danger';del.textContent='Sil';del.onclick=()=>{write(customKey,getCustom().filter(x=>x.id!==f.id));renderCustomFoods();renderRecipeOptions()};el.append(left,del);root.append(el)})}
