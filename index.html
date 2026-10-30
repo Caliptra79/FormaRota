@@ -904,7 +904,8 @@ async function search(){
   if(request===foodSearchSerial)foodSearchAbort=null;
  }
 }
-function addFood(food,chosenAmount,options){
+function addFood(food,chosenAmount){
+ const options=arguments[2];
  const amount=Number(chosenAmount===undefined?$('amount').value:chosenAmount);
  const measurement=typeof window!=='undefined'?window.FormaRotaFoodUnits:null;
  const unit=measurement?.unit(food)||food.unit||'g';
