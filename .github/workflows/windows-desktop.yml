@@ -8,6 +8,10 @@ on:
       - main
     paths:
       - 'desktop/**'
+      - 'index.html'
+      - 'assets/**'
+      - 'manifest.webmanifest'
+      - 'sw.js'
       - 'package.json'
       - '.github/workflows/windows-desktop.yml'
 

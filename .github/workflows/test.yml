@@ -17,3 +17,6 @@ jobs:
         run: node --test tests/*.test.cjs
       - name: Validate Windows offline bundle
         run: node desktop/build-assets.cjs && node --test desktop/desktop.test.cjs
+
+      - name: Verify real Chrome layouts on phone, tablet and desktop
+        run: node tests/viewport-browser.cjs

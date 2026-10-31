@@ -6,7 +6,8 @@
 /* Tablets, and computer browser windows that are shorter than a tablet.
    A phone in landscape (wide but short, coarse pointer) never matches. */
 @media (min-width:768px) and (min-height:640px),
-       (min-width:768px) and (hover:hover) and (pointer:fine) {
+       (min-width:768px) and (hover:hover) and (pointer:fine),
+       (min-width:1200px) {
  html[data-theme] body.compact-app-shell main{
   width:min(calc(100% - 30px),1120px)!important;
   max-width:1120px!important;
@@ -40,6 +41,7 @@
  html[data-theme] #homePanel.oled-home>.oled-home-heading,
  html[data-theme] #homePanel.oled-home>.oled-today-activity,
  html[data-theme] #homePanel.oled-home>.oled-week,
+ html[data-theme] #homePanel.oled-home>.fr-route-home,
  html[data-theme] #homePanel.oled-home>.oled-bottom-tools,
  html[data-theme] #homePanel.oled-home>#homeBackupAlert{
   grid-column:1/-1!important;
@@ -89,6 +91,27 @@
  }
  html[data-theme] #homePanel.oled-home .tracker-history-controls #trackerDate{
   max-width:none;
+ }
+ /* New route teaser must be full-width; the game map must keep the
+    exact 400/420 ratio of its SVG viewBox and absolute-positioned pins.
+    In wide windows the old max-height capped SVG but not overlay positions. */
+ html[data-theme] #homePanel.oled-home>.fr-route-home{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  margin-inline:0;
+ }
+ html[data-theme] #frRoutePanel .fr-route-map{
+  width:min(100%,533px);
+  max-height:none!important;
+  justify-self:center;
+  aspect-ratio:400/420;
+ }
+ html[data-theme] #frRoutePanel .fr-route-layout{
+  min-width:0;
+ }
+ html[data-theme] #frRoutePanel .fr-route-side{
+  min-width:0;
  }
  html[data-theme] #homePanel.oled-home .oled-recent-list,
  html[data-theme] #homePanel.oled-home .oled-plan-list{
@@ -141,6 +164,27 @@
   width:min(720px,calc(100% - 34px));
   max-width:720px!important;
   margin-inline:auto;
+ }
+}
+
+/* Narrow tablet portrait: show the illustrated route above its stages,
+   instead of squeezing the illustration and controls into two tiny columns.
+   Phone portrait and phone landscape remain untouched. */
+@media (min-width:768px) and (max-width:959px) and (min-height:640px),
+       (min-width:768px) and (max-width:959px) and (hover:hover) and (pointer:fine) {
+ html[data-theme] #frRoutePanel .fr-route-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html[data-theme] #frRoutePanel .fr-route-stops{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+ html[data-theme] #frRoutePanel .fr-route-map{
+  width:min(100%,480px);
+  margin-inline:auto;
+ }
+ html[data-theme] #frRoutePanel .fr-route-side{
+  max-width:100%;
+  min-width:0;
  }
 }
 
