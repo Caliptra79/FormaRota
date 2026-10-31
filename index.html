@@ -838,8 +838,9 @@ function renderResults(items,root=$('results')){
     const value=Number(String(raw).replace(',','.'));
     if(!pieces.validGrams(value)){alert('1 adet için 0,1–1000 g arasında değer gir.');return;}
     if(!pieces.save(food,value)){alert('Adet gramajı cihazda saklanamadı.');return;}
+    // Changing the estimated piece weight must never overwrite a gram quantity
+    // that the user has already typed in this search result.
     pieceGrams=value;updateHint();
-    if(pieceChoice.value==='g')input.value=String(pieceGrams);
    };
    left.append(editWeight);
   }else label.textContent='Miktar ('+unit+')';
@@ -1055,7 +1056,9 @@ if(pieceInput&&($('customUnit').value==='ml'||!window.FormaRotaFoodPieces?.valid
 const foods=getCustom();foods.push({id:'custom-'+Date.now(),name,kcal,protein,carbs,fat,
  kind:$('customKind').value,unit:$('customUnit').value==='ml'?'ml':'g',
  nutritionBasis:$('customUnit').value==='ml'?'100ml':'100g',
- ...(pieceGrams!==null?{pieceGrams}:{}),source:'Kişisel besin',verified:false});write(customKey,foods);e.target.reset();$('customStatus').textContent='Besin kaydedildi; arama alanından bulabilirsin.';renderCustomFoods();renderRecipeOptions()});
+ ...(pieceGrams!==null?{pieceGrams}:{}),source:'Kişisel besin',verified:false});write(customKey,foods);e.target.reset();
+$('customPieceGrams').disabled=false; // Reset returns the unit selector to its default "g".
+$('customStatus').textContent='Besin kaydedildi; arama alanından bulabilirsin.';renderCustomFoods();renderRecipeOptions()});
 $('customUnit').addEventListener('change',()=>{const field=$('customPieceGrams');
  field.disabled=$('customUnit').value==='ml';if(field.disabled)field.value='';
 });
