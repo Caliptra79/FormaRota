@@ -163,38 +163,87 @@ html{background:var(--bg,#101216)}
 .fr-launch-icon{width:clamp(94px,25vw,132px);height:auto;border-radius:25%;box-shadow:0 14px 42px #0005;animation:fr-logo-pop .76s cubic-bezier(.16,1,.3,1) both}
 .fr-launch-wordmark{font-size:1.42rem;font-weight:800;letter-spacing:.045em;animation:fr-title-in .7s .13s both}
 .fr-launch-rule{width:54px;height:3px;border-radius:5px;background:var(--accent);transform-origin:center;animation:fr-rule-in .8s .28s both}
+
+.fr-launch-center{width:min(100%,480px);max-height:100dvh;overflow-y:auto;gap:13px;padding:clamp(16px,4vw,30px) 22px}
+.fr-launch-quote-wrap{display:grid;justify-items:center;gap:8px;max-width:400px;width:100%;margin-top:8px}
+.fr-launch-quote{font-size:clamp(1rem,3.7vw,1.23rem);font-weight:650;line-height:1.55;letter-spacing:-.012em;margin:0;max-width:33ch;text-wrap:balance;color:var(--text);animation:fr-title-in .48s .27s both}
+.fr-launch-author{font-size:.82rem;font-weight:800;letter-spacing:.03em;color:var(--accent);margin:0}
+.fr-launch-source{font-size:.72rem;line-height:1.5;color:var(--muted);max-width:100%;margin:0}
+.fr-launch-note{font-size:.67rem;color:var(--muted);opacity:.85;margin:0}
+#fr-launch .fr-launch-skip{width:auto;min-width:125px;min-height:44px;margin-top:4px;padding:10px 22px;border:1px solid var(--border);border-radius:100px;background:var(--panel2);color:var(--text);font-size:.82rem;font-weight:750;cursor:pointer}
+#fr-launch .fr-launch-skip:hover{border-color:var(--accent)}
+#fr-launch .fr-launch-skip:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media(max-height:600px){.fr-launch-center{gap:8px}.fr-launch-icon{width:82px}.fr-launch-quote-wrap{gap:5px;margin-top:2px}}
+
 @keyframes fr-logo-pop{0%{opacity:0;transform:translateY(24px) scale(.75) rotate(-7deg)}60%{opacity:1;transform:translateY(-5px) scale(1.045) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
 @keyframes fr-title-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fr-rule-in{from{opacity:0;transform:scaleX(.05)}to{opacity:1;transform:scaleX(1)}}
-@media(prefers-reduced-motion:reduce){html[data-fr-motion="system"] #fr-launch{transition:none}html[data-fr-motion="system"] .fr-launch-icon,html[data-fr-motion="system"] .fr-launch-wordmark,html[data-fr-motion="system"] .fr-launch-rule{animation:none!important}}
+@media(prefers-reduced-motion:reduce){html[data-fr-motion="system"] #fr-launch{transition:none}html[data-fr-motion="system"] .fr-launch-icon,html[data-fr-motion="system"] .fr-launch-wordmark,html[data-fr-motion="system"] .fr-launch-rule,html[data-fr-motion="system"] .fr-launch-quote{animation:none!important}}
 </style><style id="fr-rank-css">.fr-rank-card{border:1px solid color-mix(in srgb,var(--accent) 38%,var(--border));background:linear-gradient(125deg,color-mix(in srgb,var(--accent) 10%,var(--panel)),var(--panel));border-radius:17px;padding:15px;margin:12px 0;color:var(--text)}#frRankHome{cursor:pointer}#frRankHome:focus-visible{outline:3px solid var(--accent);outline-offset:3px}.fr-rank-row{display:flex;gap:12px;align-items:center}.fr-rank-row>div{min-width:0}.fr-rank-row small,.fr-rank-card>small,.fr-rank-grid small{display:block;color:var(--muted);font-size:.78rem}.fr-rank-row strong{display:block;font-size:1.2rem}.fr-rank-icon{font-size:28px;display:grid;place-items:center;width:50px;height:50px;border-radius:14px;background:var(--panel2)}.fr-rank-track{height:9px;border-radius:99px;background:var(--panel2);overflow:hidden;margin:11px 0 7px}.fr-rank-track span{height:100%;display:block;background:var(--accent);border-radius:inherit;transition:width .4s ease}.fr-rank-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.fr-rank-grid>div{padding:10px;border-radius:12px;background:var(--panel2)}.fr-rank-grid strong{display:block}@media(prefers-reduced-motion:reduce){html[data-fr-motion="system"] .fr-rank-track span{transition:none}}</style><link rel="stylesheet" href="./assets/route-map.css"/>
+<script src="./assets/launch-quotes.js"></script>
 </head>
 <body class="compact-app-shell">
-<div id="fr-launch" role="status" aria-label="FormaRota açılıyor"><div class="fr-launch-center"><img class="fr-launch-icon" src="./assets/formarota-icon.svg" alt="" width="120" height="120"/><div class="fr-launch-wordmark">FormaRota</div><div class="fr-launch-rule" aria-hidden="true"></div></div></div>
+<div id="fr-launch" role="region" aria-label="FormaRota motivasyonlu açılış sahnesi"><div class="fr-launch-center"><img class="fr-launch-icon" src="./assets/formarota-icon.svg" alt="" width="120" height="120"/><div class="fr-launch-wordmark">FormaRota</div><div class="fr-launch-rule" aria-hidden="true"></div><div class="fr-launch-quote-wrap"><p class="fr-launch-quote" id="frLaunchQuote">Uzun bir yolculuk bile tek bir adımla başlar.</p><p class="fr-launch-author" id="frLaunchAuthor">— Laozi</p><p class="fr-launch-source" id="frLaunchWork">Dao De Jing · 64</p><p class="fr-launch-note">Klasik eserlerden kısa Türkçe serbest çeviriler</p></div><button id="frLaunchSkip" class="fr-launch-skip secondary" type="button" aria-label="Açılışı geç ve uygulamaya devam et">Geç →</button></div></div>
 <script>(function(){
-var el=document.getElementById('fr-launch'),started=Date.now(),hiddenAt=0,seq=0,first=true;
+var el=document.getElementById('fr-launch'),quote=document.getElementById('frLaunchQuote'),
+    author=document.getElementById('frLaunchAuthor'),work=document.getElementById('frLaunchWork'),
+    skip=document.getElementById('frLaunchSkip');
+var DURATION=3800,MAX_WAIT=5800,RESUME_AFTER=30000;
+var started=Date.now(),lastShown=started,hiddenAt=0,seq=0,loadDone=false;
 if(!el)return;
-function hide(token){if(token!==seq)return;el.classList.add('fr-launch-done');el.setAttribute('aria-hidden','true')}
+function chooseQuote(){
+ try{
+  var selected=window.FormaRotaLaunchQuotes?.pick?.();
+  if(selected&&quote&&author&&work){
+   quote.textContent=selected.text;
+   author.textContent='— '+selected.author;
+   work.textContent=selected.work;
+  }
+ }catch(e){ /* Keep the verified static quote if storage is unavailable. */ }
+}
+function hide(token){
+ if(token!==seq)return;
+ el.classList.add('fr-launch-done');
+ el.setAttribute('aria-hidden','true');
+ if(document.activeElement===skip)skip.blur();
+}
+function retrigger(){
+ var icon=el.querySelector('.fr-launch-icon'),word=el.querySelector('.fr-launch-wordmark'),
+     rule=el.querySelector('.fr-launch-rule'),line=el.querySelector('.fr-launch-quote');
+ [icon,word,rule,line].forEach(function(node){
+  if(node){node.style.animation='none';void node.offsetWidth;node.style.animation='';}
+ });
+}
 function display(){
+ var now=Date.now();
+ if(now-lastShown<1200)return;
  var token=++seq;
+ lastShown=now;
+ chooseQuote();
  el.classList.remove('fr-launch-done');
  el.removeAttribute('aria-hidden');
- /* Re-trigger logo and wordmark animations on iOS WebKit resumes. */
- var center=el.querySelector('.fr-launch-center');
- if(center){center.style.animation='none';void center.offsetWidth;center.style.animation=''}
- var icon=el.querySelector('.fr-launch-icon'),word=el.querySelector('.fr-launch-wordmark'),rule=el.querySelector('.fr-launch-rule');
- [icon,word,rule].forEach(function(node){if(node){node.style.animation='none';void node.offsetWidth;node.style.animation=''}});
- setTimeout(function(){hide(token)},1350);
+ retrigger();
+ setTimeout(function(){hide(token)},DURATION);
 }
-function onReady(){var elapsed=Date.now()-started;setTimeout(function(){hide(seq)},Math.max(0,1350-elapsed))}
-if(document.readyState==='complete')onReady();else window.addEventListener('load',onReady,{once:true});
+chooseQuote();
+function onReady(){
+ loadDone=true;
+ var token=seq,elapsed=Date.now()-started;
+ setTimeout(function(){hide(token)},Math.max(0,DURATION-elapsed));
+}
+if(document.readyState==='complete')onReady();
+else window.addEventListener('load',onReady,{once:true});
+skip?.addEventListener('click',function(){hide(seq)});
 document.addEventListener('visibilitychange',function(){
- if(document.hidden){hiddenAt=Date.now();return}
- if(hiddenAt&&Date.now()-hiddenAt>2500){hiddenAt=0;display()}
+ if(document.hidden){hiddenAt=Date.now();return;}
+ if(hiddenAt&&Date.now()-hiddenAt>=RESUME_AFTER){hiddenAt=0;display();}
+ else hiddenAt=0;
 });
-window.addEventListener('pageshow',function(event){if(event.persisted)display()});
-/* Never block the app if some resource fails to load. */
-setTimeout(function(){hide(seq)},4000);
+window.addEventListener('pageshow',function(event){
+ if(event.persisted&&Date.now()-lastShown>=RESUME_AFTER)display();
+});
+/* Fail open if a resource prevents the load event. */
+setTimeout(function(){if(!loadDone)hide(seq)},MAX_WAIT);
 })()</script>
 <div class="daily-masthead" role="group" aria-label="Bugünün tarihi"><div class="daily-masthead-inner"><span class="daily-masthead-label" aria-hidden="true">BUGÜN</span><time id="globalTodayDate"></time></div></div>
 <div class="context-nav hidden" id="contextNav" aria-label="Bölüm alt menüsü">
