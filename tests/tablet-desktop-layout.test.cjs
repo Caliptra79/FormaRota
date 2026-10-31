@@ -22,7 +22,7 @@ function mediaRoots(source){
 }
 test('responsive layer is gated: no declarations can affect phone portrait or landscape',()=>{
  const roots=mediaRoots(css);
- assert.equal(roots.length,3);
+ assert.equal(roots.length,4);
  for(const rule of roots){
   assert.match(rule,/^@media\s*\(/);
   for(const part of rule.replace(/^@media\s*/, '').split(',')){
@@ -48,7 +48,12 @@ test('main shell and desktop navigation are balanced and keyboard accessible',()
   'grid-template-columns:repeat(2,minmax(0,1fr))!important',
   '#fitExercisePanel .fit-card',
   '#searchPanel .food-result-controls',
-  '#homePanel.oled-home .oled-routine .tracker-pair'
+  '#homePanel.oled-home .oled-routine .tracker-pair',
+  '#homePanel.oled-home>.fr-route-home',
+  '#frRoutePanel .fr-route-map',
+  'aspect-ratio:400/420',
+  'max-height:none!important',
+  '(max-width:959px)'
  ])assert.ok(css.includes(needle),needle);
  const nav=html.slice(html.indexOf('<nav aria-label="Uygulama sayfaları"'),html.indexOf('</nav>',html.indexOf('<nav aria-label="Uygulama sayfaları"'))+6);
  for(const value of ['home','nutrition','fitness','progress','settings'])
@@ -66,6 +71,14 @@ test('style is appended last, preserving all 10 themes and the existing phone CS
  assert.ok(html.includes('id="trackerDate"'));
  assert.ok(html.includes('function fitStartSession(){if(fitCurrent)return;'));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
+});
+test('tablet and desktop map styling is scoped, preserving phone-only appearance',()=>{
+ assert.match(css,/html\[data-theme\] #homePanel\.oled-home>\.fr-route-home\s*\{/);
+ assert.match(css,/html\[data-theme\] #frRoutePanel \.fr-route-map\s*\{/);
+ assert.match(css,/grid-template-columns:minmax\(0,1fr\)!important/);
+ assert.match(css,/max-width:959px/);
+ assert.match(css,/justify-self:center/);
+ assert.ok(!css.includes('overflow-x:hidden'), 'do not hide overflow instead of fixing it');
 });
 test('new CSS is PWA precached; existing GIFs and data behavior remain unchanged',()=>{
  assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
