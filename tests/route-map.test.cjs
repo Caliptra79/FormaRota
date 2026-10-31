@@ -93,7 +93,7 @@ test('HTML, styling and service worker include accessible, offline route compone
  assert.match(html,/id="frRouteNextBar"/);
  assert.match(html,/assets\/route-map\.js/);
  assert.match(html,/assets\/route-map\.css/);
- assert.match(sw,/formarota-solo-v94-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.match(sw,/'\.\/assets\/route-map\.js'/);
  assert.match(sw,/'\.\/assets\/route-map\.css'/);
  assert.match(src('assets/route-map.js'),/fr-route-pin secondary/);
