@@ -111,7 +111,7 @@ function renderRecent(data){
  const host=byId('oledRecentList');if(!host)return;
  const recent=data.logs.filter(x=>x&&typeof x==='object'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')&&x.date<=data.day)
   .map((x,i)=>({kind:'meal',date:x.date,index:i,name:safeName(x.name),
-   sub:[x.meal||'Öğün',dateLabel(x.date),x.amount!=null?fmt(x.amount)+' '+(x.unit==='ml'?'ml':'g'):null].filter(Boolean).join(' · '),
+   sub:[x.meal||'Öğün',dateLabel(x.date),x.amount!=null?(root.FormaRotaFoodPieces?.logLabel(x,fmt)||fmt(x.amount)+' '+(x.unit==='ml'?'ml':'g')):null].filter(Boolean).join(' · '),
    value:number(x.kcal)!==null?fmt(x.kcal)+' kcal':'Kalori yok'}));
  const full=array(read('kocluk-fitness-history-v1',[]));
  const abs=array(read('formarota-abs-history-v1',[]));
