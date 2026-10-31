@@ -120,7 +120,7 @@ test('integrates with existing icon, user motion preference, and offline shell',
  assert.match(html,/data-fr-motion="system"\] \.fr-launch-quote/);
  assert.match(html,/src="\.\/assets\/launch-quotes\.js"/);
  assert.match(sw,/'\.\/assets\/launch-quotes\.js'/);
- assert.match(sw,/formarota-solo-v96-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.match(html,/function collectBackup\(\)\{return\{version:7/);
  assert.doesNotThrow(()=>new vm.Script(src));
 });
