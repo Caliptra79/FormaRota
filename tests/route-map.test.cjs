@@ -93,9 +93,11 @@ test('HTML, styling and service worker include accessible, offline route compone
  assert.match(html,/id="frRouteNextBar"/);
  assert.match(html,/assets\/route-map\.js/);
  assert.match(html,/assets\/route-map\.css/);
- assert.match(sw,/formarota-solo-v94-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.match(sw,/'\.\/assets\/route-map\.js'/);
  assert.match(sw,/'\.\/assets\/route-map\.css'/);
+ assert.match(src('assets/route-map.js'),/fr-route-pin secondary/);
+ assert.match(src('assets/route-map.js'),/fr-route-stop secondary/);
  assert.match(css,/prefers-reduced-motion/);
  assert.match(css,/aspect-ratio:400\/420/);
  assert.doesNotThrow(()=>new vm.Script(src('assets/route-map.js')));
