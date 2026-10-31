@@ -1,0 +1,10 @@
+/* Optional count entry for foods with a known edible portion estimate. */
+#searchPanel .food-piece-select{width:104px;min-height:44px;font-size:16px;
+ border-radius:10px;border:1px solid var(--border);background:var(--control,var(--panel2));
+ color:var(--text);padding:8px}
+#searchPanel .food-piece-hint{display:block;color:var(--muted);font-size:.76rem;
+ line-height:1.45;margin-top:6px}
+#searchPanel .food-piece-edit{border:0;background:transparent;color:var(--accent);
+ text-decoration:underline;padding:3px 0;font-size:.78rem;min-height:30px;cursor:pointer}
+#searchPanel .food-quantity-label .food-piece-select{margin:0 0 3px}
+@media(max-width:430px){#searchPanel .food-piece-select{width:100%;max-width:none}}
