@@ -519,7 +519,7 @@ setTimeout(function(){hide(seq)},4000);
 <script defer src="./assets/date-masthead.js"></script>
 <script>
 (function(){const themes={night:'#0c141a',ocean:'#091821',light:'#f4f6f7',sand:'#f7f5f0',neon:'#100b1d',volt:'#0b1011',sunset:'#190e16','oled-black':'#000000','oled-neon':'#000000','oled-ember':'#000000'};const el=document.getElementById('themeSelect');if(!el)return;const saved=document.documentElement.dataset.theme||'night';el.value=saved;const apply=t=>{if(!Object.hasOwn(themes,t))return;document.documentElement.dataset.theme=t;document.querySelector('meta[name="theme-color"]').content=themes[t];try{localStorage.setItem('formarota-ui-theme',t)}catch(e){}};el.addEventListener('change',()=>apply(el.value));apply(saved)})();
-const $=id=>document.getElementById(id);const profileKey='kocluk-profile-v1',weightKey='kocluk-weight-v1';const logKey="kocluk-food-log-v2",customKey="kocluk-custom-foods-v1";const DINNER_PLAN_KEY='formarota-dinner-plans-v1',WATER_KEY='formarota-water-v1',WALK_KEY='formarota-walks-v1',BACKUP_KEY='formarota-last-backup-v1';
+const $=id=>document.getElementById(id);const profileKey='kocluk-profile-v1',weightKey='kocluk-weight-v1';const logKey="kocluk-food-log-v2",customKey="kocluk-custom-foods-v1";const CALORIE_PLAN_KEY='formarota-deficit-plan-v1';const DINNER_PLAN_KEY='formarota-dinner-plans-v1',WATER_KEY='formarota-water-v1',WALK_KEY='formarota-walks-v1',BACKUP_KEY='formarota-last-backup-v1';
 // Yaklaşık değerler; tariflerde yağ, su kaybı ve malzeme oranı sonucu değiştirir.
 const seedFoods=[
 {id:"egg-boiled",name:"Yumurta, haşlanmış",aliases:["yumurta","haşlanmış yumurta"],kcal:155,protein:12.6,carbs:1.1,fat:10.6,kind:"Temel besin"},
@@ -994,7 +994,53 @@ $('searchBtn').addEventListener('click',search);$('query').addEventListener('key
 function getProfile(){return read(profileKey,{age:25,height:196,target:96,sex:'male',activity:'1.375'})}
 function getWeights(){return read(weightKey,[])}
 function persistProfile(){const profile={age:Number($('profileAge').value),height:Number($('profileHeight').value),target:Number($('profileTarget').value),sex:$('profileSex').value,activity:$('profileActivity').value};if(profile.age<16||profile.height<100||profile.target<35)return;write(profileKey,profile);renderProfile()}
-function energyEstimate(){const p=getProfile(),weights=getWeights(),weight=weights.length?weights.slice().sort((a,b)=>b.date.localeCompare(a.date))[0].kg:110;if(!p.sex||!p.activity)return null;const bmr=10*weight+6.25*p.height-5*p.age+(p.sex==='male'?5:-161);return {tdee:Math.round(bmr*Number(p.activity)),goal:Math.round((bmr*Number(p.activity)-450)/50)*50}}
+function energyEstimate(){
+ const p=getProfile(),weights=getWeights();
+ const weight=weights.length?weights.slice().sort((a,b)=>b.date.localeCompare(a.date))[0].kg:110;
+ const plan=window.FormaRotaCaloriePlan?.estimate(p,weight,read(CALORIE_PLAN_KEY,{}));
+ return plan?{...plan,tdee:plan.maintenance,goal:plan.suggestedGoal}:null;
+}
+function renderDeficitPlan(){
+ const engine=window.FormaRotaCaloriePlan;
+ const opts=engine.normalizeConfig(read(CALORIE_PLAN_KEY,{}));
+ $('frCdpDeficit').value=String(opts.deficit);
+ $('frCdpWalk').value=String(opts.walkKm);
+ $('frCdpExtra').value=String(opts.extraDayKcal);
+ const est=energyEstimate();
+ if(!est){
+  $('frCdpBmr').textContent='—';$('frCdpBase').textContent='—';
+  $('frCdpWalkBurn').textContent='—';$('frCdpMaintenance').textContent='—';
+  $('frCdpSuggested').textContent='Profilini tamamla';
+  $('frCdpCurrent').textContent='Hesaplama için yaş, boy, kilo ve cinsiyet gerekli.';
+  $('frCdpActual').textContent='';$('frCdpApply').disabled=true;return;
+ }
+ $('frCdpBmr').textContent=fmt(est.bmr)+' kcal';
+ $('frCdpBase').textContent=fmt(est.baseline)+' kcal';
+ $('frCdpWalkBurn').textContent='+'+fmt(est.walk)+' kcal';
+ $('frCdpMaintenance').textContent=fmt(est.maintenance)+' kcal';
+ $('frCdpSuggested').textContent=fmt(est.suggestedGoal)+' kcal';
+ const currentGoal=Number($('goalKcal').value)||2600;
+ $('frCdpCurrent').textContent='Şu anki yemek hedefin: '+fmt(currentGoal)+' kcal/gün.'+
+  (currentGoal===est.suggestedGoal?' Önerilen plan uygulanmış.':' Öneriyi uygulamak için düğmeye basabilirsin.');
+ $('frCdpApply').disabled=currentGoal===est.suggestedGoal;
+ const day=$('date').value;
+ const actualKm=Math.max(0,Number(read(WALK_KEY,{})[day]||0));
+ const actualExtra=engine.netWalkingKcal(est.weight,Math.min(actualKm,100));
+ $('frCdpActual').textContent='Seçili gün ('+day+') yürüyüş kaydı: '+fmt(actualKm)+
+  ' km · tahmini net ek '+fmt(actualExtra??0)+' kcal. Bu kayıt yemek hakkını otomatik yükseltmez.';
+}
+function saveDeficitOptions(){
+ const engine=window.FormaRotaCaloriePlan;
+ const opts=engine.normalizeConfig({
+  deficit:Number($('frCdpDeficit').value),
+  walkKm:Number($('frCdpWalk').value),
+  extraDayKcal:Number($('frCdpExtra').value)
+ });
+ write(CALORIE_PLAN_KEY,opts);
+ renderDeficitPlan();
+ renderProfile();
+}
+
 
 function renderTrend(){
  const end=today(),start=shiftISO(end,-13),dates=Array.from({length:14},(_,i)=>shiftISO(start,i));
@@ -1021,11 +1067,22 @@ function renderTrend(){
  $('trendInterpretation').textContent=notes.join(' ');
 }
 
-function renderProfile(){const weights=getWeights().slice().sort((a,b)=>a.date.localeCompare(b.date)),p=getProfile();const current=weights.length?weights[weights.length-1].kg:110;const first=weights.length?weights[0].kg:110;const diff=current-p.target;const est=energyEstimate();$('latestWeight').textContent=`${fmt(current)} kg`;$('targetWeightStat').textContent=`${fmt(p.target)} kg`;$('weightRemaining').textContent=diff>0?`${fmt(diff)} kg`:'Hedefe ulaşıldı';$('weightChange').textContent=`${first-current>0?'-':first-current<0?'+':''}${fmt(Math.abs(current-first))} kg`;$('profileEstimate').textContent=est?`Formüle dayalı yaklaşık koruma kalorisi: ${fmt(est.tdee)} kcal/gün. Yaklaşık 450 kcal açıkla başlangıç tahmini: ${fmt(est.goal)} kcal/gün. Gerçek ihtiyaç farklı olabilir; haftalık kilo ve enerji durumuna göre gözden geçir.`:'Enerji ihtiyacını yaklaşık hesaplamak için isteğe bağlı cinsiyet ve aktivite seçeneklerini doldur. 2600 kcal / 160 g protein başlangıç hedeflerini dilediğin gibi değiştirebilirsin.';$('applyEstimate').disabled=!est;const root=$('weightHistory');root.innerHTML='';weights.slice(-6).reverse().forEach(x=>{const div=document.createElement('div');div.className='entry';const label=document.createElement('span');label.textContent=`${x.date} · ${fmt(x.kg)} kg`;const btn=document.createElement('button');btn.type='button';btn.className='danger smallbtn';btn.textContent='Sil';btn.onclick=()=>{write(weightKey,getWeights().filter(e=>e.date!==x.date));renderProfile();renderTrend()};div.append(label,btn);root.append(div)})}
+function renderProfile(){const weights=getWeights().slice().sort((a,b)=>a.date.localeCompare(b.date)),p=getProfile();const current=weights.length?weights[weights.length-1].kg:110;const first=weights.length?weights[0].kg:110;const diff=current-p.target;const est=energyEstimate();$('latestWeight').textContent=`${fmt(current)} kg`;$('targetWeightStat').textContent=`${fmt(p.target)} kg`;$('weightRemaining').textContent=diff>0?`${fmt(diff)} kg`:'Hedefe ulaşıldı';$('weightChange').textContent=`${first-current>0?'-':first-current<0?'+':''}${fmt(Math.abs(current-first))} kg`;$('profileEstimate').textContent=est?`Temel yaşamla yaklaşık harcama: ${fmt(est.baseline)} kcal/gün. Planlanan ${fmt(est.settings.walkKm)} km akşam yürüyüşü: +${fmt(est.walk)} kcal net. Toplam koruma tahmini: ${fmt(est.tdee)} kcal/gün. ${fmt(est.deficit)} kcal hedeflenen açıkla önerilen yemek bütçesi: ${fmt(est.goal)} kcal/gün. Gün içi normal hareket bu tabana dahildir; ek hareketi yalnızca ayrıca ölçtüysen belirt. 2–4 haftalık kilo eğilimine göre ayarla.`:'Enerji ihtiyacını yaklaşık hesaplamak için isteğe bağlı cinsiyet ve aktivite seçeneklerini doldur. 2600 kcal / 160 g protein başlangıç hedeflerini dilediğin gibi değiştirebilirsin.';$('applyEstimate').disabled=!est;const root=$('weightHistory');root.innerHTML='';weights.slice(-6).reverse().forEach(x=>{const div=document.createElement('div');div.className='entry';const label=document.createElement('span');label.textContent=`${x.date} · ${fmt(x.kg)} kg`;const btn=document.createElement('button');btn.type='button';btn.className='danger smallbtn';btn.textContent='Sil';btn.onclick=()=>{write(weightKey,getWeights().filter(e=>e.date!==x.date));renderProfile();renderTrend()};div.append(label,btn);root.append(div)})}
 const migratedProfile=getProfile();if(!migratedProfile.sex||!migratedProfile.activity){write(profileKey,{...migratedProfile,sex:migratedProfile.sex||'male',activity:migratedProfile.activity||'1.375'})}const pSaved=getProfile();for(const [key,id] of [['age','profileAge'],['height','profileHeight'],['target','profileTarget'],['sex','profileSex'],['activity','profileActivity']])$(id).value=pSaved[key]??'';$('weightDate').value=today();for(const id of ['profileAge','profileHeight','profileTarget','profileSex','profileActivity'])$(id).addEventListener('change',persistProfile);
 $('saveWeight').addEventListener('click',()=>{const kg=Number($('weightKg').value),date=$('weightDate').value;if(!(kg>=35&&kg<=350)||!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('Geçerli kilo ve tarih gir.');write(weightKey,[...getWeights().filter(x=>x.date!==date),{date,kg}]);renderProfile();renderTrend()});
-$('applyEstimate').addEventListener('click',()=>{const est=energyEstimate();if(!est)return;$('goalKcal').value=est.goal;localStorage.setItem('kocluk-goal-kcal',String(est.goal));renderTotals()});
-if(!getWeights().length)write(weightKey,[{date:today(),kg:110}]);renderProfile();renderTrend();
+$('applyEstimate').addEventListener('click',()=>{const est=energyEstimate();if(!est)return;$('goalKcal').value=est.goal;localStorage.setItem('kocluk-goal-kcal',String(est.goal));renderTotals();renderDeficitPlan();renderHome()});
+for(const id of ['frCdpDeficit','frCdpWalk','frCdpExtra'])$(id).addEventListener('change',saveDeficitOptions);
+$('frCdpApply').addEventListener('click',()=>{
+ const est=energyEstimate();if(!est)return;
+ $('goalKcal').value=String(est.goal);
+ localStorage.setItem('kocluk-goal-kcal',String(est.goal));
+ renderTotals();renderHome();renderDeficitPlan();renderProfile();
+});
+for(const id of ['date','goalKcal','profileAge','profileHeight','profileSex','profileActivity','walkKm'])
+ $(id).addEventListener('change',renderDeficitPlan);
+for(const id of ['walkToggle','trackerToday','saveWeight'])
+ $(id).addEventListener('click',renderDeficitPlan);
+if(!getWeights().length)write(weightKey,[{date:today(),kg:110}]);renderProfile();renderTrend();renderDeficitPlan();
 
 // Yedekleme v15: handlers defined below after fitness initialization.
 
