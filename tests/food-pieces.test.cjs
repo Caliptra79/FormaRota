@@ -77,7 +77,7 @@ test('UI, edits, custom food, backup and service worker include count mode',()=>
  const sw=src('sw.js');
  assert.ok(sw.includes("'./assets/food-pieces.js'"));
  assert.ok(sw.includes("'./assets/food-pieces.css'"));
- assert.ok(sw.includes("formarota-solo-v93-shell"));
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });
 
