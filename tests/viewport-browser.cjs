@@ -93,7 +93,8 @@ async function run(){
      label+' route teaser should span both home columns '+JSON.stringify(home));
    }
    await evaluate('document.getElementById("fr-launch").classList.add("fr-launch-done");showView("progress",false,false);window.FormaRotaRouteMap.render();true');
-   await sleep(90);
+   // Allow the existing 340 ms route-entry animation to settle before measuring scrollWidth.
+   await sleep(500);
    const map=await evaluate("(()=>{\n const box=document.getElementById('frRouteMap'),svg=box.querySelector('svg'),ctm=svg.getScreenCTM();\n const distances=window.FormaRotaRouteMap.STAGES.map((stage,i)=>{\n  const point=svg.createSVGPoint();point.x=stage.x*4;point.y=stage.y*4.2;\n  const projected=point.matrixTransform(ctm);\n  const pin=box.querySelector('.fr-route-pin[data-route-index=\"'+i+'\"]');\n  const r=pin.getBoundingClientRect();\n  return Math.hypot(projected.x-r.x-r.width/2,projected.y-r.y-r.height/2);\n });\n const r=box.getBoundingClientRect(),layout=box.closest('.fr-route-layout');\n const overflowElements=[...document.querySelectorAll('main *')].filter(n=>{\n  const style=getComputedStyle(n),rect=n.getBoundingClientRect();\n  return style.display!=='none'&&rect.width>0&&(rect.right>innerWidth+5||rect.left< -5);\n }).slice(0,20).map(n=>{\n  const rect=n.getBoundingClientRect();\n  return {tag:n.tagName,id:n.id,cls:String(n.className).slice(0,70),\n    left:Math.round(rect.left),right:Math.round(rect.right),width:Math.round(rect.width)};\n });\n return {width:r.width,height:r.height,ratio:box.clientWidth/box.clientHeight,\n  distances,cols:getComputedStyle(layout).gridTemplateColumns,\n  doc:document.documentElement.scrollWidth,overflowElements};\n})()");
    assert.ok(map.width>200&&map.height>240,label+' map too small '+JSON.stringify(map));
    assert.ok(Math.abs(map.ratio-400/420)<.025,label+' SVG aspect ratio distorted '+JSON.stringify(map));
