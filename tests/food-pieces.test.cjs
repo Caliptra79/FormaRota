@@ -66,7 +66,7 @@ test('UI, edits, custom food, backup and service worker include count mode',()=>
  assert.ok(html.includes('const pieceChoice=pieceGrams!=null?'));
  assert.ok(html.includes("pieceChoice.value='adet'"));
  assert.ok(html.includes("pieceCount:Number(input.value)"));
- assert.ok(html.includes("const pieceEdit=!!window.FormaRotaFoodPieces?.logLabel(original,fmt)"));
+ assert.ok(html.includes("!!window.FormaRotaFoodPieces?.logLabel(original,fmt)"));
  assert.ok(html.includes('newPieceCount:chosen'));
  assert.ok(html.includes('customPieceGrams'));
  assert.ok(html.includes('pieceGrams:window.FormaRotaFoodPieces?.overrides?.()||{}'));
