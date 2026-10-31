@@ -81,7 +81,7 @@ html[data-theme] .fr-route-explain{font-size:.77rem;line-height:1.55;color:var(-
 html[data-theme] :is(.fr-route-pin,.fr-route-stop):focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:700px){
  .fr-route-layout{grid-template-columns:minmax(0,1fr)}
- .fr-route-map{width:100%;max-height:none;aspect-ratio:400/365}
+ .fr-route-map{width:100%;max-height:none;aspect-ratio:400/420}
  .fr-route-stops{grid-template-columns:repeat(2,minmax(0,1fr))}
  .fr-route-stop{gap:5px!important;padding:9px!important}
  .fr-route-stop-icon{font-size:1.1rem;flex-basis:23px}
