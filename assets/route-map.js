@@ -54,7 +54,7 @@
   if(typeof validator==='function')return validator(row)===true;
   const items=row.items;
   return !!items&&typeof items==='object'&&!Array.isArray(items)&&
-   ['heel-touch','half-crunch','reverse-crunch','plank'].every(id=>
+   ['heel-touch','floor-crunch','reverse-crunch','plank'].every(id=>
     Array.isArray(items[id])&&items[id].length===3&&items[id].every(s=>s?.done===true));
  }
  function snapshot(source={},today=localDay(),validators={}){
@@ -95,7 +95,7 @@
   const n=doc.createElement(tag);if(cls)n.className=cls;
   if(content!==undefined)n.textContent=content;return n;
  };
- let selected=0,queued=false,built=false;
+ let selected=null,queued=false,built=false;
  function openRoute(){
   if(typeof root.showView==='function')root.showView('progress');
   else doc.querySelector('.mobile-tabbar [data-tab="progress"]')?.click();
@@ -143,6 +143,7 @@
   if(!doc||!byId('frRoutePanel')||!byId('frRouteHome'))return;
   build();
   const data=currentSnapshot();
+  if(selected===null)selected=data.stage;
   const stage=STAGES[data.stage],next=data.next;
   const set=(id,value)=>{const n=byId(id);if(n)n.textContent=value;};
   set('frRouteHomeName',stage.icon+' '+stage.name);
