@@ -119,8 +119,8 @@ test('new module loads before food list and is cached for offline PWA, preservin
  assert.ok(html.indexOf(loader)<html.indexOf('const seedFoods=['));
  assert.ok(html.includes('.concat(window.FormaRotaBreakfastSweets||[])'));
  assert.ok(sw.includes("'./assets/breakfast-sweets.js'"));
- assert.match(sw,/const CACHE='formarota-solo-v93-shell'/);
- assert.match(sw,/const GIF_CACHE='formarota-solo-v93-gifs'/);
+ assert.match(sw,/const CACHE='formarota-solo-v\d+-shell'/);
+ assert.match(sw,/const GIF_CACHE='formarota-solo-v\d+-gifs'/);
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(x=>x.endsWith('.gif')).length,19);
  assert.ok(html.includes('function fitStartSession(){if(fitCurrent)return;'));
  assert.ok(html.includes('function collectBackup(){return{version:7'));

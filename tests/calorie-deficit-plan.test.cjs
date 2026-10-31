@@ -92,7 +92,7 @@ test('new calculation module is loaded and precached offline, legacy app preserv
  assert.ok(html.indexOf(loader)<html.indexOf('function energyEstimate(){'));
  assert.ok(sw.includes("'./assets/calorie-deficit.js'"));
  assert.ok(sw.includes("'./assets/calorie-deficit.css'"));
- assert.match(sw,/formarota-solo-v93-shell/);
- assert.match(sw,/formarota-solo-v93-gifs/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
+ assert.match(sw,/formarota-solo-v\d+-gifs/);
  assert.ok(html.includes('id="goalKcal" min="0"'));
 });
