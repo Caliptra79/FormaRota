@@ -170,9 +170,6 @@ html{background:var(--bg,#101216)}
 .fr-launch-author{font-size:.82rem;font-weight:800;letter-spacing:.03em;color:var(--accent);margin:0}
 .fr-launch-source{font-size:.72rem;line-height:1.5;color:var(--muted);max-width:100%;margin:0}
 .fr-launch-note{font-size:.67rem;color:var(--muted);opacity:.85;margin:0}
-#fr-launch .fr-launch-skip{width:auto;min-width:125px;min-height:44px;margin-top:4px;padding:10px 22px;border:1px solid var(--border);border-radius:100px;background:var(--panel2);color:var(--text);font-size:.82rem;font-weight:750;cursor:pointer}
-#fr-launch .fr-launch-skip:hover{border-color:var(--accent)}
-#fr-launch .fr-launch-skip:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-height:600px){.fr-launch-center{gap:8px}.fr-launch-icon{width:82px}.fr-launch-quote-wrap{gap:5px;margin-top:2px}}
 
 @keyframes fr-logo-pop{0%{opacity:0;transform:translateY(24px) scale(.75) rotate(-7deg)}60%{opacity:1;transform:translateY(-5px) scale(1.045) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
@@ -183,12 +180,13 @@ html{background:var(--bg,#101216)}
 <script src="./assets/launch-quotes.js"></script>
 </head>
 <body class="compact-app-shell">
-<div id="fr-launch" role="region" aria-label="FormaRota motivasyonlu açılış sahnesi"><div class="fr-launch-center"><img class="fr-launch-icon" src="./assets/formarota-icon.svg" alt="" width="120" height="120"/><div class="fr-launch-wordmark">FormaRota</div><div class="fr-launch-rule" aria-hidden="true"></div><div class="fr-launch-quote-wrap"><p class="fr-launch-quote" id="frLaunchQuote">Uzun bir yolculuk bile tek bir adımla başlar.</p><p class="fr-launch-author" id="frLaunchAuthor">— Laozi</p><p class="fr-launch-source" id="frLaunchWork">Dao De Jing · 64</p><p class="fr-launch-note">Klasik eserlerden kısa Türkçe serbest çeviriler</p></div><button id="frLaunchSkip" class="fr-launch-skip secondary" type="button" aria-label="Açılışı geç ve uygulamaya devam et">Geç →</button></div></div>
+<div id="fr-launch" role="region" aria-label="FormaRota motivasyonlu açılış sahnesi"><div class="fr-launch-center"><img class="fr-launch-icon" src="./assets/formarota-icon.svg" alt="" width="120" height="120"/><div class="fr-launch-wordmark">FormaRota</div><div class="fr-launch-rule" aria-hidden="true"></div><div class="fr-launch-quote-wrap"><p class="fr-launch-quote" id="frLaunchQuote">Uzun bir yolculuk bile tek bir adımla başlar.</p><p class="fr-launch-author" id="frLaunchAuthor">— Laozi</p><p class="fr-launch-source" id="frLaunchWork">Dao De Jing · 64</p><p class="fr-launch-note">Klasik eserlerden kısa Türkçe serbest çeviriler</p></div></div></div>
 <script>(function(){
 var el=document.getElementById('fr-launch'),quote=document.getElementById('frLaunchQuote'),
-    author=document.getElementById('frLaunchAuthor'),work=document.getElementById('frLaunchWork'),
-    skip=document.getElementById('frLaunchSkip');
-var DURATION=3800,MAX_WAIT=5800,RESUME_AFTER=30000;
+    author=document.getElementById('frLaunchAuthor'),work=document.getElementById('frLaunchWork');
+/* A single reading-friendly duration is calculated from the longest quote, author and work. */
+var DURATION=window.FormaRotaLaunchQuotes?.DURATION_MS||6000,
+    MAX_WAIT=DURATION+1800,RESUME_AFTER=30000;
 var started=Date.now(),lastShown=started,hiddenAt=0,seq=0,loadDone=false;
 if(!el)return;
 function chooseQuote(){
@@ -205,7 +203,6 @@ function hide(token){
  if(token!==seq)return;
  el.classList.add('fr-launch-done');
  el.setAttribute('aria-hidden','true');
- if(document.activeElement===skip)skip.blur();
 }
 function retrigger(){
  var icon=el.querySelector('.fr-launch-icon'),word=el.querySelector('.fr-launch-wordmark'),
@@ -233,7 +230,6 @@ function onReady(){
 }
 if(document.readyState==='complete')onReady();
 else window.addEventListener('load',onReady,{once:true});
-skip?.addEventListener('click',function(){hide(seq)});
 document.addEventListener('visibilitychange',function(){
  if(document.hidden){hiddenAt=Date.now();return;}
  if(hiddenAt&&Date.now()-hiddenAt>=RESUME_AFTER){hiddenAt=0;display();}

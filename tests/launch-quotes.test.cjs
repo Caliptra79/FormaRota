@@ -14,7 +14,7 @@ function factory(store=new Map(),random=()=>0){
 }
 test('short, attributed quotations all reference identifiable primary texts',()=>{
  const {api}=factory();
- assert.equal(api.QUOTES.length,10);
+ assert.equal(api.QUOTES.length,39);
  assert.equal(new Set(api.QUOTES.map(q=>q.text)).size,api.QUOTES.length);
  for(const q of api.QUOTES){
   assert.ok(q.text.length>=20&&q.text.length<=88,q.text);
@@ -24,6 +24,11 @@ test('short, attributed quotations all reference identifiable primary texts',()=
   assert.ok(Object.isFrozen(q));
  }
  assert.ok(Object.isFrozen(api.QUOTES));
+ const expectedLongest=Math.max(...api.QUOTES.map(q=>(q.text+' '+q.author+' '+q.work).split(/\s+/).length));
+ assert.equal(api.MAX_WORDS,expectedLongest,'longest displayed text determines duration');
+ assert.equal(api.READING_WPM,195);
+ assert.ok(api.DURATION_MS>=expectedLongest*60000/195+550);
+ assert.ok(api.DURATION_MS>=5400&&api.DURATION_MS<=7500,'launch should stay brief but readable');
 });
 test('quotes rotate without immediately repeating, even across a new session',()=>{
  const store=new Map();
@@ -48,9 +53,7 @@ function launchHarness(){
  const start=1000,clock={now:start,timers:[]},events={};
  const cls=new Set(),attrs={},nodes={
   'frLaunchQuote':{textContent:''},'frLaunchAuthor':{textContent:''},
-  'frLaunchWork':{textContent:''},'frLaunchSkip':{
-   listeners:{},addEventListener(event,fn){this.listeners[event]=fn},blur(){this.blurred=true}
-  }
+  'frLaunchWork':{textContent:''}
  };
  const el={classList:{add(x){cls.add(x)},remove(x){cls.delete(x)}},
   setAttribute(k,v){attrs[k]=v},removeAttribute(k){delete attrs[k]},
@@ -60,7 +63,7 @@ function launchHarness(){
  const doc={readyState:'complete',hidden:false,activeElement:null,
   getElementById:id=>nodes[id]||null,
   addEventListener:(event,fn)=>{events[event]=fn}};
- const win={FormaRotaLaunchQuotes:{pick:()=>({
+ const win={FormaRotaLaunchQuotes:{DURATION_MS:6000,pick:()=>({
   text:'Deneme motivasyonu '+(++calls),author:'Epiktetos',work:'Söylevler · I.15'})},
   addEventListener:(event,fn)=>{events[event]=fn}};
  const block=html.match(/<script>\(function\(\)\{\nvar el=document\.getElementById\('fr-launch'\)[\s\S]*?\}\)\(\)<\/script>/)?.[0];
@@ -79,22 +82,22 @@ function launchHarness(){
  }
  return {nodes,cls,attrs,events,doc,advance,clock,get calls(){return calls}};
 }
-test('launch lasts ~3.8 seconds, shows citation, and can be skipped',()=>{
+test('launch allows reading for the longest quote and closes automatically without a skip control',()=>{
  const x=launchHarness();
  assert.equal(x.nodes.frLaunchQuote.textContent,'Deneme motivasyonu 1');
  assert.equal(x.nodes.frLaunchAuthor.textContent,'— Epiktetos');
  assert.equal(x.nodes.frLaunchWork.textContent,'Söylevler · I.15');
  assert.equal(x.cls.has('fr-launch-done'),false);
- x.advance(3500);
+ assert.equal(x.nodes.frLaunchSkip,undefined,'no visual skip button');
+ x.advance(5800);
  assert.equal(x.cls.has('fr-launch-done'),false);
- x.advance(300);
+ x.advance(200);
  assert.equal(x.cls.has('fr-launch-done'),true);
- x.nodes.frLaunchSkip.listeners.click();
  assert.equal(x.attrs['aria-hidden'],'true');
 });
 test('brief app switches are ignored, long background returns show a new quote',()=>{
  const x=launchHarness();
- x.advance(3800);
+ x.advance(6000);
  x.doc.hidden=true;x.events.visibilitychange();
  x.advance(4000);
  x.doc.hidden=false;x.events.visibilitychange();
@@ -106,16 +109,17 @@ test('brief app switches are ignored, long background returns show a new quote',
  assert.equal(x.cls.has('fr-launch-done'),false);
  x.events.pageshow({persisted:true});
  assert.equal(x.calls,2,'bfcache and visibility should not double-display');
- x.nodes.frLaunchSkip.listeners.click();
- assert.equal(x.cls.has('fr-launch-done'),true);
+ x.advance(6000);
+ assert.equal(x.cls.has('fr-launch-done'),true,'resumed splash auto-closes too');
 });
 test('integrates with existing icon, user motion preference, and offline shell',()=>{
  assert.match(html,/fr-launch-icon" src="\.\/assets\/formarota-icon\.svg"/);
- assert.match(html,/id="frLaunchSkip"/);
+ assert.doesNotMatch(html,/frLaunchSkip|fr-launch-skip|Geç →/);
  assert.match(html,/id="frLaunchQuote"/);
  assert.match(html,/id="frLaunchAuthor"/);
  assert.match(html,/id="frLaunchWork"/);
- assert.match(html,/DURATION=3800,MAX_WAIT=5800/);
+ assert.match(html,/DURATION=window\.FormaRotaLaunchQuotes\?\.DURATION_MS\|\|6000/);
+ assert.match(html,/MAX_WAIT=DURATION\+1800/);
  assert.match(html,/RESUME_AFTER=30000/);
  assert.match(html,/data-fr-motion="system"\] \.fr-launch-quote/);
  assert.match(html,/src="\.\/assets\/launch-quotes\.js"/);
