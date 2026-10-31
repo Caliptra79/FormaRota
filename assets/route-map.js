@@ -118,7 +118,7 @@
   map.append(art);
   const markers=el('div','fr-route-markers');
   STAGES.forEach((stage,i)=>{
-   const button=el('button','fr-route-pin',stage.icon);
+   const button=el('button','fr-route-pin secondary',stage.icon);
    button.type='button';button.style.left=stage.x+'%';button.style.top=stage.y+'%';
    button.dataset.routeIndex=String(i);button.setAttribute('aria-label',stage.name);
    button.addEventListener('click',()=>{selected=i;render();});
@@ -127,7 +127,7 @@
   map.append(markers);
   const list=el('div','fr-route-stops');list.setAttribute('role','group');list.setAttribute('aria-label','Harita durakları');
   STAGES.forEach((stage,i)=>{
-   const button=el('button','fr-route-stop');
+   const button=el('button','fr-route-stop secondary');
    button.type='button';button.dataset.routeIndex=String(i);
    button.append(el('span','fr-route-stop-icon',stage.icon));
    const copy=el('span','fr-route-stop-copy');
