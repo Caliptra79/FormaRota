@@ -611,8 +611,8 @@ function nutritionEditLog(id,row){
   }
   const newSugar=sugarChoice?Number(sugarChoice.value):Number(original.sugarCubes||0);
   if(Number(original.amount)===grams&&Number(original.sugarCubes||0)===newSugar){wrap.remove();return}
-  const before=pieceEdit?fmt(original.pieceCount)+' adet':fmt(original.amount)+' '+unit;
-  const after=pieceEdit?fmt(chosen)+' adet (≈ '+fmt(grams)+' g)':fmt(grams)+' '+unit;
+  const before=pieceEdit?String(original.pieceCount)+' adet':String(original.amount)+' '+unit;
+  const after=pieceEdit?String(chosen)+' adet (≈ '+String(grams)+' g)':String(grams)+' '+unit;
   if(!confirm(original.name+': '+before+' → '+after+
    (sugarChoice?' · ilave şeker '+newSugar+' küp':'')+' olarak düzeltilecek. Onaylıyor musun?'))return;
   const logs=getLogs(),index=logs.findIndex(x=>x.id===id);
