@@ -47,7 +47,7 @@ async function run(){
  const server=webServer();await new Promise(ok=>server.listen(0,'127.0.0.1',ok));
  const port=server.address().port,debugPort=await getPort(),profile=fs.mkdtempSync(path.join(os.tmpdir(),'fr-browser-'));
  const chrome=spawn(chromeBinary(),['--headless=new','--no-sandbox','--disable-dev-shm-usage','--no-first-run','--disable-background-networking',
-  '--remote-debugging-port='+debugPort,'--remote-allow-origins=*','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});
+  '--remote-debugging-port='+debugPort,'--remote-allow-origins=*','--user-data-dir='+profile,'about:blank'],{stdio:'ignore',detached:true});
  let cdp;
  try{
   let tab;
@@ -105,16 +105,15 @@ async function run(){
   }
  }finally{
   if(cdp)cdp.close();
-  chrome.kill('SIGTERM');
+  // Terminate Chrome and all child renderer processes, not only the browser parent.
+  try{process.kill(-chrome.pid,'SIGKILL')}catch{chrome.kill('SIGKILL')}
   await Promise.race([
    new Promise(ok=>chrome.exitCode!==null?ok():chrome.once('exit',ok)),
-   sleep(3000)
+   sleep(500)
   ]);
   await new Promise(ok=>server.close(ok));
-  // Chrome can briefly retain cache files after SIGTERM on hosted runners.
-  // Cleanup must never hide a viewport assertion failure.
-  try{fs.rmSync(profile,{force:true,recursive:true,maxRetries:8,retryDelay:250})}
-  catch(error){console.warn('Non-fatal Chrome profile cleanup:',error.code)}
+  // Temporary profile cleanup is best-effort; never mask actual UI assertions.
+  try{fs.rmSync(profile,{force:true,recursive:true,maxRetries:2,retryDelay:50})}catch{}
  }
 }
 run().catch(e=>{console.error(e);process.exitCode=1});
