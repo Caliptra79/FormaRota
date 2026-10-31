@@ -80,3 +80,51 @@ test('UI, edits, custom food, backup and service worker include count mode',()=>
  assert.ok(sw.includes("formarota-solo-v93-shell"));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });
+
+test('changing the piece estimate does not overwrite a typed gram amount',()=>{
+ const {mod:p}=pieces();
+ const fake=tag=>({tag,children:[],attrs:{},value:'',textContent:'',disabled:false,
+  append(...children){this.children.push(...children)},
+  setAttribute(k,v){this.attrs[k]=v}});
+ const host={innerHTML:'',children:[],append(el){this.children.push(el)}};
+ const added=[];
+ const ctx={window:{FormaRotaFoodPieces:p,FormaRotaFoodUnits:{
+  unit:()=> 'g',basis:()=>({text:'100 g',approximate:false})}},
+  document:{createElement:fake},$:()=>({textContent:''}),fmt:String,
+  nutritionMacrosValid:()=>true,
+  addFood:(food,amount,opts)=>added.push({amount,opts}),prompt:()=> '160',alert:()=>{}};
+ vm.runInNewContext(slice("function renderResults(items,root=$('results')){",'function localSearch(q){')+
+  ';this.render=renderResults;',ctx);
+ ctx.render([{id:'apple',name:'Elma',kcal:52,protein:0.3,carbs:13.8,fat:0.2}],host);
+ const el=host.children[0],left=el.children[0],controls=el.children[1];
+ const label=controls.children[0],choice=label.children[0],input=label.children[1];
+ choice.value='g';choice.onchange();
+ input.value='275';
+ left.children.find(child=>child.textContent==='Adet gramajını değiştir').onclick();
+ assert.equal(input.value,'275','gram entry should not change');
+ assert.equal(p.grams({id:'apple'}),160,'new piece weight is saved separately');
+ controls.children[1].onclick();
+ assert.equal(added[0].amount,'275');
+ assert.equal(added[0].opts.quantityMode,undefined);
+});
+test('saving a drink resets custom form and re-enables piece weight for the next food',()=>{
+ const handlers={};
+ const fields={customName:'Ayran',customKcal:'40',customProtein:'2',
+  customCarbs:'3',customFat:'1',customUnit:'ml',customKind:'Paketli ürün',
+  customPieceGrams:''};
+ const nodes=Object.fromEntries(Object.entries(fields).map(([id,value])=>
+  [id,{value,disabled:false,listeners:{},addEventListener(event,fn){this.listeners[event]=fn;}}]));
+ nodes.customForm={addEventListener(event,fn){handlers[event]=fn;}};
+ nodes.customStatus={textContent:''};
+ const saved=[];
+ const ctx={$:id=>nodes[id],window:{FormaRotaFoodPieces:pieces().mod},
+  getCustom:()=>[],write:(_,data)=>saved.push(...data),customKey:'custom',
+  renderCustomFoods:()=>{},renderRecipeOptions:()=>{}};
+ vm.runInNewContext(slice("$('customForm').addEventListener('submit',","$('searchBtn').addEventListener('click',search);"),ctx);
+ nodes.customUnit.listeners.change();
+ assert.equal(nodes.customPieceGrams.disabled,true);
+ handlers.submit({preventDefault(){},target:{reset(){nodes.customUnit.value='g';}}});
+ assert.equal(saved.length,1);
+ assert.equal(saved[0].unit,'ml');
+ assert.equal(nodes.customPieceGrams.disabled,false,'new gram food must allow piece count again');
+});
