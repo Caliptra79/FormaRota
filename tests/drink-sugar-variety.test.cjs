@@ -125,7 +125,7 @@ test('new catalog loads before seed foods and is cached for offline PWA, old fit
  assert.ok(html.includes('<link rel="stylesheet" href="./assets/drink-sugar.css"/>'));
  for(const f of ['drink-sugar.js','drink-sugar.css','food-variety.js'])
   assert.ok(sw.includes("'./assets/"+f+"'"),f);
- assert.match(sw,/formarota-solo-v92-shell/);
+ assert.match(sw,/formarota-solo-v93-shell/);
  assert.ok(html.includes('function fitStartSession(){if(fitCurrent)return;'));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });
