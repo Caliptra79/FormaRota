@@ -68,8 +68,8 @@ test('style is appended last, preserving all 10 themes and the existing phone CS
  assert.ok(html.includes('function collectBackup(){return{version:7'));
 });
 test('new CSS is PWA precached; existing GIFs and data behavior remain unchanged',()=>{
- assert.match(sw,/const CACHE='formarota-solo-v90-shell'/);
- assert.match(sw,/const GIF_CACHE='formarota-solo-v90-gifs'/);
+ assert.match(sw,/const CACHE='formarota-solo-v91-shell'/);
+ assert.match(sw,/const GIF_CACHE='formarota-solo-v91-gifs'/);
  assert.ok(sw.includes("'./assets/tablet-desktop-layout.css'"));
  assert.ok(sw.includes("'./assets/oled-home.css'"));
  assert.equal(fs.readdirSync(path.join(__dirname,'../assets')).filter(x=>x.endsWith('.gif')).length,19);
