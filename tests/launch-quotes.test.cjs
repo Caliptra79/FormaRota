@@ -35,7 +35,7 @@ test('quotes rotate without immediately repeating, even across a new session',()
  assert.notEqual(b.text,c.text);
  const other=factory(store).api.pick(()=>0);
  assert.notEqual(other.text,c.text);
- assert.equal(store.get(api.KEY),String(api.QUOTES.indexOf(other)));
+ assert.equal(store.get(api.KEY),String(api.QUOTES.findIndex(q=>q.text===other.text)));
 });
 test('bad storage and invalid random values never prevent launching',()=>{
  const a=factory(new Map([['formarota-launch-last-quote-v1','NaN']])).api.pick(()=>NaN);
