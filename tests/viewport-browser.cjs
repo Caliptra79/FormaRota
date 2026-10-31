@@ -104,8 +104,16 @@ async function run(){
   }
  }finally{
   if(cdp)cdp.close();
-  chrome.kill('SIGTERM');await new Promise(ok=>server.close(ok));
-  fs.rmSync(profile,{force:true,recursive:true});
+  chrome.kill('SIGTERM');
+  await Promise.race([
+   new Promise(ok=>chrome.exitCode!==null?ok():chrome.once('exit',ok)),
+   sleep(3000)
+  ]);
+  await new Promise(ok=>server.close(ok));
+  // Chrome can briefly retain cache files after SIGTERM on hosted runners.
+  // Cleanup must never hide a viewport assertion failure.
+  try{fs.rmSync(profile,{force:true,recursive:true,maxRetries:8,retryDelay:250})}
+  catch(error){console.warn('Non-fatal Chrome profile cleanup:',error.code)}
  }
 }
 run().catch(e=>{console.error(e);process.exitCode=1});
