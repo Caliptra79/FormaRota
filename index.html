@@ -582,7 +582,7 @@ function nutritionEditLog(id,row){
  document.querySelectorAll('.fr-nutrition-editor').forEach(x=>x.remove());
  const wrap=document.createElement('div');wrap.className='fr-nutrition-editor';
  const label=document.createElement('label');const unit=original.unit==='ml'?'ml':'g';
- const pieceEdit=!!window.FormaRotaFoodPieces?.logLabel(original,fmt);
+ const pieceEdit=typeof window!=='undefined'&&!!window.FormaRotaFoodPieces?.logLabel(original,fmt);
  label.textContent=original.name+' · yeni miktar ('+(pieceEdit?'adet':unit)+')';
  const field=document.createElement('input');
  field.type='number';field.min='0.1';field.max=pieceEdit?'1000':'3000';
