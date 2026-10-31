@@ -143,6 +143,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/fitness-record-editor.css"/>
 <link rel="stylesheet" href="./assets/nutrition-quality.css"/><link rel="stylesheet" href="./assets/food-units.css"/>
 <link rel="stylesheet" href="./assets/drink-sugar.css"/>
+<link rel="stylesheet" href="./assets/calorie-deficit.css"/>
 <link rel="stylesheet" href="./assets/readability-layout.css"/>
 <link rel="stylesheet" href="./assets/compact-shell.css"/>
 <link rel="stylesheet" href="./assets/settings-disclosure.css"/>
@@ -316,7 +317,29 @@ setTimeout(function(){hide(seq)},4000);
 </section>
 <section class="panel wide" data-view="nutrition" id="nutritionTop"><div class="row"><div><label for="date">Gün</label><input id="date" type="date"/></div><div><label for="meal">Öğün</label><select id="meal"><option>Kahvaltı</option><option selected="">Öğle yemeği</option><option>Akşam yemeği</option><option>Ara öğün</option></select></div></div>
 <div class="stats" style="margin-top:12px"><div class="stat"><span class="muted">Kalori</span><strong><span id="totalKcal">0</span> <small>kcal</small></strong><span class="muted">Hedef <input class="inlinegoal" id="goalKcal" min="0" type="number" value="2600"/></span><div class="progress"><span id="kcalProgress"></span></div></div><div class="stat"><span class="muted">Protein</span><strong><span id="totalProtein">0</span> <small>g</small></strong><span class="muted">Hedef <input class="inlinegoal" id="goalProtein" min="0" type="number" value="160"/></span><div class="progress"><span id="proteinProgress"></span></div></div><div class="stat"><span class="muted">Karbonhidrat</span><strong><span id="totalCarbs">0</span> <small>g</small></strong><span class="muted">Günlük toplam</span></div><div class="stat"><span class="muted">Yağ</span><strong><span id="totalFat">0</span> <small>g</small></strong><span class="muted">Günlük toplam</span></div></div></section>
-<section class="panel wide" data-view="nutrition" id="v21Budget"><h2>Bugünkü kalan hedefin</h2><div class="v21-grid"><div class="v21-box"><small>Kalan kalori</small><div><strong id="v21KcalLeft">0</strong> kcal</div></div><div class="v21-box"><small>Kalan protein</small><div><strong id="v21ProteinLeft">0</strong> g</div></div></div><p class="v21-mini">Hedef aşıldığında kalan miktar negatif gösterilir. Kayıtlı tüm öğünler hesaba katılır.</p></section><section class="panel wide" data-view="nutrition" id="v21Recents"><h2>Sık yediklerin ve son öğünler</h2><p class="v21-mini">Besine dokunup porsiyonu onayla; seçili öğüne hemen kaydedilir.</p><div class="v21-pills" id="v21MealFilters"></div><div id="v21RecentList" class="v21-list"></div></section><section class="panel wide" data-view="nutrition" id="mealQuickPanel"><div class="split"><div><h2>Öğünlerim</h2><p class="muted">Öğüne dokunarak besin seç ve doğrudan günlüğüne kaydet.</p></div></div><div class="meal-cards" id="mealCards"><button type="button" class="meal-card" data-meal-open="Kahvaltı"><span class="meal-symbol">🥚</span><span class="meal-description"><strong>Kahvaltı</strong><small id="breakfastMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Öğle yemeği"><span class="meal-symbol">🍽️</span><span class="meal-description"><strong>Öğle yemeği</strong><small id="lunchMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Akşam yemeği"><span class="meal-symbol">🌙</span><span class="meal-description"><strong>Akşam yemeği</strong><small id="dinnerMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Ara öğün"><span class="meal-symbol">🍎</span><span class="meal-description"><strong>Ara öğün</strong><small id="snackMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button></div></section>
+<section class="panel wide" data-view="nutrition" id="v21Budget"><h2>Bugünkü kalan hedefin</h2><div class="v21-grid"><div class="v21-box"><small>Kalan kalori</small><div><strong id="v21KcalLeft">0</strong> kcal</div></div><div class="v21-box"><small>Kalan protein</small><div><strong id="v21ProteinLeft">0</strong> g</div></div></div><p class="v21-mini">Hedef aşıldığında kalan miktar negatif gösterilir. Kayıtlı tüm öğünler hesaba katılır.</p></section><section class="panel wide" data-view="nutrition" id="frCaloriePlan" aria-labelledby="frCaloriePlanTitle">
+ <div class="fr-cdp-header"><div><h2 id="frCaloriePlanTitle">Kalori açığı planı</h2><p>Koruma kalorisi, yürüyüş ve hedeflenen açık ayrı gösterilir. Bu bir tahmindir; kayıtlı besin hedefin otomatik değiştirilmez.</p></div></div>
+ <div class="fr-cdp-controls">
+  <label for="frCdpDeficit">Hedeflediğin günlük açık
+   <select id="frCdpDeficit"><option value="300">300 kcal · hafif</option><option value="500" selected>500 kcal · dengeli</option><option value="700">700 kcal · daha yüksek</option></select>
+  </label>
+  <label for="frCdpWalk">Planlanan akşam yürüyüşü
+   <select id="frCdpWalk"><option value="0">Yürüyüş yok</option><option value="3">3 km</option><option value="5" selected>5 km</option><option value="7">7 km</option></select>
+  </label>
+  <label for="frCdpExtra">Gün içi ek hareket (normal rutinin dışında)
+   <select id="frCdpExtra"><option value="0" selected>0 kcal · varsayılan</option><option value="100">+100 kcal</option><option value="200">+200 kcal</option><option value="300">+300 kcal</option><option value="500">+500 kcal · yalnızca doğrulanmışsa</option></select>
+  </label>
+ </div>
+ <div class="fr-cdp-metrics" aria-live="polite">
+  <div><small>Bazal metabolizma</small><strong id="frCdpBmr">—</strong></div>
+  <div><small>Normal günlük yaşam dahil</small><strong id="frCdpBase">—</strong></div>
+  <div><small>Ek akşam yürüyüşü</small><strong id="frCdpWalkBurn">—</strong></div>
+  <div><small>Tahmini koruma kalorisi</small><strong id="frCdpMaintenance">—</strong></div>
+ </div>
+ <div class="fr-cdp-target"><div><small>Önerilen sabit günlük yemek hedefi</small><strong id="frCdpSuggested">—</strong><p id="frCdpCurrent">Mevcut günlük hedef yükleniyor.</p></div><button type="button" id="frCdpApply">Önerilen hedefi uygula</button></div>
+ <p id="frCdpActual" class="muted" aria-live="polite"></p>
+ <p id="frCdpExplanation" class="muted">Temel günlük yaşam harcaması, olağan ayakta kalma ve hafif hareketi içerir. Akşam yürüyüşü yalnızca bunun üzerindeki net ek enerjidir. Gün içi 500 + akşam 500 kcal otomatik eklenmez. 2–4 haftalık kilo eğilimine göre hedefi gözden geçir.</p>
+</section><section class="panel wide" data-view="nutrition" id="v21Recents"><h2>Sık yediklerin ve son öğünler</h2><p class="v21-mini">Besine dokunup porsiyonu onayla; seçili öğüne hemen kaydedilir.</p><div class="v21-pills" id="v21MealFilters"></div><div id="v21RecentList" class="v21-list"></div></section><section class="panel wide" data-view="nutrition" id="mealQuickPanel"><div class="split"><div><h2>Öğünlerim</h2><p class="muted">Öğüne dokunarak besin seç ve doğrudan günlüğüne kaydet.</p></div></div><div class="meal-cards" id="mealCards"><button type="button" class="meal-card" data-meal-open="Kahvaltı"><span class="meal-symbol">🥚</span><span class="meal-description"><strong>Kahvaltı</strong><small id="breakfastMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Öğle yemeği"><span class="meal-symbol">🍽️</span><span class="meal-description"><strong>Öğle yemeği</strong><small id="lunchMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Akşam yemeği"><span class="meal-symbol">🌙</span><span class="meal-description"><strong>Akşam yemeği</strong><small id="dinnerMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button><button type="button" class="meal-card" data-meal-open="Ara öğün"><span class="meal-symbol">🍎</span><span class="meal-description"><strong>Ara öğün</strong><small id="snackMealSummary">Henüz kayıt yok</small></span><span class="meal-arrow">＋</span></button></div></section>
 <section class="route-heading wide" data-view="progress" aria-label="Gelişimini gör"><div class="eyebrow">GELİŞİM</div><h2>Gelişimini gör</h2><p>Kilo, makro eğilimleri, haftalık özet ve kişisel rekorlar.</p></section>
 <section class="panel wide" data-view="progress" id="frRankProgress"><h2>🏆 FormaRota Rank</h2><div id="frRankFull" class="fr-rank-card"></div><p class="muted">Puanlar kayıtlarından hesaplanır. Dinlenme günleri cezalandırılmaz; uyku kaydı gerekmez.</p></section>
 <section class="panel wide fr-ai-week" data-view="progress" id="frAiWeek">
@@ -491,6 +514,7 @@ setTimeout(function(){hide(seq)},4000);
 <script src="./assets/breakfast-sweets.js"></script>
 <script src="./assets/dinner-coach.js"></script><script src="./assets/food-units.js"></script>
 <script src="./assets/drink-sugar.js"></script>
+<script src="./assets/calorie-deficit.js"></script>
 <script src="./assets/food-search-cache.js"></script>
 <script defer src="./assets/date-masthead.js"></script>
 <script>
