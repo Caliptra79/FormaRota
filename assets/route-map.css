@@ -1,0 +1,98 @@
+/* FormaRota Rota Haritasi — ten-theme, offline-first adventure map. */
+html[data-theme] .fr-route-home,
+html[data-theme] #frRoutePanel{
+ --fr-route-glow:color-mix(in srgb,var(--accent) 25%,transparent);
+ color:var(--text);
+ border:1px solid var(--border);
+ border-radius:20px;
+ background:var(--panel);
+ min-width:0;
+}
+html[data-theme] .fr-route-home{
+ padding:17px 18px;
+ display:grid;
+ gap:12px;
+}
+.fr-route-home-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.fr-route-home-kicker,.fr-route-eyebrow{color:var(--accent);letter-spacing:.12em;font-size:.7rem;font-weight:850}
+html[data-theme] .fr-route-home h3{margin:4px 0 0;font-size:1.08rem;line-height:1.25}
+html[data-theme] .fr-route-home p{font-size:.79rem;line-height:1.4;color:var(--muted);margin:4px 0 0}
+html[data-theme] .fr-route-home button{padding:9px 12px;min-height:42px;white-space:nowrap;font-size:.78rem;border-radius:12px}
+.fr-route-meter{height:8px;border-radius:50px;background:var(--panel2);overflow:hidden;border:1px solid var(--border)}
+.fr-route-meter>span{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 50%,white));transition:width .4s ease}
+html[data-theme] #frRoutePanel{padding:clamp(15px,3vw,25px)}
+.fr-route-header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap}
+html[data-theme] .fr-route-header h2{margin:5px 0 7px;font-size:clamp(1.35rem,3vw,1.8rem);line-height:1.2}
+html[data-theme] .fr-route-header p{margin:0;max-width:600px;color:var(--muted);font-size:.84rem;line-height:1.5}
+.fr-route-stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0}
+.fr-route-stat{display:flex;flex-direction:column;gap:3px;padding:10px 14px;background:var(--panel2);border:1px solid var(--border);border-radius:13px;min-width:120px}
+.fr-route-stat strong{font-size:.95rem;color:var(--text);font-weight:820}
+.fr-route-stat small{font-size:.72rem;color:var(--muted)}
+.fr-route-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(240px,.85fr);gap:16px;align-items:stretch}
+.fr-route-map{
+ position:relative;isolation:isolate;aspect-ratio:400 / 420;max-height:560px;
+ overflow:hidden;border:1px solid color-mix(in srgb,var(--accent) 25%,var(--border));
+ border-radius:19px;background:
+ radial-gradient(circle at 85% 13%,var(--fr-route-glow),transparent 38%),
+ radial-gradient(circle at 18% 75%,color-mix(in srgb,var(--accent) 10%,transparent),transparent 43%),
+ linear-gradient(147deg,var(--panel2),var(--panel));
+}
+.fr-route-art,.fr-route-markers{position:absolute;width:100%;height:100%;inset:0}
+.fr-route-art{color:var(--accent)}
+.fr-route-road-base{stroke:color-mix(in srgb,var(--text) 30%,transparent);stroke-width:13;stroke-linecap:round;stroke-dasharray:2 3}
+.fr-route-road-progress{stroke:var(--accent);stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 0 8px var(--fr-route-glow));transition:stroke-dasharray .4s ease}
+.fr-route-markers{pointer-events:none}
+html[data-theme] .fr-route-pin{
+ position:absolute;pointer-events:auto;
+ display:grid;place-items:center;transform:translate(-50%,-50%);
+ width:50px;height:50px;min-width:50px;min-height:50px;padding:0;
+ font-size:1.45rem;line-height:1;
+ border-radius:50%;border:2px solid var(--border);
+ color:var(--text);background:var(--panel2);
+ box-shadow:0 7px 17px #0004;cursor:pointer;
+ transition:transform .2s ease,border-color .2s ease,filter .2s ease;
+}
+html[data-theme] .fr-route-pin.is-locked{filter:grayscale(.95);opacity:.72}
+html[data-theme] .fr-route-pin.is-unlocked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 13%,var(--panel))}
+html[data-theme] .fr-route-pin.is-current{box-shadow:0 0 0 5px var(--fr-route-glow),0 8px 23px #0004}
+html[data-theme] .fr-route-pin.is-selected{outline:2px solid var(--accent);outline-offset:4px}
+html[data-theme] .fr-route-pin:hover{transform:translate(-50%,-50%) scale(1.09)}
+.fr-route-side{min-width:0;display:flex;flex-direction:column;gap:12px}
+.fr-route-next,.fr-route-selected{padding:15px;background:var(--panel2);border:1px solid var(--border);border-radius:17px}
+.fr-route-next small,.fr-route-selected small{display:block;font-size:.72rem;color:var(--muted)}
+.fr-route-next strong,.fr-route-selected strong{display:block;font-size:1rem;color:var(--text);margin:5px 0 8px;line-height:1.35}
+.fr-route-next .fr-route-meter{margin:11px 0 4px}
+.fr-route-stops{display:grid;grid-template-columns:1fr;gap:7px}
+html[data-theme] .fr-route-stop{
+ display:flex;align-items:center;gap:10px;text-align:left;min-height:56px;width:100%;min-width:0;
+ padding:8px 11px;background:var(--panel2);border:1px solid var(--border);
+ border-radius:13px;color:var(--text);cursor:pointer;
+}
+.fr-route-stop-icon{font-size:1.25rem;flex:0 0 29px}
+.fr-route-stop-copy{min-width:0;display:flex;flex-direction:column;gap:3px;flex:1}
+.fr-route-stop-copy strong{font-size:.83rem;line-height:1.25}
+.fr-route-stop-copy small{font-size:.7rem;color:var(--muted)}
+.fr-route-stop-status{font-size:.86rem;flex-shrink:0}
+html[data-theme] .fr-route-stop.is-selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--panel2))}
+html[data-theme] .fr-route-stop.is-locked .fr-route-stop-copy{opacity:.67}
+.fr-route-selected[data-locked="true"]{border-style:dashed}
+.fr-route-selected p{font-size:.79rem;line-height:1.5;color:var(--muted);margin:0}
+html[data-theme] .fr-route-explain{font-size:.77rem;line-height:1.55;color:var(--muted);margin:16px 0 0}
+html[data-theme] :is(.fr-route-pin,.fr-route-stop):focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media(max-width:700px){
+ .fr-route-layout{grid-template-columns:minmax(0,1fr)}
+ .fr-route-map{width:100%;max-height:none;aspect-ratio:400/420}
+ .fr-route-stops{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .fr-route-stop{gap:5px!important;padding:9px!important}
+ .fr-route-stop-icon{font-size:1.1rem;flex-basis:23px}
+ .fr-route-stop-copy strong{font-size:.75rem}
+ .fr-route-home-top{align-items:flex-start}
+ .fr-route-stat{flex:1;min-width:0}
+}
+@media(max-width:370px){
+ .fr-route-stops{grid-template-columns:1fr}
+ .fr-route-home-top{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+ .fr-route-meter>span,.fr-route-road-progress,.fr-route-pin{transition:none!important}
+}
