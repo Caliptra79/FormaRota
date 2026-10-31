@@ -48,7 +48,7 @@
  ]);
  const READING_WPM=195;
  const INTRO_MS=550;
- const MAX_WORDS=Math.max(...QUOTES.map(q=>(q.text+' '+q.author+' '+q.work).trim().split(/\\s+/).length));
+ const MAX_WORDS=Math.max(...QUOTES.map(q=>(q.text+' '+q.author+' '+q.work).trim().split(/\s+/).length));
  const READING_MS=Math.ceil(MAX_WORDS*60000/READING_WPM)+INTRO_MS;
  // Fixed timing for all quotes, using the longest displayed quote and attribution.
  const DURATION_MS=Math.max(5400,READING_MS);
