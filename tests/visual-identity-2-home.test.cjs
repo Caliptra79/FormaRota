@@ -9,7 +9,7 @@ const home=html.slice(a,b);
 const count=id=>(html.match(new RegExp('id="'+id+'"','g'))||[]).length;
 test('OLED Edition replaces the promotional stage with actual daily metrics',()=>{
  assert.ok(a>=0&&b>a);
- for(const word of ['Bugünkü Durum','Kalori takibi','Günlük ilerleme','Hızlı kayıt','Bugün neler var?','Son kayıtlar']){
+ for(const word of ['Bugünkü Durum','Kalori planı','Günlük ilerleme','Hızlı kayıt','Bugün neler var?','Son kayıtlar']){
   assert.ok(home.includes(word),word);
  }
  for(const legacy of ['İlerlemeni','sen yönet','class="fr2-stage"','class="fr2-brand"','fr2-art-core'])
