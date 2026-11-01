@@ -68,7 +68,7 @@ test('calorie ring accurately reports exceeding the target and clamps only the v
  assert.equal(ring.style.values['--oled-progress'],'100%');
  assert.equal(ring.attributes['aria-valuenow'],'2600');
  assert.equal(ring.dataset.exceeded,'true');
- assert.match(x.elements.get('oledKcalState').textContent,/250 kcal aşıldı/);
+ assert.match(x.elements.get('oledKcalState').textContent,/hedef farkı 250 kcal/);
  assert.equal(x.elements.get('oledKcalValue').textContent,'2.850');
 });
 test('today plan reflects real meal, water, walking and in-progress workout records',()=>{
