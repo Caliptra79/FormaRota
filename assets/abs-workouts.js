@@ -58,6 +58,7 @@
   const d=day(),startedAt=new Date().toISOString();
   const id='abs-'+d+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
   if(!save(KEY.current,engine.session(d,id,startedAt)))return;
+  manualOpen(false);
   edited=null;refresh();message('ABS başladı. Dört hareketin setlerini kaydetmeye başlayabilirsin.','success');
  }
  function saveSet(id,index){
@@ -111,6 +112,109 @@
   edited=null;refresh();
   message(complete?'Bugün ABS antrenmanını tamamladın! Geçmişe kaydedildi.':'ABS seansı yarım olarak geçmişe kaydedildi.','success');
   root.FormaRotaStudioPlus?.refresh?.();
+ }
+
+ // A post-workout entry is an explicitly verified set log, not a simulated timer.
+ // Today's real set counts are required; nothing is guessed or filled on open.
+ function manualNotice(text){
+  const node=$('absManualStatus');
+  if(node)node.textContent=text;
+ }
+ function manualOpen(open){
+  const panel=$('absManualPanel'),button=$('absManualToggle');
+  if(!panel||!button)return;
+  panel.hidden=!open;
+  button.setAttribute('aria-expanded',String(open));
+  if(open){
+   const date=$('absManualDate');
+   if(date)date.textContent='Bugün · '+new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long'});
+   manualNotice('');
+  }
+ }
+ function renderManualForm(){
+  const parent=$('absManualMoves');
+  if(!parent||parent.childElementCount)return;
+  for(const move of engine.MOVES){
+   const group=element('div','abs-manual-move');
+   const title=element('div','abs-manual-move-title');
+   title.append(element('strong','',move.tr),element('small','',move.kind==='seconds'?'Plank · saniye':'Tekrar · her set ayrı'));
+   const inputs=element('div','abs-manual-inputs');
+   for(let i=0;i<3;i++){
+    const label=element('label','abs-manual-set');
+    label.append(element('span','',String(i+1)+'. set'));
+    const input=element('input');
+    input.id='absManual-'+move.id+'-'+i;
+    input.type='number';input.min='1';input.max=move.kind==='seconds'?'7200':'150';
+    input.step='1';input.required=true;input.inputMode='numeric';
+    input.placeholder=move.kind==='seconds'?'sn':'tekrar';
+    input.setAttribute('aria-label',move.tr+' '+(i+1)+'. set '+(move.kind==='seconds'?'saniye':'tekrar'));
+    label.append(input);
+    inputs.append(label);
+   }
+   const copy=element('button','secondary abs-manual-copy','3 sete uygula');
+   copy.type='button';
+   copy.setAttribute('aria-label',move.tr+' ilk set değerini diğer iki sete kopyala');
+   copy.addEventListener('click',()=>{
+    const first=$('absManual-'+move.id+'-0');
+    const numberValue=Number(first?.value);
+    const proposed=move.kind==='seconds'?{done:true,seconds:numberValue}:{done:true,reps:numberValue};
+    if(!first?.value.trim()||!engine.validSet(move,proposed)){
+     manualNotice('Önce '+move.tr+' için ilk setin gerçek değerini gir.');
+     first?.focus();
+     return;
+    }
+    for(let i=1;i<3;i++){
+     const input=$('absManual-'+move.id+'-'+i);
+     if(input)input.value=first.value;
+    }
+    manualNotice(move.tr+' ilk setin değeri diğer iki sete kopyalandı; farklıysa düzeltebilirsin.');
+   });
+   group.append(title,inputs,copy);parent.append(group);
+  }
+ }
+ function manualSave(event){
+  event?.preventDefault?.();
+  if(current()){
+   manualNotice('Açık bir ABS seansın var. Önce mevcut seansı tamamla veya yarım bırak.');
+   return;
+  }
+  const today=day();
+  if(history().some(row=>row.date===today&&engine.finished(row))){
+   manualNotice('Bugün için tamamlanmış ABS kaydı zaten var. İkinci kez kaydedilmedi.');
+   return;
+  }
+  const values={};
+  for(const move of engine.MOVES){
+   values[move.id]=[];
+   for(let i=0;i<3;i++){
+    const input=$('absManual-'+move.id+'-'+i);
+    if(!input?.value.trim()){
+     manualNotice(move.tr+' · '+(i+1)+'. set boş. Yalnızca gerçekten yaptığın setleri kaydet.');
+     input?.focus();
+     return;
+    }
+    values[move.id].push(input.value.trim());
+   }
+  }
+  let record;
+  try{
+   const now=new Date().toISOString();
+   const id='abs-manual-'+today+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+   record=engine.manualSession(today,id,now,values);
+  }catch(error){manualNotice(error?.message||'Girilen setlerde hata var.');return}
+  if(!root.confirm?.('Bugün bu 12 ABS setini gerçekten tamamladığını ve değerlerin doğru olduğunu onaylıyor musun?'))return;
+  // Read again immediately before committing, to avoid stale same-day forms.
+  if(current()||history().some(row=>row.date===today&&engine.finished(row))){
+   manualNotice('Kayıtlar değişti. Açık seans veya tamamlanmış ABS kaydı var, ikinci kayıt yapılmadı.');
+   return;
+  }
+  if(!save(KEY.history,[...history(),record]))return;
+  $('absManualForm')?.reset();
+  manualOpen(false);edited=null;refresh();
+  message('Bugünkü ABS · 12/12 set, sonradan kaydedildi ✓','success');
+  root.FormaRotaStudioPlus?.refresh?.();
+  root.FormaRotaRouteMap?.schedule?.();
+  renderReport();
  }
  function stopwatchMs(record){
   const watch=record?.watch||{};
@@ -233,7 +337,7 @@
    const item=element('div','abs-history-row');
    const left=element('div');
    const complete=engine.finished(record);
-   left.append(element('strong','',record.date+' · '+(complete?'✓ ABS tamamlandı':'ABS yarım bırakıldı')),
+   left.append(element('strong','',record.date+' · '+(complete?'✓ ABS tamamlandı':'ABS yarım bırakıldı')+(record.recordedAfterWorkout?' · Sonradan kaydedildi':'')),
     element('small','',engine.count(record)+'/12 set · '+
      (record.items?.plank||[]).filter(x=>x?.done).map(x=>x.seconds+' sn').join(' / ')+
      (record.items?.plank?.some(x=>x?.done)?' plank':' plank kaydı yok')));
@@ -264,6 +368,14 @@
   const note=$('absProgressNote');if(note)note.textContent=done===12?'12/12 set hazır · ABS seansını bitirip kaydet':
    active?done+'/12 set kaydedildi · '+(12-done)+' set kaldı':'Dört hareket · 12 set · doğru form öncelikli';
   const button=$('absStart');if(button){button.disabled=Boolean(active);button.textContent=active?'✓ ABS seansı açık':'▶ ABS antrenmanını başlat';}
+  const manual=$('absManualToggle');
+  if(manual){
+   const doneToday=history().some(row=>row.date===day()&&engine.finished(row));
+   manual.disabled=Boolean(active)||doneToday;
+   manual.textContent=active?'📝 Sonradan kayıt için açık ABS seansını kapat':
+    doneToday?'✓ Bugünkü ABS zaten kayıtlı':'📝 Antrenmanı zaten yaptım · Sonradan kaydet';
+   if(active||doneToday)manualOpen(false);
+  }
   const hero=$('absHeroAction');if(hero)hero.textContent=active?'↗ ABS setlerine git':'▶ ABS antrenmanına başla';
   const finishBtn=$('absFinish');if(finishBtn)finishBtn.disabled=!active||done!==12;
   const stopBtn=$('absStop');if(stopBtn)stopBtn.disabled=!active||done===0;
@@ -336,6 +448,13 @@
   $('absHeroAction')?.addEventListener('click',()=>{if(!current())start();$('absWorkoutPanel')?.scrollIntoView({block:'start',behavior:root.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})});
   $('absFinish')?.addEventListener('click',()=>finish(true));
   $('absStop')?.addEventListener('click',()=>finish(false));
+  renderManualForm();
+  $('absManualToggle')?.addEventListener('click',()=>{
+   if(current()||history().some(row=>row.date===day()&&engine.finished(row)))return;
+   manualOpen($('absManualPanel')?.hidden);
+  });
+  $('absManualCancel')?.addEventListener('click',()=>{manualOpen(false);$('absManualForm')?.reset();});
+  $('absManualForm')?.addEventListener('submit',manualSave);
   $('absWatchStart')?.addEventListener('click',startWatch);
   $('absWatchPause')?.addEventListener('click',pauseWatch);
   $('absWatchReset')?.addEventListener('click',resetWatch);
