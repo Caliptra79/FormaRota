@@ -77,7 +77,7 @@ function ring(data){
   band&&data.kcal>=band.low&&data.kcal<=band.high?
    'Planlanan kalori aralığında · daha az yemek ek puan getirmez':
   data.kcal>data.goalKcal*1.05?
-   'Planlanan aralığın üzerinde · dengeyi haftalık değerlendir':
+   'Planlanan aralığın üzerinde · hedef farkı '+fmt(Math.max(0,data.kcal-data.goalKcal))+' kcal · dengeyi haftalık değerlendir':
    'Günlük kayıt: '+fmt(data.kcal)+' kcal · planlanan '+fmt(data.goalKcal)+' kcal');
  setText('oledCarbs',data.carbs===null?'—':fmt(data.carbs)+' g');
  setText('oledFat',data.fat===null?'—':fmt(data.fat)+' g');
