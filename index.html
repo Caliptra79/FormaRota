@@ -564,6 +564,22 @@ setTimeout(function(){if(!loadDone)hide(seq)},MAX_WAIT);
   <button type="button" id="absFinish" disabled>✓ Tamamla ve kaydet</button>
   <button type="button" class="secondary" id="absStop" disabled>■ Yarım bırak ve kaydet</button>
  </div>
+ <div class="abs-manual-entry">
+  <button id="absManualToggle" type="button" class="secondary abs-manual-toggle" aria-expanded="false" aria-controls="absManualPanel">📝 Antrenmanı zaten yaptım · Sonradan kaydet</button>
+  <div id="absManualPanel" class="abs-manual-panel" hidden>
+   <div class="abs-manual-heading"><strong>Bugünkü ABS antrenmanını kaydet</strong><span class="tag" id="absManualDate">Bugün</span></div>
+   <p class="abs-manual-help">Kronometre veya antrenman oturumu başlatmadan, gerçekten yaptığın 3'er setin tekrarını ve plank saniyelerini yaz. Tüm setlerin aynıysa ilk değeri üç sete kopyalayabilirsin.</p>
+   <form id="absManualForm" novalidate>
+    <div id="absManualMoves" class="abs-manual-moves" aria-label="Dört ABS hareketinin setleri"></div>
+    <p class="abs-manual-hint">12 gerçek setin tamamını doldurman gerekir. Boş ya da hatırlamadığın değerler otomatik tahmin edilmez. Bu kayıt, süre ölçülmeden sonradan girildi olarak işaretlenir.</p>
+    <div class="abs-manual-actions">
+     <button type="submit" id="absManualSave">✓ Bugünkü ABS'yi kaydet</button>
+     <button type="button" class="secondary" id="absManualCancel">Vazgeç</button>
+    </div>
+   </form>
+   <p class="abs-manual-status" role="status" aria-live="polite" id="absManualStatus"></p>
+  </div>
+ </div>
  <p class="abs-status" id="absStatus" role="status" aria-live="polite">Başlatınca setleri tek tek kaydedebilirsin.</p>
  <div class="abs-stopwatch" aria-label="Plank kronometresi">
   <div><div class="abs-stopwatch-title">PLANK · SÜRE ÖLÇER</div><div id="absWatchTime" class="abs-stopwatch-clock" role="timer">00:00</div></div>

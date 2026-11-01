@@ -458,3 +458,70 @@ html[data-theme] #workoutProgramChooser button:focus-visible{
  #studioFitnessHero .studio-progress-inner strong,
  #absWorkoutHero .studio-progress-inner strong{font-size:clamp(1.45rem,6vw,2rem)}
 }
+
+/* ABS after-workout entry: manual actual set values, no simulated stopwatch. */
+html[data-theme] .abs-manual-entry{
+ min-width:0;
+ margin:0 0 14px;
+}
+html[data-theme] #absManualToggle{
+ width:100%;min-height:46px;
+ padding:11px 14px;border:1px dashed color-mix(in srgb,var(--accent) 55%,var(--border));
+ border-radius:13px;background:color-mix(in srgb,var(--accent) 6%,var(--panel2))!important;
+ color:var(--text)!important;text-align:center;
+ font-size:.82rem;line-height:1.45;white-space:normal;
+}
+html[data-theme] #absManualToggle:disabled{
+ opacity:.66;cursor:default;
+}
+html[data-theme] .abs-manual-panel{
+ min-width:0;
+ display:grid;gap:11px;
+ border:1px solid var(--border);
+ border-radius:16px;background:var(--panel2);
+ margin-top:10px;padding:clamp(12px,2vw,18px);
+}
+html[data-theme] #absManualPanel[hidden]{display:none!important}
+.abs-manual-heading{
+ display:flex;justify-content:space-between;
+ align-items:flex-start;flex-wrap:wrap;gap:8px;
+}
+.abs-manual-heading strong{font-size:1.02rem;line-height:1.4}
+.abs-manual-help,.abs-manual-hint,.abs-manual-status{
+ color:var(--muted);font-size:.79rem;line-height:1.55;margin:0;
+}
+.abs-manual-status:not(:empty){color:var(--text);font-weight:650}
+.abs-manual-moves{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.abs-manual-move{
+ min-width:0;
+ padding:12px;border:1px solid var(--border);
+ border-radius:13px;background:var(--panel);
+ display:grid;gap:10px;
+}
+.abs-manual-move-title{display:flex;flex-direction:column;gap:3px;min-width:0}
+.abs-manual-move-title strong{font-size:.89rem}
+.abs-manual-move-title small{color:var(--muted);font-size:.73rem}
+.abs-manual-inputs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+html[data-theme] .abs-manual-set{display:grid;min-width:0;gap:5px;margin:0;font-size:.73rem;color:var(--muted)}
+html[data-theme] .abs-manual-set input{
+ min-width:0;width:100%;
+ padding:10px 7px;border-radius:10px;
+ font-size:1rem;text-align:center;font-variant-numeric:tabular-nums;
+}
+html[data-theme] .abs-manual-copy{
+ width:auto;justify-self:end;min-height:38px;
+ padding:8px 12px;border:1px solid var(--border);
+ border-radius:10px;background:var(--panel2)!important;color:var(--text)!important;
+ font-size:.78rem;
+}
+.abs-manual-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+html[data-theme] .abs-manual-actions button{
+ min-height:46px;border-radius:12px;
+ font-size:.85rem;white-space:normal;
+}
+html[data-theme] #absManualSave{background:var(--accent)!important;color:var(--onaccent)!important}
+html[data-theme] #absManualCancel{background:var(--panel)!important;color:var(--text)!important;border:1px solid var(--border)}
+@media(max-width:650px){
+ .abs-manual-moves{grid-template-columns:minmax(0,1fr)}
+ .abs-manual-actions{grid-template-columns:minmax(0,1fr)}
+}
