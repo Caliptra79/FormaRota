@@ -34,6 +34,33 @@
    items:Object.fromEntries(ids.map(move=>[move,[null,null,null]])),
    watch:{elapsedMs:0,startedAt:null}};
  }
+ function manualSession(date,id,recordedAt,values){
+  if(!iso(date)||typeof id!=='string'||!id||typeof recordedAt!=='string'||
+     !Number.isFinite(Date.parse(recordedAt))||!values||typeof values!=='object'||Array.isArray(values))
+   throw Error('Geçersiz manuel ABS kaydı');
+  if(Object.keys(values).length!==MOVES.length||Object.keys(values).some(key=>!ids.includes(key)))
+   throw Error('Dört ABS hareketinin tüm setleri gerekli');
+  const result=session(date,id,recordedAt);
+  for(const move of MOVES){
+   const rows=values[move.id];
+   if(!Array.isArray(rows)||rows.length!==3)throw Error(move.tr+' için 3 set gerekli');
+   result.items[move.id]=rows.map(raw=>{
+    if(raw===null||raw===undefined||String(raw).trim()==='')throw Error(move.tr+' için boş set var');
+    const numberValue=Number(raw);
+    const set=move.kind==='seconds'?
+     {done:true,seconds:numberValue,doneAt:recordedAt}:
+     {done:true,reps:numberValue,doneAt:recordedAt};
+    if(!validSet(move,set))throw Error(move.tr+' için geçersiz set değeri');
+    return set;
+   });
+  }
+  result.status='finished';
+  result.endedAt=recordedAt;
+  result.recordedAfterWorkout=true;
+  result.watch={elapsedMs:0,startedAt:null};
+  if(!finished(result))throw Error('ABS seansı tamamlanmış olarak doğrulanamadı');
+  return result;
+ }
  function sameDay(history,date){
   return Array.isArray(history)?history.filter(x=>x?.date===date&&iso(x.date)):[];
  }
@@ -66,7 +93,7 @@
      (set.done===false||validSet(move,set)))))&&
    (x.status!=='finished'||complete(x)));
  }
- const api=Object.freeze({MOVES,validSet,count,complete,finished,session,sameDay,todaySummary,completedDates,weekCount,validateBackup});
+ const api=Object.freeze({MOVES,validSet,count,complete,finished,session,manualSession,sameDay,todaySummary,completedDates,weekCount,validateBackup});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  scope.FormaRotaABSEngine=api;
 })(typeof window!=='undefined'?window:globalThis);
