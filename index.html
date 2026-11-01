@@ -1198,8 +1198,14 @@ function renderDeficitPlan(){
  $('frCdpMaintenance').textContent=fmt(est.maintenance)+' kcal';
  $('frCdpSuggested').textContent=fmt(est.suggestedGoal)+' kcal';
  const currentGoal=Number($('goalKcal').value)||2600;
- $('frCdpCurrent').textContent='Şu anki yemek hedefin: '+fmt(currentGoal)+' kcal/gün.'+
-  (currentGoal===est.suggestedGoal?' Önerilen plan uygulanmış.':' Öneriyi uygulamak için düğmeye basabilirsin.');
+ const estimatedGap=est.maintenance-currentGoal;
+ $('frCdpCurrent').textContent='Şu anki yemek hedefin: '+fmt(currentGoal)+' kcal/gün. '+
+  (estimatedGap>0?'Bu hedefte bile tahmini '+fmt(estimatedGap)+' kcal/gün açık planlanır.':
+   estimatedGap===0?'Bu hedef tahmini koruma kalorisine eşit, açık planlanmıyor.':
+   'Bu hedef tahmini koruma kalorisinin üzerinde; kilo verme planını gözden geçir.')+
+  (estimatedGap>1000?' Tahmini açık oldukça yüksek; hedefini uzmanla değerlendirmek faydalı olabilir.':'')+
+  (currentGoal===est.suggestedGoal?' Önerilen plan uygulanmış.':' Önerilen hedefi ayrıca uygulayabilirsin.')+
+  ' Bunlar günlük harcama tahminleridir, garanti sonuç değildir.';
  $('frCdpApply').disabled=currentGoal===est.suggestedGoal;
  const day=$('date').value;
  const actualKm=Math.max(0,Number(read(WALK_KEY,{})[day]||0));
