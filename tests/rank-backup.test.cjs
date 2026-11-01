@@ -10,8 +10,10 @@ test('rank goals and XP baseline survive backup and restore',()=>{
  assert.match(html,/changes\.push\(\['formarota-rank-goals-snapshot-v1',rankGoals\]\)/);
  assert.match(html,/changes\.push\(\['formarota-rank-last-seen-xp-v1'/);
 });
-test('historical goals remain independent from changing UI goals',()=>{
- assert.match(rank,/const goals=snapshotGoals\(\),kcalGoal=goals\.kcal,proteinGoal=goals\.protein/);
+test('changed nutrition goals update the reward band without breaking existing rank snapshot backups',()=>{
+ assert.match(rank,/const goals=snapshotGoals\(\)/);
+ assert.match(rank,/Number\(g\.kcal\)!==kcal/);
+ assert.match(rank,/FormaRotaNutritionRewards\?\.evaluate/);
  assert.match(rank,/r\.water>=waterTarget\(\)/);
  assert.match(rank,/Object\.values\(row\.items\)/);
  new vm.Script(rank);

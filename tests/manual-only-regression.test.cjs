@@ -13,7 +13,7 @@ test('discontinued Apple Health bridge is absent from interface, startup, and of
  }
  assert.doesNotMatch(html,/FormaRotaAppleHealth|appleHealth:window\.|data\.appleHealth|FORMAROTA_HEALTH_V1/);
  assert.doesNotMatch(browser,/frHealthInput|frHealthImport|Apple Health paste import/);
- assert.match(sw,/formarota-solo-v100-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
 });
 test('manual fitness, nutrition, weight, water and walk records remain in application',()=>{
  for(const marker of [

@@ -67,10 +67,18 @@ function ring(data){
   (data.kcal>data.goalKcal?', hedef '+fmt(data.kcal-data.goalKcal)+' kcal aşıldı':''));
  setText('oledKcalValue',fmt(data.kcal));
  setText('oledKcalTarget','/ '+fmt(data.goalKcal)+' kcal');
+ // The intake target is already meant to include a planned deficit.
+ // Never congratulate lower intake or instruct the user to "fill" calories.
+ const band=root.FormaRotaNutritionRewards?.evaluate?.(data.todays,{
+  kcal:data.goalKcal,protein:data.goalProtein,
+  sex:read('kocluk-profile-v1',{})?.sex
+ });
  setText('oledKcalState',!data.todays.length?'Henüz öğün kaydı yok':
-  data.kcal>data.goalKcal?'Hedef '+fmt(data.kcal-data.goalKcal)+' kcal aşıldı':
-  data.kcal===data.goalKcal?'Günlük hedefe ulaştın':
-  fmt(data.goalKcal-data.kcal)+' kcal hedefe kaldı');
+  band&&data.kcal>=band.low&&data.kcal<=band.high?
+   'Planlanan kalori aralığında · daha az yemek ek puan getirmez':
+  data.kcal>data.goalKcal*1.05?
+   'Planlanan aralığın üzerinde · hedef farkı '+fmt(Math.max(0,data.kcal-data.goalKcal))+' kcal · dengeyi haftalık değerlendir':
+   'Günlük kayıt: '+fmt(data.kcal)+' kcal · planlanan '+fmt(data.goalKcal)+' kcal');
  setText('oledCarbs',data.carbs===null?'—':fmt(data.carbs)+' g');
  setText('oledFat',data.fat===null?'—':fmt(data.fat)+' g');
  setText('oledProtein',fmt(data.protein)+' / '+fmt(data.goalProtein)+' g');

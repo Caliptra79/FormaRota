@@ -7,7 +7,24 @@ function day(row){for(const key of ['date','endedAt','completedAt','finishedAt']
 function week(s){const a=s.split('-').map(Number),d=new Date(a[0],a[1]-1, a[2],12);d.setDate(d.getDate()-((d.getDay()+6)%7));return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 const waterTarget=()=>{const n=Number(localStorage.getItem('formarota-water-goal-v1'));return n>=250&&n<=7000?n:2500};
 const XP_GOALS_KEY='formarota-rank-goals-snapshot-v1';
-function snapshotGoals(){let g=read(XP_GOALS_KEY,null);if(!g||!(Number(g.kcal)>0)||!(Number(g.protein)>0)){g={kcal:Number(document.getElementById('goalKcal')?.value)||2600,protein:Number(document.getElementById('goalProtein')?.value)||160};try{localStorage.setItem(XP_GOALS_KEY,JSON.stringify(g))}catch(e){}}return g}
+function snapshotGoals(){
+ const kcal=Number(document.getElementById('goalKcal')?.value)||2600;
+ const protein=Number(document.getElementById('goalProtein')?.value)||160;
+ let g=read(XP_GOALS_KEY,null);
+ // A goal adjusted in Nutrition must affect the reward policy, not an obsolete snapshot.
+ if(!g||Number(g.kcal)!==kcal||Number(g.protein)!==protein){
+  g={kcal,protein};
+  try{localStorage.setItem(XP_GOALS_KEY,JSON.stringify(g))}catch(e){}
+ }
+ const profile=read('kocluk-profile-v1',{});
+ const weights=read('kocluk-weight-v1',[]);
+ const sorted=Array.isArray(weights)?weights.filter(x=>Number.isFinite(Number(x?.kg))&&Number(x.kg)>0)
+  .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))):[];
+ const weight=sorted.length?Number(sorted[0].kg):null;
+ const maintenance=weight!==null?window.FormaRotaCaloriePlan?.estimate?.(profile,weight,
+  read('formarota-deficit-plan-v1',{}))?.maintenance:null;
+ return {...g,sex:profile?.sex,maintenance};
+}
 function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='full')return row.items&&typeof row.items==='object'&&Object.keys(row.items).length>=13&&Object.values(row.items).reduce((n,sets)=>n+(Array.isArray(sets)?sets.filter(v=>v&&v.done===true).length:0),0)>=39;return true}
 function tally(){
  const days=new Map(),entry=d=>{if(!days.has(d))days.set(d,{food:[],walk:0,water:0,full:0,abs:0});return days.get(d)};
@@ -16,11 +33,11 @@ function tally(){
  for(const [key,col] of [['kocluk-fitness-history-v1','full'],['formarota-abs-history-v1','abs']]){const rows=read(key,[]);if(Array.isArray(rows))rows.forEach(x=>{const d=day(x);if(d&&isCompleted(x,col))entry(d)[col]++})}
  const weeks=new Map();days.forEach((v,d)=>{const w=week(d);if(!weeks.has(w))weeks.set(w,[]);weeks.get(w).push(v)});
  const categories={Fitness:0,Beslenme:0,Aktivite:0,Düzenlilik:0};
- const goals=snapshotGoals(),kcalGoal=goals.kcal,proteinGoal=goals.protein;
+ const goals=snapshotGoals();
  weeks.forEach(rows=>{let full=0,abs=0,active=0;for(const r of rows){
   if(r.food.length||r.full||r.abs||r.walk)active++;
-  if(r.food.length){categories.Beslenme+=25;const meals=new Set(r.food.map(x=>x.meal)),k=r.food.reduce((n,x)=>n+(Number(x.kcal)||0),0),p=r.food.reduce((n,x)=>n+(Number(x.protein)||0),0);
-   if(meals.size>=3&&kcalGoal>0&&proteinGoal>0&&k>=.85*kcalGoal&&k<=1.15*kcalGoal&&p>=.9*proteinGoal)categories.Beslenme+=15}
+  if(r.food.length){categories.Beslenme+=25;
+   if(window.FormaRotaNutritionRewards?.evaluate?.(r.food,goals)?.balanced)categories.Beslenme+=15}
   if(r.walk>=5)categories.Aktivite+=25;
   if(r.water>=waterTarget())categories.Aktivite+=10;
   if(r.full&&full<3){categories.Fitness+=80;full++}
@@ -115,6 +132,8 @@ const ACHIEVEMENTS=[
  ['thirty-food-days','🍽️','Düzenli takip','30 ayrı gün beslenme kaydı','gold',x=>x.foodDays>=30],
  ['ninety-food-days','🌱','Sağlam alışkanlık','90 ayrı gün beslenme kaydı','diamond',x=>x.foodDays>=90],
  ['oneeighty-food-days','👑','Beslenme efsanesi','180 ayrı gün beslenme kaydı','legendary',x=>x.foodDays>=180],
+ ['seven-balanced-food-days','🥗','Dengeyi buldum','7 gün düzenli öğün, protein ve planlı kalori aralığı','silver',x=>x.balancedFoodDays>=7],
+ ['thirty-balanced-food-days','🌱','Dengeli rutin','30 gün düzenli öğün, protein ve planlı kalori aralığı','gold',x=>x.balancedFoodDays>=30],
  ['five-active-weeks','🌟','Beş haftalık emek','En az 5 aktif haftaya ulaş','silver',x=>x.activeWeeks>=5],
  ['twelve-active-weeks','⭐','İstikrar mevsimi','En az 12 aktif haftaya ulaş','gold',x=>x.activeWeeks>=12],
  ['twentyfour-active-weeks','💠','Uzun soluk','En az 24 aktif haftaya ulaş','diamond',x=>x.activeWeeks>=24],
@@ -123,12 +142,12 @@ const ACHIEVEMENTS=[
 const BADGE_TIERS={bronze:'🥉 Bronze',silver:'🥈 Silver',gold:'🥇 Gold',diamond:'💎 Diamond',legendary:'👑 Legendary'};
 function historySummary(){
  const foods=read('kocluk-food-log-v2',[]),walks=read('formarota-walks-v1',{}),full=read('kocluk-fitness-history-v1',[]),abs=read('formarota-abs-history-v1',[]);
- const dayMap=new Map(),get=d=>{if(!dayMap.has(d))dayMap.set(d,{food:false,walk:0,workouts:0,kcal:0,protein:0});return dayMap.get(d)};
- if(Array.isArray(foods))for(const x of foods){if(!iso(x?.date)||!(Number(x.amount)>0))continue;const v=get(x.date);v.food=true;v.kcal+=Math.max(0,Number(x.kcal)||0);v.protein+=Math.max(0,Number(x.protein)||0)}
+ const dayMap=new Map(),get=d=>{if(!dayMap.has(d))dayMap.set(d,{food:false,foodRecords:[],walk:0,workouts:0,kcal:0,protein:0});return dayMap.get(d)};
+ if(Array.isArray(foods))for(const x of foods){if(!iso(x?.date)||!(Number(x.amount)>0))continue;const v=get(x.date);v.food=true;v.foodRecords.push(x);v.kcal+=Math.max(0,Number(x.kcal)||0);v.protein+=Math.max(0,Number(x.protein)||0)}
  if(walks&&typeof walks==='object'&&!Array.isArray(walks))for(const [d,n] of Object.entries(walks))if(iso(d))get(d).walk=Math.max(0,Number(n)||0);
  for(const [rows,type] of [[full,'full'],[abs,'abs']])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&isCompleted(x,type))get(d).workouts++}
  const weeks=new Map();dayMap.forEach((v,d)=>{const key=week(d);if(!weeks.has(key))weeks.set(key,{workouts:0,walk:0,foodDays:0,activeDays:0,protein:0,proteinDays:0});const w=weeks.get(key);w.workouts+=v.workouts;w.walk+=v.walk;if(v.food){w.foodDays++;w.protein+=v.protein;w.proteinDays++}if(v.food||v.walk>0||v.workouts>0)w.activeDays++});
- const stats={workouts:0,km:0,foodDays:0,activeWeeks:0};dayMap.forEach(v=>{stats.workouts+=v.workouts;stats.km+=v.walk;if(v.food)stats.foodDays++});weeks.forEach(w=>{if(w.activeDays>=3)stats.activeWeeks++});
+ const stats={workouts:0,km:0,foodDays:0,balancedFoodDays:0,activeWeeks:0};const goals=snapshotGoals();dayMap.forEach(v=>{stats.workouts+=v.workouts;stats.km+=v.walk;if(v.food){stats.foodDays++;if(window.FormaRotaNutritionRewards?.evaluate?.(v.foodRecords,goals)?.balanced)stats.balancedFoodDays++}});weeks.forEach(w=>{if(w.activeDays>=3)stats.activeWeeks++});
  return {stats,weeks};
 }
 function achievementMarkup(stats){
@@ -159,7 +178,8 @@ function render(){
  const home=document.getElementById('frRankHome'),detail=document.getElementById('frRankFull');if(!home||!detail)return;
  const x=tally();checkRankUp(x.xp);const base='<div class="fr-rank-row"><span class="fr-rank-icon">'+x.icon+'</span><div><small>FORMA ROTA RANK</small><strong>'+x.title+'</strong><small>'+x.xp.toLocaleString('tr-TR')+' XP · Sonraki seviye için '+x.remaining.toLocaleString('tr-TR')+' XP</small></div></div><div class="fr-rank-track"><span style="width:'+x.percent+'%"></span></div>';
  home.innerHTML=base+'<small>Gelişimde ayrıntıları gör →</small>';
- detail.innerHTML=base+'<div class="fr-rank-grid">'+Object.entries(x.categories).map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+' XP</strong></div>').join('')+'</div>';ensureProgressStyles();const progress=historySummary();detail.insertAdjacentHTML('beforeend',achievementMarkup(progress.stats)+graphMarkup(progress.weeks));
+ detail.innerHTML=base+'<div class="fr-rank-grid">'+Object.entries(x.categories).map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+' XP</strong></div>').join('')+'</div>'+
+ '<p class="muted fr-rank-policy">Beslenme: kayıt bulunan her gün +25 XP. Günün üç ana öğünü kayıtlıysa, protein hedefinin en az %90’ı ve planlanan kalorinin yaklaşık %95–105’i sağlanıyorsa +15 XP. Eksik yemek, çok düşük kalori veya daha büyük açık ekstra puan getirmez. Kalori hedefi bakım kalorisi değil, planlanan alımdır.</p>';ensureProgressStyles();const progress=historySummary();detail.insertAdjacentHTML('beforeend',achievementMarkup(progress.stats)+graphMarkup(progress.weeks));
 }
 function init(){const h=document.getElementById('frRankHome');if(!h)return;
  const open=()=>{if(typeof showView==='function')showView('progress');document.getElementById('frRankProgress')?.scrollIntoView({block:'start',behavior:'smooth'})};
