@@ -101,6 +101,19 @@ async function run(){
    assert.ok(Math.max(...map.distances)<6,label+' pins drift from road '+JSON.stringify(map));
    assert.ok(map.doc<=width+5,label+' progress overflow '+JSON.stringify(map));
    if(label==='tablet portrait')assert.equal(map.cols.trim().split(/\s+/).length,1,'tablet portrait should stack the route map');
+   if(label==='desktop wide'){
+    const form=await evaluate("(()=>{\n showView('fitness',false,false);\n window.FormaRotaABS.choose('abs');\n const toggle=document.getElementById('absManualToggle');\n toggle.click();\n const panel=document.getElementById('absManualPanel');\n const visible=!panel.hidden&&getComputedStyle(panel).display!=='none';\n const values={\n  'floor-crunch':[12,12,12],\n  'reverse-crunch':[12,11,10],\n  'heel-touch':[20,20,20],\n  'plank':[42,40,35]\n };\n document.getElementById('absManual-floor-crunch-0').value='12';\n panel.querySelector('.abs-manual-copy').click();\n for(const [move,sets] of Object.entries(values)){\n  sets.forEach((n,i)=>{\n   if(move==='floor-crunch'&&i>0)return;\n   document.getElementById('absManual-'+move+'-'+i).value=String(n);\n  });\n }\n const count=panel.querySelectorAll('input[type=\"number\"]').length;\n window.confirm=()=>true;\n document.getElementById('absManualForm').requestSubmit();\n const history=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]');\n const saved=history[0];\n const archive=document.getElementById('absHistory').textContent;\n const completed=window.FormaRotaABSEngine.finished(saved);\n const beforeDup=history.length;\n document.getElementById('absManualForm').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));\n const afterDup=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]').length;\n return {visible,count,completed,backfilled:saved?.recordedAfterWorkout,\n  archived:archive.includes('Sonradan kaydedildi'),\n  beforeDup,afterDup,plank:saved?.items?.plank?.map(x=>x.seconds),\n  mapDays:window.FormaRotaRouteMap.currentSnapshot().days,\n  active:localStorage.getItem('formarota-abs-current-v1')};\n})()");
+    assert.equal(form.visible,true,'manual form must be visible in ABS mode');
+    assert.equal(form.count,12,'all 12 set inputs must exist');
+    assert.equal(form.completed,true,'saved post-workout record must pass ABS engine');
+    assert.equal(form.backfilled,true,'must tag post-workout provenance');
+    assert.equal(form.archived,true,'history must identify backfilled sessions');
+    assert.equal(form.beforeDup,1,'manual saving should create one record');
+    assert.equal(form.afterDup,1,'repeat submit must not create duplicates');
+    assert.ok(form.mapDays>=1,'completed manual workout should count toward route');
+    assert.equal(form.active,null,'manual record must not create a live workout');
+    console.log('PASS desktop wide, ABS manual save, history, deduplication and route progress');
+   }
    console.log('PASS '+label+' '+width+'x'+height+', longest pin drift '+Math.max(...map.distances).toFixed(1)+'px');
   }
  }finally{
