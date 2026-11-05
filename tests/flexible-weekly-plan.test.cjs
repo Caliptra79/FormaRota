@@ -84,6 +84,44 @@ test('custom activities, notes, and next-week plans remain independent',()=>{
  assert.equal(x.reads('formarota-fitness-day-plan-v1',{})['2026-11-02']['2026-11-04'].type,'abs');
  assert.equal(x.reads('kocluk-fitness-weeks-v1',{})['2026-10-26'].length,0);
 });
+test('volleyball can be scheduled and restored without recording a completed workout',()=>{
+ const x=harness();
+ assert.equal(x.publicApi.types.find(x=>x.value==='rest').label,'Yürüyüş');
+ assert.equal(x.publicApi.types.find(x=>x.value==='volleyball').label,'Voleybol');
+ assert.equal(x.api.fitValidDayPlans({'2026-10-26':{'2026-10-28':{type:'volleyball',note:''}}}),true);
+ const saved=x.publicApi.setDay('2026-10-28','volleyball');
+ assert.equal(saved.type,'volleyball');
+ assert.equal(x.api.fitWeekPlan('2026-10-26')['2026-10-28'].type,'volleyball');
+ assert.equal(x.reads('kocluk-fitness-weeks-v1',{})['2026-10-26'].length,0);
+ assert.equal(x.store.getItem('kocluk-fitness-history-v1'),null);
+ const fresh=harness({'formarota-fitness-day-plan-v1':x.reads('formarota-fitness-day-plan-v1',{})});
+ assert.equal(fresh.publicApi.getDay('2026-10-28').type,'volleyball');
+ assert.equal(fresh.writes(),0);
+});
+test('past rest records remain readable as Walking after an unchanged-data upgrade',()=>{
+ const legacy={'2026-10-26':{'2026-10-28':{type:'rest',note:''}}};
+ const x=harness({'formarota-fitness-day-plan-v1':legacy});
+ assert.equal(x.api.fitWeekPlan('2026-10-26')['2026-10-28'].type,'rest');
+ assert.equal(x.publicApi.getDay('2026-10-28').type,'rest');
+ assert.equal(x.publicApi.types.find(x=>x.value==='rest').label,'Yürüyüş');
+ assert.equal(x.writes(),0,'no automatic rewrite of old plans');
+ const html=read('index.html');
+ assert.ok(html.includes('<option value="rest">🚶 Yürüyüş</option>'));
+ assert.ok(html.includes('<option value="volleyball">🏐 Voleybol</option>'));
+ assert.ok(read('assets/coach-ui-v33.js').includes("volleyball:'Voleybol'"));
+ assert.ok(read('assets/coach-ui-v33.js').includes("rest:'Yürüyüş'"));
+});
+test('the coach preserves volleyball and does not treat planned volleyball as a completed session',()=>{
+ const sandbox={window:{}};vm.runInNewContext(read('assets/coach-engine-v35.js'),sandbox);
+ const E=sandbox.window.FormaRotaCoachEngine;
+ const plans={'2026-10-27':{type:'volleyball'},'2026-10-28':{type:'full'},'2026-10-30':{type:'full'}};
+ const w=E.weekly([],'2026-10-28',2,['2026-10-28','2026-10-30'],plans);
+ assert.equal(w.activities['2026-10-27'],'volleyball');
+ assert.equal(w.finished,0);
+ assert.equal(w.fullSessions,0);
+ assert.equal(w.planReady,true);
+ assert.ok(!w.planned.includes('2026-10-27'));
+});
 test('backup validation rejects invalid dates, unrecognized activities, oversized text and arrays',()=>{
  const x=harness();const valid={'2026-10-26':{'2026-10-28':{type:'basket-abs',note:''}}};
  assert.equal(x.api.fitValidDayPlans(valid),true);
