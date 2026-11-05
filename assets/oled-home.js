@@ -180,7 +180,7 @@ function renderActivity(data){
   return;
  }
  if(!selected.explicit){
-  status.textContent='Henüz bir etkinlik seçilmedi · Dinlenme varsayılan görünümdür.';
+  status.textContent='Henüz bir etkinlik seçilmedi · Yürüyüş varsayılan görünümdür.';
   return;
  }
  const label=activityLabel(selected.type);
@@ -195,8 +195,9 @@ function renderActivity(data){
  else if(selected.type==='basket'||selected.type==='basket-abs')
   completion=(selected.type==='basket-abs'&&doneAbs?'ABS kaydedilmiş; ':'')+
    'Basketbol katılımı otomatik doğrulanmaz.';
+ else if(selected.type==='volleyball')completion='Voleybol katılımı otomatik doğrulanmaz.';
  else if(selected.type==='other')completion='Diğer etkinlikler için otomatik tamamlanma kaydı yok.';
- else if(selected.type==='rest')completion='Dinlenme seçimin kaydedildi; antrenman tamamlandı sayılmaz.';
+ else if(selected.type==='rest')completion='Yürüyüş planın kaydedildi; mesafeyi ayrıca günlük yürüyüş bölümünden kaydedebilirsin.';
  status.textContent='Bugün: '+label+(selected.type==='other'&&selected.note?' · '+selected.note:'')+' — '+completion;
 }
 function render(){

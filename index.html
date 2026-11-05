@@ -272,10 +272,11 @@ setTimeout(function(){if(!loadDone)hide(seq)},MAX_WAIT);
     <div class="oled-today-activity-controls">
       <label for="oledTodayActivitySelect">Bugünkü etkinliğin</label>
       <select id="oledTodayActivitySelect" aria-describedby="oledTodayActivityHelp" aria-label="Bugünün antrenman etkinliğini seç">
-        <option value="rest">☕ Dinlenme</option>
+        <option value="rest">🚶 Yürüyüş</option>
         <option value="full">🏋️ Full Body</option>
         <option value="abs">💪 ABS / Karın</option>
         <option value="basket">🏀 Basketbol</option>
+        <option value="volleyball">🏐 Voleybol</option>
         <option value="basket-abs">🏀 Basketbol + ABS</option>
         <option value="full-abs">🏋️ Full Body + ABS</option>
         <option value="other">✦ Başka etkinlik</option>
@@ -1309,10 +1310,11 @@ function fitSaveCurrent(){write(FIT_KEY,fitCurrent)}
 function fitGetHist(){return read(FIT_HISTORY_KEY,[])}
 function fitSetHist(h){write(FIT_HISTORY_KEY,h)}
 const FIT_DAY_TYPES=[
- {value:'rest',label:'Dinlenme',icon:'☕'},
+ {value:'rest',label:'Yürüyüş',icon:'🚶'},
  {value:'full',label:'Full Body',icon:'🏋️'},
  {value:'abs',label:'ABS / Karın',icon:'💪'},
  {value:'basket',label:'Basketbol',icon:'🏀'},
+ {value:'volleyball',label:'Voleybol',icon:'🏐'},
  {value:'basket-abs',label:'Basketbol + ABS',icon:'🏀'},
  {value:'full-abs',label:'Full Body + ABS',icon:'🏋️'},
  {value:'other',label:'Başka etkinlik',icon:'✦'}
@@ -1387,7 +1389,7 @@ function fitDrawWeek(){
   if(selection.type==='other'){
    const note=document.createElement('input');note.type='text';note.maxLength=80;
    note.className='fit-plan-note';note.value=selection.note;
-   note.placeholder='Örn. yürüyüş, yüzme, dinlenme dışı etkinlik';
+   note.placeholder='Örn. yüzme, koşu, farklı bir etkinlik';
    note.setAttribute('aria-label',FIT_DAYS[i]+' diğer etkinlik açıklaması');
    note.addEventListener('change',()=>{
     try{fitSaveWeekDay(monday,date,'other',note.value);fitDrawWeek()}
