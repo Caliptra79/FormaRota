@@ -79,16 +79,16 @@ function refreshOverview(){
    const scheduled=w.planned.includes(date);
    const kind=done?'done':partial?'partial':
     activity==='basket'||activity==='basket-abs'?'ball':
-    activity==='abs'?'abs':activity==='other'?'other':
+    activity==='abs'?'abs':activity==='volleyball'?'ball':activity==='other'?'other':
     scheduled?'planned':'rest';
    const label={
-    rest:'Dinlenme',full:'Full Body',abs:'Karın / ABS',
-    basket:'Basketbol','basket-abs':'Basketbol + ABS',
+    rest:'Yürüyüş',full:'Full Body',abs:'Karın / ABS',
+    basket:'Basketbol','basket-abs':'Basketbol + ABS',volleyball:'Voleybol',
     'full-abs':'Full Body + ABS',other:'Diğer etkinlik'
-   }[activity]||'Dinlenme';
+   }[activity]||'Yürüyüş';
    const status=done?'✓':partial?'◐':
     activity==='basket'||activity==='basket-abs'?'🏀':
-    activity==='abs'?'💪':activity==='other'?'✦':
+    activity==='abs'?'💪':activity==='volleyball'?'🏐':activity==='other'?'✦':
     scheduled?'●':'·';
    const el=text('div','coach-day coach-'+kind);
    el.title=date+' · '+(done?'Tam Full Body kaydedildi':partial?'Yarım seans kaydedildi':'Plan: '+label);
