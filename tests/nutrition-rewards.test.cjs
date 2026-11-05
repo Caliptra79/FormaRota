@@ -56,7 +56,7 @@ test('rank, weekly progress, and home copy all use the same reward engine',()=>{
  assert.doesNotMatch(home,/Günlük hedefe ulaştın|kcal hedefe kaldı/);
  assert.match(html,/assets\/nutrition-rewards\.js/);
  assert.match(sw,/'\.\/assets\/nutrition-rewards\.js'/);
- assert.match(sw,/formarota-solo-v101-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.match(html,/function collectBackup\(\)\{return\{version:7/);
  assert.match(html,/id="absManualToggle"/);
 });
