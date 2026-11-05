@@ -33,8 +33,8 @@ function setup(type='rest',explicit=false,note='',acknowledgedDate=null){
   getItem:key=>savedSettings.get(key)??null,
   setItem:(key,value)=>savedSettings.set(key,value)
  };
- const types=[['rest','Dinlenme'],['full','Full Body'],['abs','ABS / Karın'],
-  ['basket','Basketbol'],['basket-abs','Basketbol + ABS'],['full-abs','Full Body + ABS'],
+ const types=[['rest','Yürüyüş'],['full','Full Body'],['abs','ABS / Karın'],
+  ['basket','Basketbol'],['basket-abs','Basketbol + ABS'],['volleyball','Voleybol'],['full-abs','Full Body + ABS'],
   ['other','Başka etkinlik']].map(([value,label])=>({value,label}));
  const history={};
  const root={document:doc,localStorage:localStore,
@@ -111,7 +111,7 @@ test('custom activity remains editable until explicit save',()=>{
  assert.ok(html.includes('id="oledTodayActivityNote" type="text" maxlength="80"'));
 });
 test('a weekly Fitness plan does not pre-hide the home shortcut even if already saved',()=>{
- for(const type of ['full','abs','basket','basket-abs','full-abs','other','rest']){
+ for(const type of ['full','abs','basket','basket-abs','volleyball','full-abs','other','rest']){
   const x=setup(type,true);
   assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false,type);
   assert.equal(x.saves(),0,type);
