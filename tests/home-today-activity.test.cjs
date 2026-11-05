@@ -93,6 +93,24 @@ test('preplanned basketball remains visible until home confirmation without inve
  assert.equal(x.saves(),1);
  assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/Basketbol katılımı otomatik doğrulanmaz/);
 });
+test('volleyball home choice is selectable, saves only a plan and does not assert attendance',()=>{
+ const x=setup('volleyball',true);
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,false);
+ assert.match(x.nodes.get('oledTodayActivityStatus').textContent,/Voleybol katılımı otomatik doğrulanmaz/);
+ const picker=x.nodes.get('oledTodayActivitySelect');
+ picker.value='volleyball';picker.handlers.change();
+ x.nodes.get('oledTodayActivitySave').handlers.click();
+ assert.equal(x.record.type,'volleyball');
+ assert.equal(x.saves(),1);
+ assert.equal(x.nodes.get('oledTodayActivityCard').hidden,true);
+});
+test('walking replaces Rest in the home display without adding a walk record',()=>{
+ const x=setup('rest',true);
+ const status=x.nodes.get('oledTodayActivityStatus').textContent;
+ assert.match(status,/Yürüyüş planın kaydedildi/);
+ assert.equal(x.localStore.getItem('formarota-walks-v1'),null);
+ assert.ok(read('index.html').includes('<option value="rest">🚶 Yürüyüş</option>'));
+});
 test('custom activity remains editable until explicit save',()=>{
  const x=setup();
  const picker=x.nodes.get('oledTodayActivitySelect');
