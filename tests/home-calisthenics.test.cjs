@@ -74,7 +74,7 @@ test('offline cache carries home program UI, CSS and engine without modifying ex
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset+' precached');
   if(asset.endsWith('.js'))new vm.Script(source('assets/'+asset),{filename:asset});
  }
- assert.match(sw,/formarota-solo-v105-shell/);
+ assert.match(sw,/formarota-solo-v106-shell/);
  assert.ok(source('assets/home-calisthenics.css').includes('data-workout-program="home"'));
  assert.ok(source('assets/home-calisthenics.css').includes('grid-template-columns:1fr'));
  assert.ok(html.includes('id="absManualToggle"'));
@@ -94,21 +94,26 @@ test('four exact band levels are selectable while legacy band notes remain reada
  assert.ok(source('assets/home-calisthenics.css').includes('.home-cal-gear'));
 });
 
-test('private GIF import adds correct 13 per-exercise media slots and preserves offline-only behavior',()=>{
+test('13 matching Home GIF assets are included and fully offline without import',()=>{
  const media=source('assets/home-calisthenics-media.js');
- const tracker=source('assets/home-calisthenics.js');
+ const workout=source('assets/home-calisthenics.js');
+ const ids=E.MOVES.map(x=>x.id);
+ assert.equal(ids.length,13);
  assert.doesNotThrow(()=>new vm.Script(media,{filename:'home-calisthenics-media.js'}));
- for(const name of E.MOVES.map(m=>m.id))assert.ok(media.includes("'"+name+"'"),name);
- assert.ok(media.includes("pack?.kind!=='formarota-home-gifs'"));
- assert.ok(media.includes("connection.transaction(STORE,'readwrite')"));
- assert.ok(media.includes('root.indexedDB'));
- assert.ok(media.includes('root.URL.createObjectURL'));
- assert.ok(media.includes('Object.hasOwn(pack.images,id)'));
- assert.ok(media.includes('root.FormaRotaHomeWorkout?.render?.()'));
- assert.ok(tracker.includes('FormaRotaHomeMedia?.renderSetup(guide)'));
- assert.ok(tracker.includes('FormaRotaHomeMedia?.attach(card,move)'));
- assert.ok(html.includes('./assets/home-calisthenics-media.js'));
+ for(const id of ids){
+  assert.ok(media.includes('"'+id+'"'),id);
+  assert.ok(fs.statSync(path.join(__dirname,'../assets/home-gifs',id+'.gif')).size>1000,id);
+  const gif=fs.readFileSync(path.join(__dirname,'../assets/home-gifs',id+'.gif'));
+  assert.match(gif.subarray(0,6).toString('ascii'),/^GIF8[79]a$/);
+ }
+ assert.ok(sw.includes("const HOME_GIFS="));
+ assert.ok(sw.includes("...HOME_GIFS]"));
  assert.ok(sw.includes("'./assets/home-calisthenics-media.js'"));
+ assert.ok(media.includes("BASE='./assets/home-gifs/'"));
+ assert.ok(media.includes("Ayrı dosya yüklemen gerekmez"));
+ assert.ok(!media.includes('indexedDB'));
+ assert.ok(workout.includes('FormaRotaHomeMedia?.attach(card,move)'));
+ assert.ok(workout.includes('FormaRotaHomeMedia?.renderSetup(guide)'));
+ assert.ok(html.includes('./assets/home-calisthenics-media.js'));
  assert.ok(source('assets/home-calisthenics.css').includes('.home-cal-media-image'));
- assert.ok(!media.includes('https://'),'No third-party image fetching');
 });

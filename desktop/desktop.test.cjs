@@ -39,6 +39,13 @@ test('desktop bundle is complete and keeps workout history intact',()=>{
  assert.ok(html.includes('id="globalTodayDate"'));
  const gifs=fs.readdirSync(path.join(root,'assets')).filter(x=>x.endsWith('.gif'));
  assert.equal(gifs.length,19);
+ const homeGifs=fs.readdirSync(path.join(root,'assets','home-gifs')).filter(x=>x.endsWith('.gif'));
+ assert.equal(homeGifs.length,13);
+ for(const id of ['incline-pushup','band-triceps','tuck-hollow']){
+  const gif=resolveAsset(root,'app://formarota/assets/home-gifs/'+id+'.gif');
+  assert.match(gif.contentType,/image\/gif/);
+  assert.ok(fs.existsSync(gif.filePath));
+ }
 });
 
 test('the isolated Electron session also owns our custom protocol',()=>{
