@@ -7,6 +7,17 @@
 const doc=root.document,E=root.FormaRotaHomeEngine;
 if(!doc||!E)return;
 const CURRENT='formarota-home-current-v1',HISTORY='formarota-home-history-v1';
+// Kilogram values are manufacturer-rated band levels, NOT measured lifting loads.
+// Previous "light/medium/heavy" entries remain readable without changing saved data.
+const BAND_OPTIONS=Object.freeze([
+ ['bodyweight','Vücut ağırlığı / band yok'],
+ ['band-10','10 kg bant (nominal)'],
+ ['band-20','20 kg bant (nominal)'],
+ ['band-30','30 kg bant (nominal)'],
+ ['band-40','40 kg bant (nominal)']
+]);
+const LEGACY_BANDS=Object.freeze({light:'Hafif bant (eski kayıt)',medium:'Orta bant (eski kayıt)',heavy:'Sert bant (eski kayıt)'});
+const bandLabel=x=>BAND_OPTIONS.find(option=>option[0]===x)?.[1]||LEGACY_BANDS[x]||'';
 const byId=id=>doc.getElementById(id);
 const read=(key,fallback)=>{try{return JSON.parse(root.localStorage.getItem(key))??fallback}catch{return fallback}};
 const history=()=>{const a=read(HISTORY,[]);return Array.isArray(a)?a:[]};
@@ -23,13 +34,19 @@ function lastPerformance(id){
  if(!sessions.length)return null;
  const prev=sessions[0],move=E.MOVES.find(m=>m.id===id),sets=prev.items[id];
  const summary=sets.map(x=>x[move.kind==='seconds'?'seconds':'reps']).join(' / ');
+ const previousBands=[...new Set(sets.map(x=>x?.resistance).filter(x=>x&&x!=='bodyweight'))].map(bandLabel).filter(Boolean);
  const targetReached=sets.every(x=>Number(x[move.kind==='seconds'?'seconds':'reps'])>=move.high);
- return {text:prev.date+' · '+summary+(move.kind==='seconds'?' sn':' tekrar'),
+ return {text:prev.date+' · '+summary+(move.kind==='seconds'?' sn':' tekrar')+(previousBands.length?' · '+previousBands.join(' / '):''),
   advice:targetReached?'Tüm setlerde üst sınıra ulaştın: form uygunsa zorluğu küçük bir adım artır.':'Önce bütün setlerde üst tekrar/süre sınırına ulaş.'};
 }
 function renderCards(){
  const host=byId('homeCalMoves');if(!host)return;
  const active=current(),frag=doc.createDocumentFragment();
+ const guide=el('section','home-cal-gear');
+ guide.append(el('strong','','Dört ekipman · Evde Full Body'));
+ guide.append(el('p','home-cal-hint','Uzun loop bantlar (10/20/30/40 kg), kapı ankrajı, geniş egzersiz matı ve isteğe bağlı şınav barları. Şınav barları, başlangıçtaki yüksek yüzeyde eğimli şınavın yerine geçmez.'));
+ guide.append(el('p','home-cal-tip','Kapı ankrajını kapalı ve güvenli kapıya, kapının açılma yönüne ters taraftan kur; her sette bağlantıyı kontrol et. Bantların kg değerleri nominaldir: gerçek gerilim esneme mesafesine göre değişir.'));
+ frag.append(guide);
  const sections=[['Temel Full Body',E.MOVES.slice(0,10)],['Kalistenik · Core / ABS',E.MOVES.slice(10)]];
  for(const [heading,moves] of sections){
   frag.append(el('h3','home-cal-section-title',heading));
@@ -48,12 +65,14 @@ function renderCards(){
      const row=active.items?.[move.id]?.[i]||null,wrap=el('div','home-cal-set');
      const input=el('input');input.type='number';input.min='1';input.max=move.kind==='seconds'?'120':'150';
      input.step='1';input.inputMode='numeric';input.id='homeCal-'+move.id+'-'+i;
-     input.setAttribute('aria-label',move.tr+' '+(i+1)+'. set '+(move.kind==='seconds'?'saniye':'tekrar'));
-     input.placeholder=move.kind==='seconds'?'saniye':'tekrar';
+     input.setAttribute('aria-label',move.tr+' '+(i+1)+'. set '+(move.kind==='seconds'?'saniye':(['dead-bug','pallof-press'].includes(move.id)?'her taraf için tekrar':'tekrar')));
+     input.placeholder=move.kind==='seconds'?'saniye':(['dead-bug','pallof-press'].includes(move.id)?'her taraf':'tekrar');
      if(row)input.value=String(move.kind==='seconds'?row.seconds:row.reps);
      const intensity=el('select');intensity.id=input.id+'-band';
      intensity.setAttribute('aria-label',move.tr+' '+(i+1)+'. set direnç veya varyasyon');
-     for(const [value,label] of [['bodyweight','Vücut ağırlığı / band yok'],['light','Hafif bant'],['medium','Orta bant'],['heavy','Sert bant']]){
+     const options=BAND_OPTIONS.slice();
+     if(row?.resistance&&LEGACY_BANDS[row.resistance])options.push([row.resistance,LEGACY_BANDS[row.resistance]]);
+     for(const [value,label] of options){
       const o=el('option','',label);o.value=value;intensity.append(o);
      }
      intensity.value=row?.resistance||'bodyweight';
@@ -75,7 +94,7 @@ function saveSet(id,index,value,resistance){
  const n=Number(value);
  const record={done:true,[move.kind==='seconds'?'seconds':'reps']:n,resistance,doneAt:new Date().toISOString()};
  if(String(value).trim()===''||!E.validSet(move,record)){status(move.tr+' için geçerli tam sayı '+(move.kind==='seconds'?'saniye':'tekrar')+' gir.');return}
- if(!['bodyweight','light','medium','heavy'].includes(resistance)){status('Geçersiz direnç seçimi.');return}
+ if(!BAND_OPTIONS.some(item=>item[0]===resistance)&&!Object.hasOwn(LEGACY_BANDS,resistance)){status('Geçersiz direnç seçimi.');return}
  const next=JSON.parse(JSON.stringify(active));next.items[id][index]=record;
  if(!write(CURRENT,next))return;
  render();status(move.tr+' · '+(index+1)+'. set kaydedildi ✓');
