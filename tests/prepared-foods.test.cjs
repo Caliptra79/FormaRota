@@ -71,7 +71,7 @@ test('PWA precaches the catalog and food search presents product notes without c
  assert.match(html,/\.concat\(window\.FormaRotaPreparedFoods\|\|\[\]\)/);
  assert.match(html,/startsWith\('prepared-'\)&&food\.note/);
  assert.match(sw,/'\.\/assets\/prepared-foods\.js'/);
- assert.match(sw,/formarota-solo-v103-shell/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
  assert.match(html,/function collectBackup\(\)\{return\{version:7/);
  assert.match(html,/id="absManualToggle"/);
  assert.match(html,/id="walkKm"/);
