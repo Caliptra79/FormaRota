@@ -74,7 +74,7 @@ test('offline cache carries home program UI, CSS and engine without modifying ex
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset+' precached');
   if(asset.endsWith('.js'))new vm.Script(source('assets/'+asset),{filename:asset});
  }
- assert.match(sw,/formarota-solo-v110-shell/);
+ assert.match(sw,/formarota-solo-v111-shell/);
  assert.ok(source('assets/home-calisthenics.css').includes('data-workout-program="home"'));
  assert.ok(source('assets/home-calisthenics.css').includes('grid-template-columns:1fr'));
  assert.ok(html.includes('id="absManualToggle"'));
