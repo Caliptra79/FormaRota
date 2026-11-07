@@ -137,7 +137,16 @@ const ACHIEVEMENTS=[
  ['five-active-weeks','🌟','Beş haftalık emek','En az 5 aktif haftaya ulaş','silver',x=>x.activeWeeks>=5],
  ['twelve-active-weeks','⭐','İstikrar mevsimi','En az 12 aktif haftaya ulaş','gold',x=>x.activeWeeks>=12],
  ['twentyfour-active-weeks','💠','Uzun soluk','En az 24 aktif haftaya ulaş','diamond',x=>x.activeWeeks>=24],
- ['fiftytwo-active-weeks','👑','Bir yıllık yolculuk','En az 52 aktif haftaya ulaş','legendary',x=>x.activeWeeks>=52]
+ ['fiftytwo-active-weeks','👑','Bir yıllık yolculuk','En az 52 aktif haftaya ulaş','legendary',x=>x.activeWeeks>=52],
+ ['first-home-session','🏡','Evde ilk adım','İlk tamamlanan Evde Full Body + Core antrenmanı','bronze',x=>x.homeCompleted>=1],
+ ['ten-home-sessions','💪','Evin gücü','10 tamamlanan ev antrenmanı','silver',x=>x.homeCompleted>=10],
+ ['three-walk-streak','👟','Üç günlük rota','Üst üste 3 gün en az 5 km yürüyüş','bronze',x=>x.longestStreak>=3],
+ ['seven-walk-streak','🥾','Rota alışkanlığı','Üst üste 7 gün en az 5 km yürüyüş','silver',x=>x.longestStreak>=7],
+ ['thirty-walk-streak','🗺️','Bir aylık rota','Üst üste 30 gün en az 5 km yürüyüş','gold',x=>x.longestStreak>=30],
+ ['first-volume-record','🏋️','Yeni hacim rekoru','Aynı hareket/varyasyonda tam antrenman hacmini geliştirdin','silver',x=>x.prCount>=1],
+ ['five-volume-records','📈','Hacim ustası','5 doğrulanabilir antrenman hacim rekoru','gold',x=>x.prCount>=5],
+ ['first-perfect-week','🌟','Görevler tamam','Haftalık dört görevi bir kez tamamla','silver',x=>x.perfectWeeks>=1],
+ ['four-perfect-weeks','💠','Görev istikrarı','Dört ayrı haftada bütün görevleri tamamla','diamond',x=>x.perfectWeeks>=4]
 ];
 const BADGE_TIERS={bronze:'🥉 Bronze',silver:'🥈 Silver',gold:'🥇 Gold',diamond:'💎 Diamond',legendary:'👑 Legendary'};
 function historySummary(){
@@ -153,6 +162,14 @@ function historySummary(){
 function achievementMarkup(stats){
  const unlocked=ACHIEVEMENTS.filter(a=>a[5](stats)).length;
  return '<div class="fr-achievements"><h3>🎖️ Başarı rozetleri <small>'+unlocked+'/'+ACHIEVEMENTS.length+' kazanıldı</small></h3><p class="muted">Bronze → Silver → Gold → Diamond → Legendary · Eski kayıtlar da sayılır.</p><div class="fr-badge-grid">'+ACHIEVEMENTS.map(a=>{const yes=a[5](stats);return '<div class="fr-badge '+(yes?'earned':'locked')+' tier-'+a[4]+'" aria-label="'+a[2]+', '+BADGE_TIERS[a[4]]+(yes?', kazanıldı':', kilitli')+'"><span aria-hidden="true">'+(yes?a[1]:'🔒')+'</span><strong>'+a[2]+'</strong><small>'+a[3]+'</small><em>'+BADGE_TIERS[a[4]]+'</em></div>'}).join('')+'</div></div>';
+}
+function questMarkup(data){
+ if(!data)return '';
+ const cards=data.missions.map(m=>'<div class="fr-quest'+(m.done?' achieved':'')+'"><strong>'+(m.done?'✓ ':'○ ')+m.label+'</strong><small>'+m.value+' / '+m.target+' gün</small><progress value="'+m.value+'" max="'+m.target+'"></progress></div>').join('');
+ return '<section class="fr-rank-quests" aria-label="Haftalık FormaRota görevleri"><h3>🎯 Haftalık görevler · '+data.complete+'/4</h3>'+
+ '<p class="fr-quest-intro">Hafta başlangıcı: '+data.week+' · Her gün en fazla bir kez sayılır. Tamamlanan seanslar ve gerçek kayıtlar kullanılır; ayrıca işaretleme gerekmez.</p>'+
+ '<div class="fr-quest-grid">'+cards+'</div>'+
+ '<p class="fr-quest-end">Yürüyüş serin: '+data.stats.currentStreak+' gün (en uzun '+data.stats.longestStreak+') · Egzersiz hacim rekorları: '+data.stats.prCount+' · Tüm görevlerin tamamlandığı haftalar: '+data.stats.perfectWeeks+'. Görevler ekstra XP üretmez; mevcut rank hesabın korunur.</p></section>';
 }
 function graphMarkup(weeks){
  const all=[...weeks.entries()].sort((a,b)=>a[0].localeCompare(b[0]));const recent=all.slice(-8),labels=recent.map(x=>x[0].slice(5)),values=[
@@ -179,7 +196,13 @@ function render(){
  const x=tally();checkRankUp(x.xp);const base='<div class="fr-rank-row"><span class="fr-rank-icon">'+x.icon+'</span><div><small>FORMA ROTA RANK</small><strong>'+x.title+'</strong><small>'+x.xp.toLocaleString('tr-TR')+' XP · Sonraki seviye için '+x.remaining.toLocaleString('tr-TR')+' XP</small></div></div><div class="fr-rank-track"><span style="width:'+x.percent+'%"></span></div>';
  home.innerHTML=base+'<small>Gelişimde ayrıntıları gör →</small>';
  detail.innerHTML=base+'<div class="fr-rank-grid">'+Object.entries(x.categories).map(([k,v])=>'<div><small>'+k+'</small><strong>'+v+' XP</strong></div>').join('')+'</div>'+
- '<p class="muted fr-rank-policy">Beslenme: kayıt bulunan her gün +25 XP. Günün üç ana öğünü kayıtlıysa, protein hedefinin en az %90’ı ve planlanan kalorinin yaklaşık %95–105’i sağlanıyorsa +15 XP. Eksik yemek, çok düşük kalori veya daha büyük açık ekstra puan getirmez. Kalori hedefi bakım kalorisi değil, planlanan alımdır.</p>';ensureProgressStyles();const progress=historySummary();detail.insertAdjacentHTML('beforeend',achievementMarkup(progress.stats)+graphMarkup(progress.weeks));
+ '<p class="muted fr-rank-policy">Beslenme: kayıt bulunan her gün +25 XP. Günün üç ana öğünü kayıtlıysa, protein hedefinin en az %90’ı ve planlanan kalorinin yaklaşık %95–105’i sağlanıyorsa +15 XP. Eksik yemek, çok düşük kalori veya daha büyük açık ekstra puan getirmez. Kalori hedefi bakım kalorisi değil, planlanan alımdır.</p>';ensureProgressStyles();const progress=historySummary();
+ const questData=window.FormaRotaRankQuests?.analyze?.({
+  foods:read('kocluk-food-log-v2',[]),walks:read('formarota-walks-v1',{}),
+  full:read('kocluk-fitness-history-v1',[]),abs:read('formarota-abs-history-v1',[]),
+  home:read('formarota-home-history-v1',[])
+ })||null;
+ detail.insertAdjacentHTML('beforeend',questMarkup(questData)+achievementMarkup({...progress.stats,...(questData?.stats||{})})+graphMarkup(progress.weeks));
 }
 function init(){const h=document.getElementById('frRankHome');if(!h)return;
  const open=()=>{if(typeof showView==='function')showView('progress');document.getElementById('frRankProgress')?.scrollIntoView({block:'start',behavior:'smooth'})};
