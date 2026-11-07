@@ -101,6 +101,13 @@ async function run(){
    assert.ok(Math.max(...map.distances)<6,label+' pins drift from road '+JSON.stringify(map));
    assert.ok(map.doc<=width+5,label+' progress overflow '+JSON.stringify(map));
    if(label==='tablet portrait')assert.equal(map.cols.trim().split(/\s+/).length,1,'tablet portrait should stack the route map');
+   const homeView=await evaluate("(()=>{showView('fitness',false,false);window.FormaRotaABS.choose('home');const p=document.getElementById('homeCalPanel');return {program:document.documentElement.dataset.workoutProgram,visible:getComputedStyle(p).display!=='none',moves:p.querySelectorAll('.home-cal-move').length,soloHidden:getComputedStyle(document.getElementById('absWorkoutPanel')).display==='none',gymHidden:getComputedStyle(document.getElementById('fitExercisePanel')).display==='none',overflow:document.documentElement.scrollWidth}})()");
+   assert.equal(homeView.program,'home',label+' home workout selector');
+   assert.equal(homeView.visible,true,label+' home workout panel visible');
+   assert.equal(homeView.moves,13,label+' ten strength + three core');
+   assert.equal(homeView.soloHidden,true,label+' Solo ABS should remain separate');
+   assert.equal(homeView.gymHidden,true,label+' gym workout should remain separate');
+   assert.ok(homeView.overflow<=width+5,label+' home tracker overflow '+JSON.stringify(homeView));
    if(label==='desktop wide'){
     const form=await evaluate("(()=>{\n showView('fitness',false,false);\n window.FormaRotaABS.choose('abs');\n const toggle=document.getElementById('absManualToggle');\n toggle.click();\n const panel=document.getElementById('absManualPanel');\n const visible=!panel.hidden&&getComputedStyle(panel).display!=='none';\n const values={\n  'floor-crunch':[12,12,12],\n  'reverse-crunch':[12,11,10],\n  'heel-touch':[20,20,20],\n  'plank':[42,40,35]\n };\n document.getElementById('absManual-floor-crunch-0').value='12';\n panel.querySelector('.abs-manual-copy').click();\n for(const [move,sets] of Object.entries(values)){\n  sets.forEach((n,i)=>{\n   if(move==='floor-crunch'&&i>0)return;\n   document.getElementById('absManual-'+move+'-'+i).value=String(n);\n  });\n }\n const count=panel.querySelectorAll('input[type=\"number\"]').length;\n window.confirm=()=>true;\n document.getElementById('absManualForm').requestSubmit();\n const history=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]');\n const saved=history[0];\n const archive=document.getElementById('absHistory').textContent;\n const completed=window.FormaRotaABSEngine.finished(saved);\n const beforeDup=history.length;\n document.getElementById('absManualForm').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));\n const afterDup=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]').length;\n return {visible,count,completed,backfilled:saved?.recordedAfterWorkout,\n  archived:archive.includes('Sonradan kaydedildi'),\n  beforeDup,afterDup,plank:saved?.items?.plank?.map(x=>x.seconds),\n  mapDays:window.FormaRotaRouteMap.currentSnapshot().days,\n  active:localStorage.getItem('formarota-abs-current-v1')};\n})()");
     assert.equal(form.visible,true,'manual form must be visible in ABS mode');
@@ -113,6 +120,15 @@ async function run(){
     assert.ok(form.mapDays>=1,'completed manual workout should count toward route');
     assert.equal(form.active,null,'manual record must not create a live workout');
     console.log('PASS desktop wide, ABS manual save, history, deduplication and route progress');
+    const workout=await evaluate("(()=>{window.FormaRotaABS.choose('home');document.getElementById('homeCalStart').click();const eng=window.FormaRotaHomeEngine;const before=JSON.parse(localStorage.getItem('formarota-home-current-v1')||'null');for(const m of eng.MOVES){for(let i=0;i<2;i++){const input=document.getElementById('homeCal-'+m.id+'-'+i);input.value=String(m.low);input.closest('.home-cal-set').querySelector('button').click();}}const active=JSON.parse(localStorage.getItem('formarota-home-current-v1')||'null');const done=eng.complete(active);document.getElementById('homeCalFinish').click();const hist=JSON.parse(localStorage.getItem('formarota-home-history-v1')||'[]');return {started:before?.program,count:eng.count(active),done,history:hist.length,finished:eng.finished(hist[0]),solo:JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]').length,active:localStorage.getItem('formarota-home-current-v1'),full:localStorage.getItem('kocluk-fitness-history-v1')}})()");
+    assert.equal(workout.started,'home-calisthenics-v1','home independent tracker starts');
+    assert.equal(workout.count,26,'all 13 home moves get two real sets');
+    assert.equal(workout.done,true,'home completion needs 26 valid sets');
+    assert.equal(workout.history,1,'home session saved separately');
+    assert.equal(workout.finished,true,'saved home session validated');
+    assert.equal(workout.solo,1,'Solo ABS records preserved');
+    assert.equal(workout.active,null,'home current session cleared');
+    console.log('PASS desktop wide, home full-body plus calisthenics core records and Solo ABS isolation');
    }
    console.log('PASS '+label+' '+width+'x'+height+', longest pin drift '+Math.max(...map.distances).toFixed(1)+'px');
   }

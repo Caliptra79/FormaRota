@@ -18,7 +18,7 @@
   try{root.localStorage.setItem(key,JSON.stringify(data));return true}
   catch{root.alert?.('Kayıt yapılamadı. Cihaz depolamasını ve boş alanı kontrol et.');return false}
  };
- const selected=()=>root.localStorage.getItem(KEY.choice)==='abs'?'abs':'fullbody';
+ const selected=()=>['abs','home'].includes(root.localStorage.getItem(KEY.choice))?root.localStorage.getItem(KEY.choice):'fullbody';
  const day=()=>{
   const d=new Date();
   return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -46,7 +46,7 @@
   root.FormaRotaStudioPlus?.renderRings?.();
  }
  function choose(program){
-  if(!['fullbody','abs'].includes(program))return;
+  if(!['fullbody','abs','home'].includes(program))return;
   if(program!=='abs')pauseWatch();
   try{root.localStorage.setItem(KEY.choice,program)}catch{}
   updateSelection();
@@ -433,7 +433,7 @@
   edited=null;
   try{
    const chosen=root.localStorage.getItem(KEY.choice);
-   if(chosen!=='abs'&&chosen!=='fullbody')root.localStorage.setItem(KEY.choice,'fullbody');
+   if(!['abs','fullbody','home'].includes(chosen))root.localStorage.setItem(KEY.choice,'fullbody');
   }catch{}
   refresh();
   root.FormaRotaStudioPlus?.refresh?.();

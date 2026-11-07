@@ -32,6 +32,9 @@ html[data-theme] #fitSchedulePanel .fit-plan-day[data-activity="basket"],
 html[data-theme] #fitSchedulePanel .fit-plan-day[data-activity="basket-abs"]{
  border-left:4px solid var(--chart-weight,var(--accent))!important;
 }
+html[data-theme] #fitSchedulePanel .fit-plan-day[data-activity="home"]{
+ border-left:4px solid var(--accent)!important;
+}
 html[data-theme] #fitSchedulePanel .fit-plan-day[data-activity="volleyball"]{
  border-left:4px solid var(--chart-weight,var(--accent))!important;
 }
