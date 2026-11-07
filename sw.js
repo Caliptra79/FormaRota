@@ -13,9 +13,10 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
   const r=await fetch(path,{cache:'reload'});if(!r.ok)throw new Error('Offline asset cannot be installed: '+path);await shell.put(path,r);
  }));
  const gifCache=await caches.open(GIF_CACHE);
- await Promise.allSettled(GIFS.map(async path=>{
+ await Promise.all(GIFS.map(async path=>{
   const response=await fetch(path,{cache:'reload'});
-  if(response.ok)await gifCache.put(path,response);
+  if(!response.ok)throw new Error('Required exercise GIF unavailable: '+path);
+  await gifCache.put(path,response);
  }));
  await self.skipWaiting();
 })()));
