@@ -16,7 +16,7 @@ const move=(id,tr,group,tip,mistake,source=GUIDE,band='10',low=8,high=12)=>Objec
 const MOVES=Object.freeze([
  move('band-squat','Bantla squat','Bacak · kalça','Bandin ustune saglam bas, kalcayi kontrollu geriye gonder ve tum ayagi yerde tut.','Dizleri ice dusurme, belini yuvarlama ve kalkarken bandin seni yana cekmesine izin verme.',VIDEO+'&t=57s'),
  move('bent-row','Bent-over row','Sirt','Kalca menteşesiyle one egil, govdeyi sabit tut ve dirsekleri kalcaya dogru cek.','Belden silkelenme; omuzlari kulaklara cekme veya bandi birakip geri sektirme.',VIDEO+'&t=455s'),
- move('wrap-chest','Wraparound chest press','Gogus','Bandi sirtin arkasindan gecir, omuzlari dengeli tut, kollari onune dogru kontrollu it.','Kamburlasma, omuzlari one firlatma veya bandi koltuk altinda kaydirma.',GUIDE),
+ move('wrap-chest','Wraparound chest press','Göğüs','Bandı sırtın arkasından geçir, omuzları dengeli tut; kolları kontrollü öne it.','Omuzları öne fırlatma, bandı koltuk altından kaydırma veya beli aşırı çukurlaştırma.','https://torokhtiy.com/blogs/guides/resistance-band-chest-exercises'),
  move('shoulder-press','Standing band shoulder press','Omuz','Banda saglam bas, karin bolgesini siki tut ve elleri kontrollu yukariya it.','Belini fazla cukurlastirma, kaburgalari ileri firlatma.',VIDEO+'&t=170s'),
  move('biceps-curl','Standing band biceps curl','Biceps','Dirsekler govde yaninda; kaldiris ve donusu esit kontrollu yap.','Govdeyi geriye savurarak kaldirma; donuste bandi aniden birakma.',VIDEO+'&t=340s'),
  move('overhead-triceps','Overhead triceps extension','Triceps','Dirsekler sabit, bant gerginligi surekli olacak sekilde yavas ac-kapat.','Dirsekleri yanlara savurma, boynu zorlayacak baglanti kurma.',VIDEO+'&t=619s'),
@@ -24,14 +24,14 @@ const MOVES=Object.freeze([
  move('band-crunch','Bantla crunch / karın','Karin','Kisa, kontrollu bir karin bukulmesi yap; boyun rahat kalsin.','Boyunla cekme ve kalcayi sertce sallama.',VIDEO+'&t=843s','none',10,15),
  move('front-lunge','Bantla front lunge','Bacak · kalca','Kucuk ve dengeli bir adimla basla; on ayagin tumunu yerde tut.','One dizini ice kacirma, hizli inip dengeni kaybetme.',GUIDE),
  move('one-arm-row','Single-arm band row','Sirt','Bant sabitken dirsegi kalcaya dogru cek; iki tarafi esit calis.','Govdeyi cekis yonune dondurme veya omuzu yukariya sikistirma.',GUIDE),
- move('single-press','Single-arm chest press','Gogus','Yalnizca guvenli ankrajla; omuz hizasinda sabitle, govdeyi dondurmeden one it.','Sabitlenmemis kapi/ankraja baglama veya omuzu ileri dusurme.',GUIDE),
+ move('band-rdl','Bantla Romanian deadlift','Arka bacak · kalça','Bandın ortasına bas, dizleri hafif bük, kalçayı geriye gönder; sırt nötr kalırken kontrollü doğrul.','Hareketi squat gibi yapma, beli yuvarlama veya kalkışın sonunda geriye yaslanma.','https://www.stridefitapp.com/exercises/band-romanian-deadlift'),
  move('pallof','Pallof press','Core · denge','Bandi gogus hizasinda saglam sabitle, iki elinle ileri uzat; iki yonde de calis.','Govdenin ankraja dogru donmesine izin verme.',GUIDE,'10',8,12),
  move('staggered-curl','Staggered-stance curl','Biceps','Bir ayak hafif onde, sabit durusla dirsekleri yerinde tut.','Kalca ve sirtla agirligi savurma.',GUIDE)
 ]);
 const IDS=new Map(MOVES.map(m=>[m.id,m]));
 const PLANS=Object.freeze({
  A:Object.freeze(['band-squat','bent-row','wrap-chest','shoulder-press','biceps-curl','overhead-triceps','calf-raise','band-crunch']),
- B:Object.freeze(['front-lunge','one-arm-row','single-press','shoulder-press','staggered-curl','overhead-triceps','calf-raise','pallof'])
+ B:Object.freeze(['front-lunge','band-rdl','one-arm-row','wrap-chest','shoulder-press','staggered-curl','overhead-triceps','band-crunch'])
 });
 const iso=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
 const number=x=>x!==null&&x!==undefined&&String(x).trim()!==''&&Number.isInteger(Number(x))?Number(x):null;
