@@ -44,15 +44,19 @@ function snapshot(day=localDay()){
  const fullComplete=full.some(s=>s?.date===day&&validSets(s));
  const absDone=root.FormaRotaABSEngine?.completedDates?.(abs);
  const absComplete=Boolean(absDone?.has(day));
+ const homeComplete=Boolean(root.FormaRotaHomeWorkout?.completedOn?.(day));
+ const bandComplete=Boolean(root.FormaRotaJamesBand?.completedOn?.(day));
  const activeFull=read('kocluk-fitness-current-v1',null);
  const activeAbs=read('formarota-abs-current-v1',null);
  const active=(activeFull?.date===day&&['running','paused'].includes(activeFull.status))||
-  (activeAbs?.date===day&&['running','paused'].includes(activeAbs.status));
+  (activeAbs?.date===day&&['running','paused'].includes(activeAbs.status))||
+  Boolean(root.FormaRotaHomeWorkout&&read('formarota-home-current-v1',null)?.date===day)||
+  Boolean(root.FormaRotaJamesBand?.activeOn?.(day));
  const hasMeal=meal=>todays.some(x=>x.meal===meal);
  return {day,logs,todays,kcal,protein,goalKcal,goalProtein,
   carbs:carbsValid?total(todays,'carbs'):null,fat:fatValid?total(todays,'fat'):null,
   carbsComplete:carbsValid,fatComplete:fatValid,
-  water,waterGoal,walk,fullComplete,absComplete,active,hasMeal};
+  water,waterGoal,walk,fullComplete,absComplete,homeComplete,bandComplete,active,hasMeal};
 }
 function setText(id,value){const node=byId(id);if(node)node.textContent=value;}
 function ring(data){
@@ -101,11 +105,13 @@ function renderPlan(data){
   done:data.water>=data.waterGoal,status:data.water>=data.waterGoal?'Tamamlandı':'Devam ediyor'});
  rows.push({label:'Yürüyüş',icon:'🚶',desc:fmt(data.walk)+' / 5 km',
   done:data.walk>=5,status:data.walk>=5?'Tamamlandı':'Kalan '+fmt(Math.max(0,5-data.walk))+' km'});
- const fullOrAbs=data.fullComplete||data.absComplete;
- rows.push({label:'Antrenman',icon:'🏋️',
-  desc:fullOrAbs?'Bugün tamamlanmış antrenman kaydı var':
-   data.active?'Aktif seansın devam ediyor':'Bugün tamamlanmış seans kaydı yok',
-  done:fullOrAbs,status:fullOrAbs?'Tamamlandı':data.active?'Sürüyor':'Kayıt yok'});
+ const anyWorkout=data.fullComplete||data.absComplete||data.homeComplete||data.bandComplete;
+ const planned=root.FormaRotaWeeklyPlan?.getDay?.(data.day);
+ const plannedLabel=planned?.explicit?root.FormaRotaWeeklyPlan?.types?.find(x=>x.value===planned.type)?.label:null;
+ rows.push({label:'Antrenman',icon:planned?.type==='band'?'🟠':'🏋️',
+  desc:(plannedLabel?'Bugünkü plan: '+plannedLabel+' · ':'')+
+   (anyWorkout?'Tamamlanan seans kaydı var':data.active?'Seans devam ediyor':'Henüz tamamlanan seans yok'),
+  done:anyWorkout,status:anyWorkout?'Tamamlandı':data.active?'Sürüyor':plannedLabel?'Planlandı':'Kayıt yok'});
  const frag=doc.createDocumentFragment();
  for(const entry of rows){
   const row=node('div','oled-plan-item'+(entry.done?' done':''));
@@ -123,7 +129,9 @@ function renderRecent(data){
    value:number(x.kcal)!==null?fmt(x.kcal)+' kcal':'Kalori yok'}));
  const full=array(read('kocluk-fitness-history-v1',[]));
  const abs=array(read('formarota-abs-history-v1',[]));
- for(const [records,label] of [[full,'Full Body'],[abs,'ABS']]){
+ const home=array(read('formarota-home-history-v1',[]));
+ const band=array(read('formarota-james-band-history-v1',[]));
+ for(const [records,label] of [[full,'Full Body'],[abs,'ABS'],[home,'Evde Full Body + Core'],[band,'James Grage · Direnç Bandı']]){
   records.forEach((x,i)=>{
    if(x&&x.status==='finished'&&/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')&&x.date<=data.day){
     recent.push({kind:'workout',date:x.date,index:i,name:label+' antrenmanı',
@@ -197,6 +205,7 @@ function renderActivity(data){
    'Basketbol katılımı otomatik doğrulanmaz.';
  else if(selected.type==='volleyball')completion='Voleybol katılımı otomatik doğrulanmaz.';
  else if(selected.type==='home')completion=root.FormaRotaHomeWorkout?.completedOn?.(data.day)?'Evde Full Body + Core kaydedilmiş.':'Ev antrenmanı için henüz tamamlanmış kayıt yok.';
+ else if(selected.type==='band')completion=root.FormaRotaJamesBand?.completedOn?.(data.day)?'Direnç bandı Full Body kaydedilmiş.':root.FormaRotaJamesBand?.activeOn?.(data.day)?'Direnç bandı seansın sürüyor.':'Direnç bandı planlandı; henüz tamamlanmış kayıt yok.';
  else if(selected.type==='other')completion='Diğer etkinlikler için otomatik tamamlanma kaydı yok.';
  else if(selected.type==='rest')completion='Yürüyüş planın kaydedildi; mesafeyi ayrıca günlük yürüyüş bölümünden kaydedebilirsin.';
  status.textContent='Bugün: '+label+(selected.type==='other'&&selected.note?' · '+selected.note:'')+' — '+completion;
