@@ -25,6 +25,9 @@ html[data-theme] #homeCalPanel strong{
 .home-cal-toolbar select{display:block;min-height:42px;width:100%;margin-top:4px}
 .home-cal-toolbar button{min-height:44px}
 .home-cal-status{padding:10px 12px;border-radius:12px;background:var(--panel2);color:var(--text);font-size:.84rem}
+.home-cal-gear{border:1px solid var(--border);border-radius:13px;padding:11px 13px;background:var(--panel2);color:var(--text);margin:12px 0 17px}
+.home-cal-gear strong{display:block;margin-bottom:6px}
+.home-cal-gear .home-cal-hint,.home-cal-gear .home-cal-tip{margin:4px 0}
 .home-cal-section-title{margin:19px 0 10px;font-size:1.16rem}
 .home-cal-move{
  border:1px solid var(--border);border-left:3px solid var(--accent);
