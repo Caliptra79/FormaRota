@@ -1,0 +1,22 @@
+/* FormaRota: restaurant meals are selected by whole menu, never typed in grams. */
+html[data-theme] .restaurant-menu-extras{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;
+ width:100%;min-width:0;padding:10px;
+ border:1px solid var(--border);border-radius:12px;
+ background:var(--panel2);color:var(--text);
+}
+html[data-theme] .restaurant-menu-option{display:grid;gap:5px;min-width:0;font-size:.8rem;font-weight:700;color:var(--text)}
+html[data-theme] .restaurant-menu-option select{
+ display:block;width:100%;min-width:0;min-height:44px;
+ color:var(--text)!important;background:var(--panel)!important;
+ border:1px solid var(--border)!important;
+}
+html[data-theme] .food-result-controls:has(.restaurant-menu-extras)>.food-quantity-label{
+ min-width:130px;flex:1;order:-1;
+}
+html[data-theme] .food-result-controls:has(.restaurant-menu-extras)>button{
+ min-height:44px;flex:1;white-space:normal;
+}
+@media(max-width:520px){
+ html[data-theme] .restaurant-menu-extras{grid-template-columns:1fr}
+}
