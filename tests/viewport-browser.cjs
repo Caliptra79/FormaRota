@@ -144,6 +144,20 @@ async function run(){
     assert.equal(workout.active,null,'home current session cleared');
     console.log('PASS desktop wide, home full-body plus calisthenics core records and Solo ABS isolation');
    }
+   if(label==='desktop wide'){
+    const order=await evaluate("(()=>{showView('nutrition',false,false);const foods=localSearch('Doyuyo');const menu=foods.find(f=>f.id==='restaurant-doyuyo-paprika-parmesan-3lu-menu');if(!menu)return{error:'missing menu',hits:foods.length};const results=document.getElementById('results');renderResults([menu],results);const card=results.querySelector('.result'),qty=card?.querySelector('.food-quantity-label input'),optionNodes=card?.querySelectorAll('.restaurant-menu-option select'),button=card?.querySelector('.food-result-controls button');if(!qty||optionNodes.length!==2||!button)return{error:'missing controls'};const initial={qty:qty.value,button:button.textContent,unit:qty.getAttribute('aria-label')};optionNodes[0].value='ranch';optionNodes[0].dispatchEvent(new Event('change'));optionNodes[1].value='cola';optionNodes[1].dispatchEvent(new Event('change'));document.getElementById('meal').value='Akşam yemeği';button.click();const rows=JSON.parse(localStorage.getItem('kocluk-food-log-v2')||'[]'),last=rows.at(-1),expected=window.FormaRotaRestaurantMenuOptions.withExtras(menu,'ranch','cola');return {initial,menuFirst:foods[0]?.portionUnit==='menü',portion:last?.portionUnit,count:last?.pieceCount,amount:last?.amount,kcal:last?.kcal,expected:expected.kcal*menu.pieceGrams/100,hasExtras:last?.name?.includes('Ranch')&&last.name.includes('Şekerli kola'),logText:document.getElementById('entries')?.textContent?.includes('1 menü')} })()");
+    assert.equal(order.error,undefined,'Doyuyo menu should be available '+JSON.stringify(order));
+    assert.equal(order.menuFirst,true,'whole restaurant menus listed before individual components');
+    assert.equal(order.initial.qty,'1','menu selection defaults to one');
+    assert.equal(order.initial.button,'Menüyü ekle','one-click whole menu');
+    assert.ok(order.initial.unit.includes('menü sayısı'),'menu count rather than grams input');
+    assert.equal(order.portion,'menü','log stores menu unit');
+    assert.equal(order.count,1,'one whole menu logged');
+    assert.equal(order.hasExtras,true,'sauce and drink recorded in same order');
+    assert.equal(order.logText,true,'nutrition history displays one menu');
+    assert.ok(Math.abs(order.kcal-order.expected)<0.05,'menu calories must include extras once');
+    console.log('PASS desktop wide, restaurant full menu 1-tap logging with sauce and drink');
+   }
    console.log('PASS '+label+' '+width+'x'+height+', longest pin drift '+Math.max(...map.distances).toFixed(1)+'px');
   }
  }finally{
