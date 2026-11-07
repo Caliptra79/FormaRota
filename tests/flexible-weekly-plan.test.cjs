@@ -205,7 +205,7 @@ test('home shortcut and full weekly planner share one save path, and planning ne
 });
 test('home shortcut can save a custom activity note and rejects invalid choices',()=>{
  const x=harness();
- assert.equal(x.publicApi.types.length,9);
+ assert.equal(x.publicApi.types.length,10);
  x.publicApi.setDay('2026-10-28','other','Yüzme');
  assert.equal(x.publicApi.getDay('2026-10-28').note,'Yüzme');
  x.publicApi.setDay('2026-10-28','rest','');
