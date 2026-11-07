@@ -82,3 +82,14 @@ test('offline cache carries home program UI, CSS and engine without modifying ex
  assert.ok(html.includes('id="workoutTodaySummary"'));
  assert.ok(sw.includes("'abs-plank'"));
 });
+
+test('four exact band levels are selectable while legacy band notes remain readable',()=>{
+ const ui=source('assets/home-calisthenics.js');
+ for(const band of ['band-10','band-20','band-30','band-40'])assert.ok(ui.includes("'"+band+"'"),band);
+ for(const band of ['light','medium','heavy'])assert.ok(ui.includes(band+":'"),'legacy '+band);
+ assert.ok(ui.includes('const bandLabel='));
+ assert.ok(ui.includes('previousBands.join'));
+ assert.ok(ui.includes('her taraf için tekrar'));
+ assert.ok(ui.includes('Kapı ankrajını kapalı ve güvenli kapıya'));
+ assert.ok(source('assets/home-calisthenics.css').includes('.home-cal-gear'));
+});
