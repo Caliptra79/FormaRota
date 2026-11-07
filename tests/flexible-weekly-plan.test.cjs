@@ -40,9 +40,9 @@ test('all seven days including Wednesday are selectable and use real dates',()=>
  assert.equal(wed.dataset.activity,'rest');
  const select=wed.children[1].children[1];
  assert.equal(select.attrs['aria-label'],'Çar 2026-10-28 antrenman etkinliği');
- assert.equal(select.children.length,9);
+ assert.equal(select.children.length,10);
  assert.equal(select.disabled,false);
- for(const choice of ['full','abs','basket','basket-abs','volleyball','home','full-abs','other','rest'])
+ for(const choice of ['full','abs','basket','basket-abs','volleyball','home','band','full-abs','other','rest'])
   assert.ok(select.children.some(o=>o.value===choice),choice);
  assert.match(x.ids.fitWeekStatus.textContent,/Plan gerçek antrenman kaydı oluşturmaz/);
 });

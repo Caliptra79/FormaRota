@@ -63,7 +63,7 @@ test('all three programs exist, but home data keys and backup validation are ind
  assert.ok(html.includes("changes.push(['formarota-home-history-v1'"));
  assert.ok(html.includes("changes.push(['formarota-abs-history-v1'"));
  assert.ok(html.includes("function collectBackup(){return{version:7"));
- assert.ok(source('assets/abs-workouts.js').includes("['fullbody','abs','home']"));
+ assert.ok(source('assets/abs-workouts.js').includes("['fullbody','abs','home','band']"));
  assert.ok(source('assets/coach-engine-v35.js').includes("'volleyball','home'"));
  assert.ok(html.includes("{value:'home',label:'Evde Full Body + Core'"));
  assert.ok(source('assets/oled-home.js').includes("selected.type==='home'"));
@@ -74,7 +74,7 @@ test('offline cache carries home program UI, CSS and engine without modifying ex
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset+' precached');
   if(asset.endsWith('.js'))new vm.Script(source('assets/'+asset),{filename:asset});
  }
- assert.match(sw,/formarota-solo-v111-shell/);
+ assert.match(sw,/formarota-solo-v112-shell/);
  assert.ok(source('assets/home-calisthenics.css').includes('data-workout-program="home"'));
  assert.ok(source('assets/home-calisthenics.css').includes('grid-template-columns:1fr'));
  assert.ok(html.includes('id="absManualToggle"'));

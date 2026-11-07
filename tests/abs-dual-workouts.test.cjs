@@ -99,7 +99,7 @@ test('choosing ABS is not blocked on Wednesdays; original Full Body IDs, GIF cou
  assert.equal((gifs.match(/'/g)||[]).length/2,19);
 });
 test('ABS backup data is exported and safely validated before restore; older backups remain valid',()=>{
- assert.ok(html.includes("absWorkouts:{selected:['abs','home'].includes(localStorage.getItem('formarota-workout-choice-v1'))"));
+ assert.ok(html.includes("absWorkouts:{selected:['abs','home','band'].includes(localStorage.getItem('formarota-workout-choice-v1'))"));
  assert.ok(html.includes("window.FormaRotaABSEngine?.validateBackup?.(data.fitness.absWorkouts)"));
  assert.ok(html.includes("if(data.fitness.absWorkouts){const absData=data.fitness.absWorkouts;"));
  for(const name of ['formarota-abs-history-v1','formarota-abs-current-v1','formarota-workout-choice-v1']){

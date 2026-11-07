@@ -18,7 +18,7 @@
   try{root.localStorage.setItem(key,JSON.stringify(data));return true}
   catch{root.alert?.('Kayıt yapılamadı. Cihaz depolamasını ve boş alanı kontrol et.');return false}
  };
- const selected=()=>['abs','home'].includes(root.localStorage.getItem(KEY.choice))?root.localStorage.getItem(KEY.choice):'fullbody';
+ const selected=()=>['abs','home','band'].includes(root.localStorage.getItem(KEY.choice))?root.localStorage.getItem(KEY.choice):'fullbody';
  const day=()=>{
   const d=new Date();
   return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
@@ -46,7 +46,7 @@
   root.FormaRotaStudioPlus?.renderRings?.();
  }
  function choose(program){
-  if(!['fullbody','abs','home'].includes(program))return;
+  if(!['fullbody','abs','home','band'].includes(program))return;
   if(program!=='abs')pauseWatch();
   try{root.localStorage.setItem(KEY.choice,program)}catch{}
   updateSelection();
@@ -353,9 +353,11 @@
   const pieces=[];
   if(completed.fullCompleted)pieces.push('✓ Bugün Full Body yaptın');
   if(completed.absCompleted)pieces.push('✓ Bugün ABS yaptın');
+  if(root.FormaRotaJamesBand?.completedOn?.(date))pieces.push('✓ Bugün direnç bandı yaptın');
   if(!pieces.length)pieces.push('Bugün henüz tamamlanmış antrenman kaydın yok.');
   if(active)pieces.push('ABS devam ediyor · '+engine.count(active)+'/12 set');
   if(fullActive)pieces.push('Full Body devam ediyor');
+  if(root.FormaRotaJamesBand?.activeOn?.(date))pieces.push('Direnç bandı seansı devam ediyor');
   node.replaceChildren();
   pieces.forEach((text,i)=>node.append(element('span',i?'abs-today-note':'abs-today-main',text)));
  }
@@ -387,7 +389,9 @@
  function renderHome(){
   const badge=$('homeSessionTag');if(!badge)return;
   const today=engine.todaySummary(history(),fullHistory(),day());
-  if(today.any){
+  if(root.FormaRotaJamesBand?.completedOn?.(day())){
+   badge.textContent='✓ Bugün Direnç Bandı yaptın';badge.classList.remove('hidden');
+  }else if(today.any){
    badge.textContent='✓ Bugün '+today.labels.join(' + ')+' yaptın';
    badge.classList.remove('hidden');
   }else if(current()){
@@ -434,7 +438,7 @@
   edited=null;
   try{
    const chosen=root.localStorage.getItem(KEY.choice);
-   if(!['abs','fullbody','home'].includes(chosen))root.localStorage.setItem(KEY.choice,'fullbody');
+   if(!['abs','fullbody','home','band'].includes(chosen))root.localStorage.setItem(KEY.choice,'fullbody');
   }catch{}
   refresh();
   root.FormaRotaStudioPlus?.refresh?.();
