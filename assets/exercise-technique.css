@@ -1,0 +1,6 @@
+/* Readable, theme-adaptive technical notes; no external assets. */
+.fr-technique{margin:10px 0 4px;padding:9px 11px;border:1px solid var(--border);border-radius:12px;background:var(--panel2);color:var(--text);min-width:0}
+.fr-technique summary{cursor:pointer;font-weight:700;font-size:.83rem;line-height:1.45;color:var(--text);list-style:revert}
+.fr-technique summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.fr-technique p{font-size:.8rem;line-height:1.5;color:var(--muted);margin:9px 0 0;overflow-wrap:anywhere}
+.fr-technique p strong{color:var(--text)}
