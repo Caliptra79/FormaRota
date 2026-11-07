@@ -40,9 +40,9 @@ test('all seven days including Wednesday are selectable and use real dates',()=>
  assert.equal(wed.dataset.activity,'rest');
  const select=wed.children[1].children[1];
  assert.equal(select.attrs['aria-label'],'Çar 2026-10-28 antrenman etkinliği');
- assert.equal(select.children.length,8);
+ assert.equal(select.children.length,9);
  assert.equal(select.disabled,false);
- for(const choice of ['full','abs','basket','basket-abs','volleyball','full-abs','other','rest'])
+ for(const choice of ['full','abs','basket','basket-abs','volleyball','home','full-abs','other','rest'])
   assert.ok(select.children.some(o=>o.value===choice),choice);
  assert.match(x.ids.fitWeekStatus.textContent,/Plan gerçek antrenman kaydı oluşturmaz/);
 });
@@ -205,7 +205,7 @@ test('home shortcut and full weekly planner share one save path, and planning ne
 });
 test('home shortcut can save a custom activity note and rejects invalid choices',()=>{
  const x=harness();
- assert.equal(x.publicApi.types.length,8);
+ assert.equal(x.publicApi.types.length,9);
  x.publicApi.setDay('2026-10-28','other','Yüzme');
  assert.equal(x.publicApi.getDay('2026-10-28').note,'Yüzme');
  x.publicApi.setDay('2026-10-28','rest','');
