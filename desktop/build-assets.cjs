@@ -20,5 +20,7 @@ html=html.replaceAll('iPhone Dosyalar','Windows İndirilenler').replaceAll('bu t
 fs.writeFileSync(index,html);
 const bundled=fs.readdirSync(path.join(dest,'assets'));
 const gifCount=bundled.filter(x=>x.endsWith('.gif')).length;
-if(gifCount!==19)throw Error('Unexpected workout GIF count: '+gifCount);
-console.log('Desktop bundle ready. Exercise GIFs:',gifCount);
+if(gifCount!==19)throw Error('Unexpected Gym / Solo ABS GIF count: '+gifCount);
+const homeGifs=fs.readdirSync(path.join(dest,'assets','home-gifs')).filter(x=>x.endsWith('.gif'));
+if(homeGifs.length!==13)throw Error('Unexpected Home Full Body GIF count: '+homeGifs.length);
+console.log('Desktop bundle ready. Exercise GIFs:',gifCount+homeGifs.length);
