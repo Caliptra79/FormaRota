@@ -26,6 +26,7 @@ const make=(id,name,nutrients,grams,aliases,meta={})=>{
   kcal:round(kcal),protein:round(protein),carbs:round(carbs),fat:round(fat),
   aliases:['Doyuyo '+name,'Doyuyo','Doyuyo menü',...aliases.split(';').filter(Boolean)],
   unit:'g',nutritionBasis:'100g',pieceGrams:grams||undefined,
+  ...(meta.menu?{portionUnit:'menü'}:{}),
   kind:'Restoran ürünü',category:'Fast food / Doyuyo',restaurant:'Doyuyo',
   source:meta.estimate?'Doyuyo · tahmini hesap':'Doyuyo · yayımlanmış 100 g tablo',
   referenceUrl:listing,verified:false,
@@ -67,17 +68,53 @@ for(const [id,label,portion] of [['paprika-parmesan','Paprika Parmesan',56],['or
   const totals=macros.map(k=>parts.reduce((sum,[part,grams])=>
    sum+Number(sideLookup.get(part)[k])*grams/100,0));
   const per100=totals.map(total=>100*total/weight);
-  const menu=make(id+'-'+count+'lu-menu',label+' Tenders '+count+"'lü Menü (tahmini; içecek ve gurme sos hariç)",per100,weight,
+  const menu=make(id+'-'+count+'lu-menu',label+' Tenders '+count+"'lü Menü (tahmini)",per100,weight,
    label+' tenders menü;'+label+' '+count+'lü;'+label+' menu;'+label+' tenders',
-   {estimate:true,note:'Tek tam menü (yaklaşık '+weight+' g) için tavuk '+(portion*count)+
+   {menu:true,estimate:true,note:'Ana menü (yaklaşık '+weight+' g) için tavuk '+(portion*count)+
     ' g, coleslaw 100 g, pesto-cheddar fusilli 36 g, patates 95 g, ketçap 20 g, mayonez 20 g hesaba katıldı. '+
     'Gurme sos (30 g) ve içecek DAHİL DEĞİL; ayrı ekle. Porsiyon, pişirme ve soslar son kaloriyi önemli ölçüde değiştirir. '+
     'Makroların bir bölümü tahminidir; resmî menü besin değeri değildir.'});
   foods.push(menu);
  }
 }
+/* Whole-menu shortcuts are explicitly per menu, not "adet" or gram entry.
+ * Sauce and beverage selections are optional. Never assume the diner's order.
+ * Side nutrition for sauces and beverage references are approximate.
+ */
+const sauces=Object.freeze([
+ {id:'none',name:'Gurme sos ekleme',kcal:0,protein:0,carbs:0,fat:0},
+ ...['ranch','bbq','honey-mustard','sriracha-mayo'].map(id=>{
+  const f=sideLookup.get(id);
+  return Object.freeze({id,name:f.name.replace(/^Doyuyo · /,'')+' (30 g, tahmini)',
+   kcal:f.kcal*0.3,protein:f.protein*0.3,carbs:f.carbs*0.3,fat:f.fat*0.3});
+ })
+].map(x=>Object.freeze(x)));
+const drinks=Object.freeze([
+ {id:'none',name:'İçecek ekleme',kcal:0,protein:0,carbs:0,fat:0},
+ {id:'water',name:'Su (330 ml)',kcal:0,protein:0,carbs:0,fat:0},
+ {id:'cola',name:'Şekerli kola (250 ml, tahmini)',kcal:105,protein:0,carbs:26.5,fat:0},
+ {id:'zero',name:'Şekersiz kola (250 ml, tahmini)',kcal:1,protein:0,carbs:0,fat:0},
+ {id:'ayran',name:'Ayran (200 ml, tahmini)',kcal:76,protein:4.2,carbs:5.4,fat:3.8}
+].map(x=>Object.freeze(x)));
+function withExtras(food,sauceId='none',drinkId='none'){
+ if(food?.portionUnit!=='menü'||!Number.isFinite(Number(food.pieceGrams))||Number(food.pieceGrams)<=0)return null;
+ const sauce=sauces.find(x=>x.id===sauceId),drink=drinks.find(x=>x.id===drinkId);
+ if(!sauce||!drink)return null;
+ const updated={...food};
+ // Add-ons represent one serving per menu, expressed against its fixed base
+ // weight to keep the existing per-100g food log calculations consistent.
+ for(const key of macros)updated[key]=round(Number(food[key])+(sauce[key]+drink[key])*100/food.pieceGrams);
+ const suffix=[sauce.id!=='none'?sauce.name.replace(/ \(.*$/,''):null,
+  drink.id!=='none'?drink.name.replace(/ \(.*$/,''):null].filter(Boolean);
+ updated.name=food.name+(suffix.length?' · '+suffix.join(' + '):'');
+ updated.note=food.note+(suffix.length?' Seçtiğin sos/içecek de bu tek menü kaydına dahildir.':
+  ' Seçili sos ve içecek yok; bu ikisi kalori hesabına eklenmez.');
+ return updated;
+}
+foods.sort((a,b)=>Number(b.portionUnit==='menü')-Number(a.portionUnit==='menü'));
 const ids=new Set();
 for(const f of foods){if(ids.has(f.id))throw Error('Duplicate restaurant ID');ids.add(f.id)}
 root.FormaRotaRestaurantFoods=Object.freeze(foods);
+root.FormaRotaRestaurantMenuOptions=Object.freeze({sauces,drinks,withExtras});
 if(typeof module!=='undefined'&&module.exports)module.exports=Object.freeze(foods);
 })(typeof window!=='undefined'?window:globalThis);
