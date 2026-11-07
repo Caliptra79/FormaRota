@@ -196,6 +196,7 @@ function renderActivity(data){
   completion=(selected.type==='basket-abs'&&doneAbs?'ABS kaydedilmiş; ':'')+
    'Basketbol katılımı otomatik doğrulanmaz.';
  else if(selected.type==='volleyball')completion='Voleybol katılımı otomatik doğrulanmaz.';
+ else if(selected.type==='home')completion=root.FormaRotaHomeWorkout?.completedOn?.(data.day)?'Evde Full Body + Core kaydedilmiş.':'Ev antrenmanı için henüz tamamlanmış kayıt yok.';
  else if(selected.type==='other')completion='Diğer etkinlikler için otomatik tamamlanma kaydı yok.';
  else if(selected.type==='rest')completion='Yürüyüş planın kaydedildi; mesafeyi ayrıca günlük yürüyüş bölümünden kaydedebilirsin.';
  status.textContent='Bugün: '+label+(selected.type==='other'&&selected.note?' · '+selected.note:'')+' — '+completion;
