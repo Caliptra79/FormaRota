@@ -21,7 +21,7 @@ function select(options,value,description){
 function link(href,label){const a=el('a','james-band-source',label);a.href=href;a.target='_blank';a.rel='noopener noreferrer';return a;}
 function renderMoves(){
  const host=$('jamesBandMoves');if(!host)return;
- const s=current(),h=history(),variant=s?.variant||E.create(today(),h).variant;
+ const s=current(),h=history(),preview=s||E.create(today(),h),variant=preview.variant;
  const ids=E.PLANS[variant],frag=doc.createDocumentFragment();
  ids.forEach((id,index)=>{
   const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h);
@@ -35,9 +35,11 @@ function renderMoves(){
   const warning=el('p','james-band-warning','Dikkat: '+m.mistake);
   content.append(warning);card.append(content);
   const guide=el('p','james-band-advice',r.advice);
-  card.append(el('p','james-band-recommendation','Öneri: '+bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar · '+(s?.targetSets||E.create(today(),h).targetSets)+' set'),guide);
+  card.append(el('p','james-band-recommendation','Öneri: '+bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar · '+preview.targetSets+' set'),guide);
   if(r.previous)card.append(el('p','james-band-previous','Önceki tamamlanan seans: '+r.previous));
-  card.append(link(m.source,'James Grage / Undersun hareket kaynağını aç'));
+  const jamesSource=m.source.includes('undersunfitness.com')||m.source.includes('youtube.com/watch?v=W3t7r5_MGUw');
+  card.append(link(m.source,jamesSource?'James Grage / Undersun kaynağını aç':'Tamamlayıcı teknik kaynağını aç'));
+  if(['front-lunge','one-arm-row','pallof'].includes(id))card.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
   const media=el('div','james-band-media');
   const placeholder=el('p','james-band-gif-wait','Hareket GIF’i bekleniyor · Dosya adı: assets/band-gifs/'+id+'.gif');
   media.append(placeholder);
@@ -98,7 +100,7 @@ function finish(full){
  try{root.localStorage.removeItem(CURRENT)}catch{}
  render();status(full?'Bant antrenmanın kaydedildi ✓':'Yarım seans saklandı.');
  root.FormaRotaOLEDHome?.schedule?.();
- root.FormaRotaABSWorkouts?.refresh?.();
+ root.FormaRotaABS?.refresh?.();
 }
 function renderHistory(){
  const host=$('jamesBandHistory');if(!host)return;
