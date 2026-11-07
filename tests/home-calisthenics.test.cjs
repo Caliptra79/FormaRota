@@ -72,7 +72,7 @@ test('offline cache carries home program UI, CSS and engine without modifying ex
  for(const asset of ['home-calisthenics-engine.js','home-calisthenics.js','home-calisthenics.css']){
   assert.ok(html.includes('./assets/'+asset),asset+' in HTML');
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset+' precached');
-  new vm.Script(source('assets/'+asset).endsWith('.js')?source('assets/'+asset):'',{filename:asset});
+  if(asset.endsWith('.js'))new vm.Script(source('assets/'+asset),{filename:asset});
  }
  assert.match(sw,/formarota-solo-v104-shell/);
  assert.ok(source('assets/home-calisthenics.css').includes('data-workout-program="home"'));
