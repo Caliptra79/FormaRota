@@ -102,6 +102,20 @@ async function run(){
    assert.ok(map.doc<=width+5,label+' progress overflow '+JSON.stringify(map));
    if(label==='tablet portrait')assert.equal(map.cols.trim().split(/\s+/).length,1,'tablet portrait should stack the route map');
    const homeView=await evaluate("(()=>{showView('fitness',false,false);window.FormaRotaABS.choose('home');const p=document.getElementById('homeCalPanel');return {program:document.documentElement.dataset.workoutProgram,visible:getComputedStyle(p).display!=='none',moves:p.querySelectorAll('.home-cal-move').length,soloHidden:getComputedStyle(document.getElementById('absWorkoutPanel')).display==='none',gymHidden:getComputedStyle(document.getElementById('fitExercisePanel')).display==='none',overflow:document.documentElement.scrollWidth}})()");
+   // Reproduce the actual user journey: Settings -> Fitness -> click the Home tab.
+   // Programmatic choose('home') alone can miss stale click handlers.
+   const clicks=await evaluate("(()=>{showView('settings',false,false);const nav=document.querySelector('[data-tab=fitness]')||document.querySelector('[data-go=fitness]');if(!nav)return {error:'missing fitness nav'};nav.click();const btn=document.querySelector('[data-workout-choice=home]');btn.click();const panel=document.getElementById('homeCalPanel');const first={mode:document.documentElement.dataset.workoutProgram,pressed:btn.getAttribute('aria-pressed'),rootVisible:getComputedStyle(document.getElementById('fitnessRoot')).display!=='none',panelVisible:getComputedStyle(panel).display!=='none',count:panel.querySelectorAll('.home-cal-move').length};showView('settings',false,false);nav.click();return {...first,returned:getComputedStyle(panel).display!=='none',persisted:localStorage.getItem('formarota-workout-choice-v1')}})()");
+   assert.equal(clicks.mode,'home',label+' Home click must activate mode '+JSON.stringify(clicks));
+   assert.equal(clicks.pressed,'true',label+' Home pill should be selected');
+   assert.equal(clicks.rootVisible,true,label+' Fitness page should be visible');
+   assert.equal(clicks.panelVisible,true,label+' Home panel must be visible on click');
+   assert.equal(clicks.returned,true,label+' Home panel must survive Settings roundtrip');
+   assert.equal(clicks.persisted,'home',label+' Home selection must persist');
+   assert.equal(clicks.count,13,label+' Home cards must render on click');
+   const colorBurst=await evaluate("(()=>{const sel=document.getElementById('themeSelect');const cases=['oled-cyberpop','oled-aurora','oled-ultraviolet'].map(id=>{sel.value=id;sel.dispatchEvent(new Event('change',{bubbles:true}));const v=getComputedStyle(document.documentElement);return{id,selected:document.documentElement.dataset.theme,accent:v.getPropertyValue('--accent').trim(),ink:v.getPropertyValue('--text').trim(),themeMeta:document.querySelector('meta[name=theme-color]').content}});sel.value='oled-black';sel.dispatchEvent(new Event('change',{bubbles:true}));return cases})()");
+   for(const item of colorBurst){assert.equal(item.selected,item.id,label+' selected theme '+item.id);
+    assert.match(item.accent,/^#[0-9a-f]{6}$/i);assert.match(item.ink,/^#[0-9a-f]{6}$/i);
+    assert.equal(item.themeMeta,'#000000',label+' OLED browser chrome');}
    assert.equal(homeView.program,'home',label+' home workout selector');
    assert.equal(homeView.visible,true,label+' home workout panel visible');
    assert.equal(homeView.moves,13,label+' ten strength + three core');
