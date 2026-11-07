@@ -81,7 +81,7 @@
  }
  function validateBackup(input){
   if(!input||typeof input!=='object'||Array.isArray(input))return false;
-  if(input.selected!==undefined&&!['abs','fullbody'].includes(input.selected))return false;
+  if(input.selected!==undefined&&!['abs','fullbody','home'].includes(input.selected))return false;
   if(input.history!==undefined&&(!Array.isArray(input.history)||input.history.length>10000))return false;
   if(input.current!==undefined&&input.current!==null&&(typeof input.current!=='object'||Array.isArray(input.current)))return false;
   const sessions=[...(input.history||[]),...(input.current?[input.current]:[])];
