@@ -41,5 +41,5 @@ test('Rank 2 does not write XP or change backup schema',()=>{
  assert.ok(rank.includes("['Bronze',0"));
  assert.ok(rank.includes("['FormaRota Legend',25000"));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
- assert.ok(read('sw.js').includes("formarota-solo-v109-shell"));
+ assert.ok(read('sw.js').includes("formarota-solo-v110-shell"));
 });

@@ -55,7 +55,8 @@
   if(record?.unit!=='g'||!validCount(record?.pieceCount)||
    !validGrams(record?.pieceGrams)||toGrams(record.pieceCount,record.pieceGrams)===null)return null;
   const fmt=typeof format==='function'?format:String;
-  return fmt(record.pieceCount)+' adet (≈ '+fmt(record.amount)+' g)';
+  return record.portionUnit==='menü'?fmt(record.pieceCount)+' menü (tahmini)':
+   fmt(record.pieceCount)+' adet (≈ '+fmt(record.amount)+' g)';
  }
  root.FormaRotaFoodPieces=Object.freeze({KEY,DEFAULTS,grams,validGrams,
   validCount,validOverrides,overrides,toGrams,save,logLabel});

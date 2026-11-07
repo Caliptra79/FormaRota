@@ -155,7 +155,7 @@ input[type="date"]{display:block;box-sizing:border-box;width:100%;max-width:100%
 <link rel="stylesheet" href="./assets/contrast-guard.css"/>
 <link rel="stylesheet" href="./assets/studio-plus.css"/>
 <link rel="stylesheet" href="./assets/abs-workouts.css?fr=108"/><link rel="stylesheet" href="./assets/home-calisthenics.css?fr=108"/><link rel="stylesheet" href="./assets/hybrid-premium-v1.css"/><link rel="stylesheet" href="./assets/hybrid-premium-fitness.css"/><link rel="stylesheet" href="./assets/visual-identity-2-home.css"/><link rel="stylesheet" href="./assets/oled-edition.css"/><link rel="stylesheet" href="./assets/oled-home.css"/><link rel="stylesheet" href="./assets/oled-screens.css"/><link rel="stylesheet" href="./assets/smart-rest-coach.css"/><link rel="stylesheet" href="./assets/flexible-weekly-plan.css"/>
-<link rel="stylesheet" href="./assets/tablet-desktop-layout.css"/><link rel="stylesheet" href="./assets/exercise-technique.css"/><link rel="stylesheet" href="./assets/rank-quests.css"/><link rel="stylesheet" href="./assets/oled-colorburst.css"/><style id="fr-splash-style">
+<link rel="stylesheet" href="./assets/tablet-desktop-layout.css"/><link rel="stylesheet" href="./assets/exercise-technique.css"/><link rel="stylesheet" href="./assets/rank-quests.css"/><link rel="stylesheet" href="./assets/oled-colorburst.css"/><link rel="stylesheet" href="./assets/restaurant-menu-entry.css"/><style id="fr-splash-style">
 html{background:var(--bg,#101216)}
 #fr-launch{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--accent) 12%,var(--bg)) 0%,var(--bg) 68%);color:var(--text);opacity:1;visibility:visible;transition:opacity .36s ease,visibility .36s ease}
 #fr-launch.fr-launch-done{opacity:0;visibility:hidden;pointer-events:none}
@@ -637,12 +637,12 @@ setTimeout(function(){if(!loadDone)hide(seq)},MAX_WAIT);
 <button data-tab="settings" type="button"><span class="ni" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span>Ayarlar</span></button></nav><script src="./assets/turkish-foods.js"></script>
 <script src="./assets/ready-desserts.js"></script>
 <script src="./assets/prepared-foods.js"></script>
-<script src="./assets/restaurant-foods.js"></script>
+<script src="./assets/restaurant-foods.js?fr=110"></script>
 <script src="./assets/food-variety.js"></script>
 <script src="./assets/breakfast-sweets.js"></script>
 <script src="./assets/dinner-coach.js"></script><script src="./assets/food-units.js"></script>
 <script src="./assets/drink-sugar.js"></script>
-<script src="./assets/food-pieces.js"></script>
+<script src="./assets/food-pieces.js?fr=110"></script>
 <script src="./assets/calorie-deficit.js"></script>
 <script src="./assets/food-search-cache.js"></script>
 <script defer src="./assets/date-masthead.js"></script>
@@ -710,10 +710,13 @@ function nutritionEditLog(id,row){
  const wrap=document.createElement('div');wrap.className='fr-nutrition-editor';
  const label=document.createElement('label');const unit=original.unit==='ml'?'ml':'g';
  const pieceEdit=typeof window!=='undefined'&&!!window.FormaRotaFoodPieces?.logLabel(original,fmt);
- label.textContent=original.name+' · yeni miktar ('+(pieceEdit?'adet':unit)+')';
+ const menuEdit=pieceEdit&&original.portionUnit==='menü';
+ label.textContent=original.name+' · yeni miktar ('+(menuEdit?'menü':pieceEdit?'adet':unit)+')';
  const field=document.createElement('input');
- field.type='number';field.min='0.1';field.max=pieceEdit?'1000':'3000';
- field.step=pieceEdit?'0.5':'1';field.value=pieceEdit?original.pieceCount:original.amount;label.append(field);
+ field.type='number';field.min=menuEdit?'1':'0.1';
+ field.max=menuEdit?String(Math.min(6,Math.floor(3000/Number(original.pieceGrams)))):pieceEdit?'1000':'3000';
+ field.step=menuEdit?'1':pieceEdit?'0.5':'1';
+ field.value=pieceEdit?original.pieceCount:original.amount;label.append(field);
  const sugarLabel=original.sugarEligible&&window.FormaRotaDrinkSugar?document.createElement('label'):null;
  let sugarChoice=null;
  if(sugarLabel){
@@ -733,13 +736,14 @@ function nutritionEditLog(id,row){
  save.onclick=()=>{
   const parsed=String(field.value||'').trim().replace(',','.'),chosen=Number(parsed);
   const grams=pieceEdit?window.FormaRotaFoodPieces.toGrams(chosen,original.pieceGrams):chosen;
-  if(!parsed||grams===null||!Number.isFinite(grams)||grams<=0||grams>3000){
-   alert(pieceEdit?'Geçerli adet gir (en fazla 3000 g).':'1–3000 '+unit+' arasında geçerli miktar gir.');return
+  if(!parsed||grams===null||!Number.isFinite(grams)||grams<=0||grams>3000||
+     (menuEdit&&(!Number.isInteger(chosen)||chosen<1||chosen>6))){
+   alert(menuEdit?'Geçerli tam menü sayısı gir.':pieceEdit?'Geçerli adet gir (en fazla 3000 g).':'1–3000 '+unit+' arasında geçerli miktar gir.');return
   }
   const newSugar=sugarChoice?Number(sugarChoice.value):Number(original.sugarCubes||0);
   if(Number(original.amount)===grams&&Number(original.sugarCubes||0)===newSugar){wrap.remove();return}
-  const before=pieceEdit?String(original.pieceCount)+' adet':String(original.amount)+' '+unit;
-  const after=pieceEdit?String(chosen)+' adet (≈ '+String(grams)+' g)':String(grams)+' '+unit;
+  const before=menuEdit?String(original.pieceCount)+' menü':pieceEdit?String(original.pieceCount)+' adet':String(original.amount)+' '+unit;
+  const after=menuEdit?String(chosen)+' menü':pieceEdit?String(chosen)+' adet (≈ '+String(grams)+' g)':String(grams)+' '+unit;
   if(!confirm(original.name+': '+before+' → '+after+
    (sugarChoice?' · ilave şeker '+newSugar+' küp':'')+' olarak düzeltilecek. Onaylıyor musun?'))return;
   const logs=getLogs(),index=logs.findIndex(x=>x.id===id);
@@ -947,9 +951,20 @@ function renderResults(items,root=$('results')){
   const input=document.createElement('input');input.type='number';input.min='0.1';input.max='3000';input.step='0.1';
   input.value=unit==='ml'?'200':'180';input.setAttribute('aria-label',food.name+' miktarı ('+unit+')');
   const pieces=window.FormaRotaFoodPieces;
-  let pieceGrams=unit==='g'?pieces?.grams(food):null;
-  const pieceChoice=pieceGrams!=null?document.createElement('select'):null;
-  if(pieceChoice){
+  // A complete restaurant menu is a catalog serving, not an editable single
+  // item weight; older custom piece overrides stay stored but are not applied.
+  let pieceGrams=unit==='g'?(food.portionUnit==='menü'?Number(food.pieceGrams):pieces?.grams(food)):null;
+  const isMenu=food.portionUnit==='menü'&&pieceGrams!=null;
+  const pieceChoice=pieceGrams!=null?(isMenu?null:document.createElement('select')):null;
+  if(isMenu){
+   label.textContent='Menü sayısı';
+   input.value='1';input.min='1';input.step='1';
+   input.max=String(Math.min(6,Math.floor(3000/pieceGrams)));
+   input.setAttribute('aria-label',food.name+' menü sayısı');
+   const hint=document.createElement('small');hint.className='food-piece-hint';
+   hint.textContent='Tam menü tek seçim: 1 menü (≈ '+fmt(pieceGrams)+' g tahmini). İstersen sayıyı değiştir.';
+   left.append(hint);
+  }else if(pieceChoice){
    pieceChoice.className='food-piece-select';pieceChoice.setAttribute('aria-label',food.name+' miktar birimi');
    for(const [value,title] of [['adet','Adet'],['g','Gram']]){
     const option=document.createElement('option');option.value=value;option.textContent=title;pieceChoice.append(option);
@@ -980,6 +995,38 @@ function renderResults(items,root=$('results')){
    left.append(editWeight);
   }else label.textContent='Miktar ('+unit+')';
   label.append(input);
+  let menuSelection=()=>food;
+  if(isMenu){
+   const menus=window.FormaRotaRestaurantMenuOptions;
+   const extras=document.createElement('div');extras.className='restaurant-menu-extras';
+   const chooser=(options,title)=>{
+    const field=document.createElement('label');field.className='restaurant-menu-option';
+    field.textContent=title;
+    const select=document.createElement('select');select.setAttribute('aria-label',food.name+' '+title);
+    for(const opt of options){
+     const option=document.createElement('option');option.value=opt.id;option.textContent=opt.name;
+     select.append(option);
+    }
+    field.append(select);extras.append(field);return select;
+   };
+   const sauce=menus?chooser(menus.sauces,'Gurme sos'):null;
+   const drink=menus?chooser(menus.drinks,'İçecek'):null;
+   if(menus)controls.append(extras);
+   menuSelection=()=>menus?.withExtras(food,sauce.value,drink.value)||food;
+   const preview=()=>{
+    const menu=menuSelection();
+    const qty=Number(input.value),count=Number.isInteger(qty)&&qty>0&&qty<=6?qty:1;
+    const multiplier=pieceGrams*count/100;
+    info.textContent=fmt(menu.kcal*multiplier)+' kcal · '+fmt(menu.protein*multiplier)+
+      ' g protein / '+fmt(count)+' menü (tahmini)';
+    macro.textContent='Karb. '+fmt(menu.carbs*multiplier)+' g · Yağ '+fmt(menu.fat*multiplier)+
+      ' g / '+fmt(count)+' menü';
+   };
+   if(sauce)sauce.onchange=preview;
+   if(drink)drink.onchange=preview;
+   input.oninput=preview;
+   preview();
+  }
   const sugarModule=window.FormaRotaDrinkSugar;
   const sugarChoice=sugarModule?.eligible(food)?document.createElement('select'):null;
   if(sugarChoice){
@@ -997,9 +1044,18 @@ function renderResults(items,root=$('results')){
    sugarLabel.append(help);controls.append(sugarLabel);
    controls.className+=' with-drink-sugar';
   }
-  const btn=document.createElement('button');btn.type='button';btn.textContent='Ekle';
+  const btn=document.createElement('button');btn.type='button';btn.textContent=isMenu?'Menüyü ekle':'Ekle';
   btn.disabled=!nutritionMacrosValid(food);
   btn.onclick=()=>{
+   if(isMenu){
+    const count=Number(input.value);
+    const grams=window.FormaRotaFoodPieces?.toGrams(count,pieceGrams);
+    if(!Number.isInteger(count)||count<1||count>6||grams===null||grams===undefined){
+     $('status').textContent='Geçerli tam menü sayısı gir (en fazla 3000 g).';return;
+    }
+    addFood(menuSelection(),grams,{quantityMode:'menü',pieceCount:count,pieceGrams});
+    return;
+   }
    const asPiece=pieceChoice?.value==='adet';
    const amount=asPiece?pieces.toGrams(input.value,pieceGrams):input.value;
    if(asPiece&&amount===null){$('status').textContent='Adet sayısı veya gramaj geçersiz (en fazla 3000 g).';return;}
@@ -1142,10 +1198,13 @@ function addFood(food,chosenAmount){
  }
  const pieces=typeof window!=='undefined'?window.FormaRotaFoodPieces:null;
  const isPiece=options?.quantityMode==='adet';
- if(isPiece&&(unit!=='g'||!pieces?.validCount(options.pieceCount)||
+ const isMenu=options?.quantityMode==='menü';
+ const isCount=isPiece||isMenu;
+ if(isCount&&(unit!=='g'||!pieces?.validCount(options.pieceCount)||
   !pieces?.validGrams(options.pieceGrams)||
-  pieces.toGrams(options.pieceCount,options.pieceGrams)!==amount)){
-  $('status').textContent='Adet ve gram karşılığı uyuşmuyor; besin eklenmedi.';return;
+  pieces.toGrams(options.pieceCount,options.pieceGrams)!==amount||
+  (isMenu&&(food.portionUnit!=='menü'||!Number.isInteger(Number(options.pieceCount)))))){
+  $('status').textContent='Adet/menü sayısı ve porsiyon karşılığı uyuşmuyor; besin eklenmedi.';return;
  }
  const approximateVolume=unit==='ml'&&food.nutritionBasis!=='100ml';
  const val=k=>food[k]==null?null:Number(food[k])*amount/100;
@@ -1155,17 +1214,18 @@ function addFood(food,chosenAmount){
  logs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
   date:$('date').value,meal:$('meal').value,foodId:food.id,name:foodName,
   amount,unit,nutritionBasis:food.nutritionBasis||'100g',approximateVolume,
-  ...(isPiece?{pieceCount:Number(options.pieceCount),pieceGrams:Number(options.pieceGrams)}:{}),
+  ...(isCount?{pieceCount:Number(options.pieceCount),pieceGrams:Number(options.pieceGrams)}:{}),
+  ...(isMenu?{portionUnit:'menü'}:{}),
   kcal:(val('kcal')??0)+(extra?.kcal||0),protein:val('protein')??0,
   carbs:val('carbs')==null?null:val('carbs')+(extra?.carbs||0),fat:val('fat'),
   ...(extra?{sugarEligible:true,sugarCubes,sugarGrams:extra.sugarGrams,baseFoodName:food.name}:{}),
   source:food.source||food.kind||'Kişisel',
   baseKcal:food.kcal,baseProtein:food.protein,baseCarbs:food.carbs,baseFat:food.fat});
  write(logKey,logs);renderTotals();
- $('status').textContent='✓ '+foodName+', '+(isPiece?fmt(options.pieceCount)+' adet (≈ '+fmt(amount)+' g)':fmt(amount)+' '+unit)+' olarak '+
+ $('status').textContent='✓ '+foodName+', '+(isMenu?fmt(options.pieceCount)+' menü':isPiece?fmt(options.pieceCount)+' adet (≈ '+fmt(amount)+' g)':fmt(amount)+' '+unit)+' olarak '+
   $('meal').value.toLocaleLowerCase('tr')+' öğününe kaydedildi.'+
   (approximateVolume?' Kalori hesabı yaklaşık (1 ml ≈ 1 g).':' Günlük kalori ve protein güncellendi.');
- typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(foodName+' · '+(isPiece?fmt(options.pieceCount)+' adet':fmt(amount)+' '+unit)+' kaydedildi');
+ typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(foodName+' · '+(isMenu?fmt(options.pieceCount)+' menü':isPiece?fmt(options.pieceCount)+' adet':fmt(amount)+' '+unit)+' kaydedildi');
 }
 async function barcodeSearch(){const code=$('barcode').value.trim();if(!/^\d{8,14}$/.test(code)){$('barcodeStatus').textContent='8–14 haneli sayısal bir barkod gir.';return}$('barcodeBtn').disabled=true;$('barcodeStatus').textContent='Barkod sorgulanıyor…';$('barcodeResult').innerHTML='';try{const res=await fetch('https://world.openfoodfacts.org/api/v3/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,brands,nutriments');if(!res.ok)throw new Error();const data=await res.json();if(data.status!==1||!data.product)throw new Error('Ürün bulunamadı');const food=offProductToFood(data.product);if(!food)throw new Error('Ürünün kalori/protein verisi eksik');renderResults([food],$('barcodeResult'));$('barcodeStatus').textContent='Ürün bulundu. Etiket bilgileriyle karşılaştır.'}catch(e){$('barcodeStatus').textContent=e.message==='Ürün bulunamadı'||e.message==='Ürünün kalori/protein verisi eksik'?e.message:'Barkod servisine ulaşılamadı.'}finally{$('barcodeBtn').disabled=false}}
 function renderCustomFoods(){const root=$('customFoods');root.innerHTML='';const foods=getCustom();if(!foods.length){root.innerHTML='<div class="empty">Henüz kişisel besin eklemedin.</div>';return}foods.forEach(f=>{const el=document.createElement('div');el.className='entry';const left=document.createElement('div');const b=document.createElement('strong');b.textContent=f.name;const p=document.createElement('p');p.textContent=`${fmt(f.kcal)} kcal · ${fmt(f.protein)} g protein / 100 ${f.unit==='ml'?'ml':'g'}`;if(window.FormaRotaFoodPieces?.grams(f)!=null)p.textContent+=' · 1 adet ≈ '+fmt(window.FormaRotaFoodPieces.grams(f))+' g';
@@ -1760,11 +1820,12 @@ const v21DateFmt=d=>dateFromISO(d).toLocaleDateString('tr-TR',{day:'numeric',mon
 function v21Budget(){const date=$('date').value,goalK=v21Num($('goalKcal').value,2600),goalP=v21Num($('goalProtein').value,160);$('v21KcalLeft').textContent=fmt(goalK-sumDay(date,'kcal'));$('v21ProteinLeft').textContent=fmt(goalP-sumDay(date,'protein'))}
 let v21MealFilter='recent';
 function v21Recent(){const logs=getLogs().filter(x=>!x.presetBreakfast&&x.name&&Number(x.amount)>0);const count={};for(const item of logs){const key=norm(item.name);if(!count[key])count[key]={count:0,item};count[key].count++;if((item.date||'')>(count[key].item.date||''))count[key].item=item}const rows=Object.values(count);rows.sort(v21MealFilter==='frequent'?(a,b)=>b.count-a.count:(a,b)=>String(b.item.date||'').localeCompare(String(a.item.date||'')));$('v21MealFilters').innerHTML='';for(const [id,name] of [['recent','Son yediklerim'],['frequent','Sık yediklerim']]){const btn=document.createElement('button');btn.className=v21MealFilter===id?'':'secondary';btn.textContent=name;btn.onclick=()=>{v21MealFilter=id;v21Recent()};$('v21MealFilters').append(btn)}const root=$('v21RecentList');root.replaceChildren();if(!rows.length){root.textContent='Öğün ekledikçe burada görünecek.';return}for(const {item,count:n} of rows.slice(0,10)){const b=document.createElement('button');b.className='secondary';const left=document.createElement('span');left.textContent=item.name+' · '+(window.FormaRotaFoodPieces?.logLabel(item,fmt)||fmt(item.amount)+' '+(item.unit==='ml'?'ml':'g'));const right=document.createElement('small');right.textContent=n+' kez';b.append(left,right);b.onclick=()=>{const isPiece=!!window.FormaRotaFoodPieces?.logLabel(item,fmt);
- const raw=prompt(item.name+' · Kaç '+(isPiece?'adet':item.unit==='ml'?'ml':'gram')+'?',
+ const raw=prompt(item.name+' · Kaç '+(item.portionUnit==='menü'?'menü':isPiece?'adet':item.unit==='ml'?'ml':'gram')+'?',
   String(isPiece?item.pieceCount:item.amount));if(raw===null)return;
  const value=Number(raw.replace(',','.'));
  const g=isPiece?window.FormaRotaFoodPieces.toGrams(value,item.pieceGrams):value;
- if(g===null||!Number.isFinite(g)||g<=0||g>3000){alert('Geçerli miktar gir (en fazla 3000 g).');return}
+ if(g===null||!Number.isFinite(g)||g<=0||g>3000||
+  (item.portionUnit==='menü'&&(!Number.isInteger(value)||value<1||value>6))){alert('Geçerli miktar gir (en fazla 3000 g).');return}
  const factor=g/Number(item.amount);const row={...item,id:makeId(),date:$('date').value,meal:$('meal').value,amount:g,
   ...(isPiece?{pieceCount:value}:{})};for(const k of ['kcal','protein','carbs','fat'])row[k]=v21Num(item[k])*factor;delete row.presetBreakfast;write(logKey,[...getLogs(),row]);renderTotals();v21Refresh()};root.append(b)}}
 function v21SmartDinner(){
