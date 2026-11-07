@@ -7,6 +7,7 @@
 const GUIDE='https://www.undersunfitness.com/blog/awesome-15-minute-resistance-bands-workout';
 const PROGRESS='https://www.undersunfitness.com/blog/resistance-bands-when-and-how-to-increase-resistance';
 const VIDEO='https://www.youtube.com/watch?v=W3t7r5_MGUw';
+const GRAGE_INTERVIEW='https://fithub.com.tr/grage-makinelere-karsi/';
 const BAND_LEVELS=Object.freeze(['none','10','20','30','40']);
 const GRIPS=Object.freeze(['relaxed','normal','short']);
 const FORMS=Object.freeze(['good','unsure','poor']);
@@ -20,13 +21,13 @@ const MOVES=Object.freeze([
  move('shoulder-press','Standing band shoulder press','Omuz','Banda saglam bas, karin bolgesini siki tut ve elleri kontrollu yukariya it.','Belini fazla cukurlastirma, kaburgalari ileri firlatma.',VIDEO+'&t=170s'),
  move('biceps-curl','Standing band biceps curl','Biceps','Dirsekler govde yaninda; kaldiris ve donusu esit kontrollu yap.','Govdeyi geriye savurarak kaldirma; donuste bandi aniden birakma.',VIDEO+'&t=340s'),
  move('overhead-triceps','Overhead triceps extension','Triceps','Dirsekler sabit, bant gerginligi surekli olacak sekilde yavas ac-kapat.','Dirsekleri yanlara savurma, boynu zorlayacak baglanti kurma.',VIDEO+'&t=619s'),
- move('calf-raise','Band calf raise','Baldir','Ayaklardan dengeli yuksel, tepede kisa dur ve yavas in.','Yaylanma ve bilekleri disa/ice devirme.',GUIDE,'10',10,15),
- move('band-crunch','Bantla crunch / karın','Karin','Kisa, kontrollu bir karin bukulmesi yap; boyun rahat kalsin.','Boyunla cekme ve kalcayi sertce sallama.',VIDEO+'&t=843s','none',10,15),
- move('front-lunge','Bantla front lunge','Bacak · kalca','Kucuk ve dengeli bir adimla basla; on ayagin tumunu yerde tut.','One dizini ice kacirma, hizli inip dengeni kaybetme.',GUIDE),
+ move('calf-raise','Band calf raise','Baldır','Ayağın üzerine dengeli yüksel; tepede kısa dur ve yavaş in.','Yaylanma ve bilekleri içeri/dışarı devirme.',GRAGE_INTERVIEW,'10',10,15),
+ move('band-crunch','Crunch – Karın (bantsız)','Karın','Bant kullanmadan kısa ve kontrollü bir karın sıkıştırması yap; boynu rahat tut. James’in videosundaki core bitiriş bölümünü genel referans olarak izle.','Boynunu çekerek kaldırma, belini aniden zorlayarak sallanma.',VIDEO+'&t=843s','none',10,15),
+ move('front-lunge','Bantla front lunge','Bacak · kalça','Küçük ve dengeli adımla başla; öndeki ayağın tümünü yerde tut.','Öndeki dizi içe kaçırma, hızlı inip dengenin bozulmasına izin verme.',GRAGE_INTERVIEW),
  move('one-arm-row','Single-arm band row','Sirt','Bant sabitken dirsegi kalcaya dogru cek; iki tarafi esit calis.','Govdeyi cekis yonune dondurme veya omuzu yukariya sikistirma.',GUIDE),
  move('band-rdl','Bantla Romanian deadlift','Arka bacak · kalça','Bandın ortasına bas, dizleri hafif bük, kalçayı geriye gönder; sırt nötr kalırken kontrollü doğrul.','Hareketi squat gibi yapma, beli yuvarlama veya kalkışın sonunda geriye yaslanma.','https://www.stridefitapp.com/exercises/band-romanian-deadlift'),
  move('pallof','Pallof press','Core · denge','Bandi gogus hizasinda saglam sabitle, iki elinle ileri uzat; iki yonde de calis.','Govdenin ankraja dogru donmesine izin verme.',GUIDE,'10',8,12),
- move('staggered-curl','Staggered-stance curl','Biceps','Bir ayak hafif onde, sabit durusla dirsekleri yerinde tut.','Kalca ve sirtla agirligi savurma.',GUIDE)
+ move('staggered-curl','Staggered-stance curl','Biceps','Bir ayak hafif önde; sabit duruşla dirsekleri yerinde tut.','Kalça ve sırtı sallayarak bandı çekme.',GRAGE_INTERVIEW)
 ]);
 const IDS=new Map(MOVES.map(m=>[m.id,m]));
 const PLANS=Object.freeze({
