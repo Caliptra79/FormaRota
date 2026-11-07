@@ -27,11 +27,13 @@ test('complete offline installation includes all trainer assets',async()=>{
  assert.ok(s.stored.includes('./assets/trainer-foundation.js'));
  assert.ok(s.events.includes('activate-requested'));
 });
-test('optional GIF cache errors do not prevent core offline installation',async()=>{
+test('all Gym and Solo ABS GIFs must cache successfully before offline update',async()=>{
  const s=simulate(['./assets/abs-plank.gif']);
- await s.installation;
- assert.ok(s.events.includes('activate-requested'));
- assert.ok(s.stored.includes('./assets/trainer-adapter.js'));
+ await assert.rejects(s.installation,/Required exercise GIF unavailable/);
+ assert.equal(s.events.includes('activate-requested'),false);
+ const ok=simulate();await ok.installation;
+ for(const asset of ['./assets/abs-plank.gif','./assets/row.gif','./assets/legpress.gif'])
+  assert.ok(ok.stored.includes(asset));
 });
 
 test('bundled home movement GIFs are mandatory for offline installation',async()=>{
