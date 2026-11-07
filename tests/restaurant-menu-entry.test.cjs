@@ -113,10 +113,11 @@ test('the menu UI, edit prompt and offline assets are connected without modifyin
  assert.ok(html.includes("let menuSelection=()=>food"));
  assert.ok(html.includes("./assets/restaurant-foods.js?fr=110"));
  assert.ok(html.includes("./assets/food-pieces.js?fr=110"));
- assert.ok(html.includes("./assets/restaurant-menu-entry.css"));
+ assert.ok(html.includes("./assets/restaurant-menu-entry.css?fr=111"));
+ assert.ok(html.includes("details.className='restaurant-menu-notes'"));
  assert.ok(sw.includes("'./assets/restaurant-menu-entry.css'"));
  assert.ok(sw.includes("'./assets/restaurant-foods.js?fr=110'"));
  assert.ok(sw.includes("'./assets/food-pieces.js?fr=110'"));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
- assert.match(sw,/formarota-solo-v110-shell/);
+ assert.match(sw,/formarota-solo-v111-shell/);
 });
