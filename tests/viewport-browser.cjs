@@ -122,6 +122,30 @@ async function run(){
    assert.equal(homeView.soloHidden,true,label+' Solo ABS should remain separate');
    assert.equal(homeView.gymHidden,true,label+' gym workout should remain separate');
    assert.ok(homeView.overflow<=width+5,label+' home tracker overflow '+JSON.stringify(homeView));
+   // The former iPhone bug squeezed both selectors into a sliver and pushed
+   // the green Add button outside the card. Inspect actual pixels at every size.
+   const restaurantLayout=await evaluate("(()=>{openMealEditor('Akşam yemeği');const menu=localSearch('Paprika Parmesan 3').find(f=>f.portionUnit==='menü');if(!menu)return{error:'missing menu'};const resultRoot=document.getElementById('results');renderResults([menu],resultRoot);const card=resultRoot.querySelector('.result');const controls=card?.querySelector('.food-result-controls');const extras=card?.querySelector('.restaurant-menu-extras');const labels=[...card.querySelectorAll('.restaurant-menu-option')];const selectors=labels.map(x=>x.querySelector('select'));const quantity=card?.querySelector('.food-quantity-label input');const button=controls?.querySelector('button');const details=card?.querySelector('details.restaurant-menu-notes');if(!extras||!button||selectors.length!==2||!quantity||!details)return{error:'missing controls'};const rect=x=>{const r=x.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};const cardRect=rect(card);const views={card:cardRect,controls:rect(controls),extras:rect(extras),labels:labels.map(rect),selectors:selectors.map(rect),quantity:rect(quantity),button:rect(button)};return {error:null,display:getComputedStyle(controls).display,cardLayout:getComputedStyle(card).flexDirection,tracks:getComputedStyle(extras).gridTemplateColumns.trim().split(/\\s+/).length,detailsClosed:!details.open,detailsLabel:details.querySelector('summary')?.textContent,views,scrollWidth:document.documentElement.scrollWidth}})()");
+   assert.equal(restaurantLayout.error,null,label+' restaurant menu controls '+JSON.stringify(restaurantLayout));
+   assert.equal(restaurantLayout.display,'grid',label+' restaurant controls must use grid');
+   assert.equal(restaurantLayout.cardLayout,'column',label+' restaurant card full-width column');
+   assert.equal(restaurantLayout.detailsClosed,true,label+' verbose restaurant details should start collapsed');
+   assert.ok(restaurantLayout.detailsLabel.includes('Menü içeriği'),label+' source note is accessible');
+   assert.equal(restaurantLayout.tracks,width<=600?1:2,label+' mobile stacked, desktop two-column options');
+   const {card,controls,extras,selectors,quantity,button}=restaurantLayout.views;
+   const inside=(child,parent)=>child.left>=parent.left-2&&child.right<=parent.right+2;
+   assert.ok(card.width>=200,label+' menu card too narrow '+JSON.stringify(card));
+   assert.ok(inside(controls,card),label+' controls spill outside menu card '+JSON.stringify(restaurantLayout));
+   assert.ok(inside(extras,card),label+' extras spill outside menu card '+JSON.stringify(restaurantLayout));
+   assert.ok(inside(button,card),label+' green add button must fit inside menu card '+JSON.stringify(restaurantLayout));
+   assert.ok(inside(quantity,card),label+' amount input must fit inside menu card');
+   for(const select of selectors){
+    assert.ok(inside(select,card),label+' select spills outside card '+JSON.stringify(restaurantLayout));
+    assert.ok(select.width>=145,label+' native selector too narrow '+JSON.stringify(restaurantLayout));
+    assert.ok(select.height>=44,label+' native selector tap target too small');
+   }
+   assert.ok(button.width>=145&&button.height>=44,label+' add button not touch-friendly '+JSON.stringify(button));
+   assert.ok(restaurantLayout.scrollWidth<=width+5,label+' restaurant menu creates horizontal overflow '+JSON.stringify(restaurantLayout));
+   console.log('PASS '+label+' restaurant menu responsive layout: '+Math.round(selectors[0].width)+'px selects, '+Math.round(button.width)+'px button');
    if(label==='desktop wide'){
     const form=await evaluate("(()=>{\n showView('fitness',false,false);\n window.FormaRotaABS.choose('abs');\n const toggle=document.getElementById('absManualToggle');\n toggle.click();\n const panel=document.getElementById('absManualPanel');\n const visible=!panel.hidden&&getComputedStyle(panel).display!=='none';\n const values={\n  'floor-crunch':[12,12,12],\n  'reverse-crunch':[12,11,10],\n  'heel-touch':[20,20,20],\n  'plank':[42,40,35]\n };\n document.getElementById('absManual-floor-crunch-0').value='12';\n panel.querySelector('.abs-manual-copy').click();\n for(const [move,sets] of Object.entries(values)){\n  sets.forEach((n,i)=>{\n   if(move==='floor-crunch'&&i>0)return;\n   document.getElementById('absManual-'+move+'-'+i).value=String(n);\n  });\n }\n const count=panel.querySelectorAll('input[type=\"number\"]').length;\n window.confirm=()=>true;\n document.getElementById('absManualForm').requestSubmit();\n const history=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]');\n const saved=history[0];\n const archive=document.getElementById('absHistory').textContent;\n const completed=window.FormaRotaABSEngine.finished(saved);\n const beforeDup=history.length;\n document.getElementById('absManualForm').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));\n const afterDup=JSON.parse(localStorage.getItem('formarota-abs-history-v1')||'[]').length;\n return {visible,count,completed,backfilled:saved?.recordedAfterWorkout,\n  archived:archive.includes('Sonradan kaydedildi'),\n  beforeDup,afterDup,plank:saved?.items?.plank?.map(x=>x.seconds),\n  mapDays:window.FormaRotaRouteMap.currentSnapshot().days,\n  active:localStorage.getItem('formarota-abs-current-v1')};\n})()");
     assert.equal(form.visible,true,'manual form must be visible in ABS mode');
