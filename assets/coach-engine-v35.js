@@ -177,7 +177,7 @@ function weekly(history,weekDate,frequency,selected,activities){
  const entries=activities&&typeof activities==='object'&&!Array.isArray(activities)?activities:null;
  const types=Object.fromEntries(days.map(d=>{
   const value=entries?.[d],type=typeof value==='string'?value:value?.type;
-  return [d,['rest','full','abs','basket','basket-abs','volleyball','home','full-abs','other'].includes(type)?type:
+  return [d,['rest','full','abs','basket','basket-abs','volleyball','home','band','full-abs','other'].includes(type)?type:
    safeArray(selected).includes(d)?'full':'rest'];
  }));
  const daysChosen=days.filter(d=>['full','full-abs'].includes(types[d]));
