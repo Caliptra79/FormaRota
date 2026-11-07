@@ -948,8 +948,17 @@ function renderResults(items,root=$('results')){
   input.value=unit==='ml'?'200':'180';input.setAttribute('aria-label',food.name+' miktarı ('+unit+')');
   const pieces=window.FormaRotaFoodPieces;
   let pieceGrams=unit==='g'?pieces?.grams(food):null;
-  const pieceChoice=pieceGrams!=null?document.createElement('select'):null;
-  if(pieceChoice){
+  const isMenu=food.portionUnit==='menü'&&pieceGrams!=null;
+  const pieceChoice=pieceGrams!=null?(isMenu?null:document.createElement('select')):null;
+  if(isMenu){
+   label.textContent='Menü sayısı';
+   input.value='1';input.min='1';input.step='1';
+   input.max=String(Math.min(6,Math.floor(3000/pieceGrams)));
+   input.setAttribute('aria-label',food.name+' menü sayısı');
+   const hint=document.createElement('small');hint.className='food-piece-hint';
+   hint.textContent='Tam menü tek seçim: 1 menü (≈ '+fmt(pieceGrams)+' g tahmini). İstersen sayıyı değiştir.';
+   left.append(hint);
+  }else if(pieceChoice){
    pieceChoice.className='food-piece-select';pieceChoice.setAttribute('aria-label',food.name+' miktar birimi');
    for(const [value,title] of [['adet','Adet'],['g','Gram']]){
     const option=document.createElement('option');option.value=value;option.textContent=title;pieceChoice.append(option);
@@ -980,6 +989,38 @@ function renderResults(items,root=$('results')){
    left.append(editWeight);
   }else label.textContent='Miktar ('+unit+')';
   label.append(input);
+  let menuSelection=()=>food;
+  if(isMenu){
+   const menus=window.FormaRotaRestaurantMenuOptions;
+   const extras=document.createElement('div');extras.className='restaurant-menu-extras';
+   const chooser=(options,title)=>{
+    const field=document.createElement('label');field.className='restaurant-menu-option';
+    field.textContent=title;
+    const select=document.createElement('select');select.setAttribute('aria-label',food.name+' '+title);
+    for(const opt of options){
+     const option=document.createElement('option');option.value=opt.id;option.textContent=opt.name;
+     select.append(option);
+    }
+    field.append(select);extras.append(field);return select;
+   };
+   const sauce=menus?chooser(menus.sauces,'Gurme sos'):null;
+   const drink=menus?chooser(menus.drinks,'İçecek'):null;
+   if(menus)controls.append(extras);
+   menuSelection=()=>menus?.withExtras(food,sauce.value,drink.value)||food;
+   const preview=()=>{
+    const menu=menuSelection();
+    const qty=Number(input.value),count=Number.isInteger(qty)&&qty>0&&qty<=6?qty:1;
+    const multiplier=pieceGrams*count/100;
+    info.textContent=fmt(menu.kcal*multiplier)+' kcal · '+fmt(menu.protein*multiplier)+
+      ' g protein / '+fmt(count)+' menü (tahmini)';
+    macro.textContent='Karb. '+fmt(menu.carbs*multiplier)+' g · Yağ '+fmt(menu.fat*multiplier)+
+      ' g / '+fmt(count)+' menü';
+   };
+   if(sauce)sauce.onchange=preview;
+   if(drink)drink.onchange=preview;
+   input.oninput=preview;
+   preview();
+  }
   const sugarModule=window.FormaRotaDrinkSugar;
   const sugarChoice=sugarModule?.eligible(food)?document.createElement('select'):null;
   if(sugarChoice){
@@ -997,9 +1038,18 @@ function renderResults(items,root=$('results')){
    sugarLabel.append(help);controls.append(sugarLabel);
    controls.className+=' with-drink-sugar';
   }
-  const btn=document.createElement('button');btn.type='button';btn.textContent='Ekle';
+  const btn=document.createElement('button');btn.type='button';btn.textContent=isMenu?'Menüyü ekle':'Ekle';
   btn.disabled=!nutritionMacrosValid(food);
   btn.onclick=()=>{
+   if(isMenu){
+    const count=Number(input.value);
+    const grams=window.FormaRotaFoodPieces?.toGrams(count,pieceGrams);
+    if(!Number.isInteger(count)||count<1||count>6||grams===null||grams===undefined){
+     $('status').textContent='Geçerli tam menü sayısı gir (en fazla 3000 g).';return;
+    }
+    addFood(menuSelection(),grams,{quantityMode:'menü',pieceCount:count,pieceGrams});
+    return;
+   }
    const asPiece=pieceChoice?.value==='adet';
    const amount=asPiece?pieces.toGrams(input.value,pieceGrams):input.value;
    if(asPiece&&amount===null){$('status').textContent='Adet sayısı veya gramaj geçersiz (en fazla 3000 g).';return;}
@@ -1142,10 +1192,13 @@ function addFood(food,chosenAmount){
  }
  const pieces=typeof window!=='undefined'?window.FormaRotaFoodPieces:null;
  const isPiece=options?.quantityMode==='adet';
- if(isPiece&&(unit!=='g'||!pieces?.validCount(options.pieceCount)||
+ const isMenu=options?.quantityMode==='menü';
+ const isCount=isPiece||isMenu;
+ if(isCount&&(unit!=='g'||!pieces?.validCount(options.pieceCount)||
   !pieces?.validGrams(options.pieceGrams)||
-  pieces.toGrams(options.pieceCount,options.pieceGrams)!==amount)){
-  $('status').textContent='Adet ve gram karşılığı uyuşmuyor; besin eklenmedi.';return;
+  pieces.toGrams(options.pieceCount,options.pieceGrams)!==amount||
+  (isMenu&&(food.portionUnit!=='menü'||!Number.isInteger(Number(options.pieceCount)))))){
+  $('status').textContent='Adet/menü sayısı ve porsiyon karşılığı uyuşmuyor; besin eklenmedi.';return;
  }
  const approximateVolume=unit==='ml'&&food.nutritionBasis!=='100ml';
  const val=k=>food[k]==null?null:Number(food[k])*amount/100;
@@ -1155,17 +1208,18 @@ function addFood(food,chosenAmount){
  logs.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
   date:$('date').value,meal:$('meal').value,foodId:food.id,name:foodName,
   amount,unit,nutritionBasis:food.nutritionBasis||'100g',approximateVolume,
-  ...(isPiece?{pieceCount:Number(options.pieceCount),pieceGrams:Number(options.pieceGrams)}:{}),
+  ...(isCount?{pieceCount:Number(options.pieceCount),pieceGrams:Number(options.pieceGrams)}:{}),
+  ...(isMenu?{portionUnit:'menü'}:{}),
   kcal:(val('kcal')??0)+(extra?.kcal||0),protein:val('protein')??0,
   carbs:val('carbs')==null?null:val('carbs')+(extra?.carbs||0),fat:val('fat'),
   ...(extra?{sugarEligible:true,sugarCubes,sugarGrams:extra.sugarGrams,baseFoodName:food.name}:{}),
   source:food.source||food.kind||'Kişisel',
   baseKcal:food.kcal,baseProtein:food.protein,baseCarbs:food.carbs,baseFat:food.fat});
  write(logKey,logs);renderTotals();
- $('status').textContent='✓ '+foodName+', '+(isPiece?fmt(options.pieceCount)+' adet (≈ '+fmt(amount)+' g)':fmt(amount)+' '+unit)+' olarak '+
+ $('status').textContent='✓ '+foodName+', '+(isMenu?fmt(options.pieceCount)+' menü':isPiece?fmt(options.pieceCount)+' adet (≈ '+fmt(amount)+' g)':fmt(amount)+' '+unit)+' olarak '+
   $('meal').value.toLocaleLowerCase('tr')+' öğününe kaydedildi.'+
   (approximateVolume?' Kalori hesabı yaklaşık (1 ml ≈ 1 g).':' Günlük kalori ve protein güncellendi.');
- typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(foodName+' · '+(isPiece?fmt(options.pieceCount)+' adet':fmt(amount)+' '+unit)+' kaydedildi');
+ typeof window!=='undefined'&&window.FormaRotaLuxe?.toast?.(foodName+' · '+(isMenu?fmt(options.pieceCount)+' menü':isPiece?fmt(options.pieceCount)+' adet':fmt(amount)+' '+unit)+' kaydedildi');
 }
 async function barcodeSearch(){const code=$('barcode').value.trim();if(!/^\d{8,14}$/.test(code)){$('barcodeStatus').textContent='8–14 haneli sayısal bir barkod gir.';return}$('barcodeBtn').disabled=true;$('barcodeStatus').textContent='Barkod sorgulanıyor…';$('barcodeResult').innerHTML='';try{const res=await fetch('https://world.openfoodfacts.org/api/v3/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,brands,nutriments');if(!res.ok)throw new Error();const data=await res.json();if(data.status!==1||!data.product)throw new Error('Ürün bulunamadı');const food=offProductToFood(data.product);if(!food)throw new Error('Ürünün kalori/protein verisi eksik');renderResults([food],$('barcodeResult'));$('barcodeStatus').textContent='Ürün bulundu. Etiket bilgileriyle karşılaştır.'}catch(e){$('barcodeStatus').textContent=e.message==='Ürün bulunamadı'||e.message==='Ürünün kalori/protein verisi eksik'?e.message:'Barkod servisine ulaşılamadı.'}finally{$('barcodeBtn').disabled=false}}
 function renderCustomFoods(){const root=$('customFoods');root.innerHTML='';const foods=getCustom();if(!foods.length){root.innerHTML='<div class="empty">Henüz kişisel besin eklemedin.</div>';return}foods.forEach(f=>{const el=document.createElement('div');el.className='entry';const left=document.createElement('div');const b=document.createElement('strong');b.textContent=f.name;const p=document.createElement('p');p.textContent=`${fmt(f.kcal)} kcal · ${fmt(f.protein)} g protein / 100 ${f.unit==='ml'?'ml':'g'}`;if(window.FormaRotaFoodPieces?.grams(f)!=null)p.textContent+=' · 1 adet ≈ '+fmt(window.FormaRotaFoodPieces.grams(f))+' g';
