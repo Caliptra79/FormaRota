@@ -119,5 +119,5 @@ test('the menu UI, edit prompt and offline assets are connected without modifyin
  assert.ok(sw.includes("'./assets/restaurant-foods.js?fr=110'"));
  assert.ok(sw.includes("'./assets/food-pieces.js?fr=110'"));
  assert.ok(html.includes('function collectBackup(){return{version:7'));
- assert.match(sw,/formarota-solo-v111-shell/);
+ assert.match(sw,/formarota-solo-v112-shell/);
 });
