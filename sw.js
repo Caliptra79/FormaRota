@@ -36,7 +36,7 @@ self.addEventListener('fetch',event=>{
  }
  // Scripts and styles must track the latest HTML. Cached-first code could pair
  // the new program selector with an old handler that does not support "home".
- if(/\\.(?:js|css|webmanifest)$/.test(url.pathname)){
+ if(/\.(?:js|css|webmanifest)$/.test(url.pathname)){
   event.respondWith((async()=>{
    try{
     const response=await fetch(req,{cache:'no-store'});
