@@ -49,12 +49,14 @@ test('conservative repetition and band progression uses good technique and repor
  assert.equal(r.band,'10');assert.equal(r.canTryBand,null);
  const b=filled(E.create(DATE,[first]),12,'good',4);
  const a=filled(E.create(DATE,[first,b]),12,'good',4);
- r=E.recommend('band-squat',[first,b,a]);
+ const b2=filled(E.create(DATE,[first,b,a]),12,'good',4);
+ const a2=filled(E.create(DATE,[first,b,a,b2]),12,'good',4);
+ r=E.recommend('band-squat',[first,b,a,b2,a2]);
  assert.equal(r.band,'10','a high performance must not silently change resistance');
  assert.equal(r.canTryBand,'20');
  assert.match(r.advice,/deneme setinde/);
- a.items['band-squat'][0].form='poor';
- r=E.recommend('band-squat',[first,b,a]);
+ a2.items['band-squat'][0].form='poor';
+ r=E.recommend('band-squat',[first,b,a,b2,a2]);
  assert.equal(r.canTryBand,null);
  assert.match(r.advice,/Form veya efor/);
 });
