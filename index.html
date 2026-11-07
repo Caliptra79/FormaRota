@@ -951,7 +951,9 @@ function renderResults(items,root=$('results')){
   const input=document.createElement('input');input.type='number';input.min='0.1';input.max='3000';input.step='0.1';
   input.value=unit==='ml'?'200':'180';input.setAttribute('aria-label',food.name+' miktarı ('+unit+')');
   const pieces=window.FormaRotaFoodPieces;
-  let pieceGrams=unit==='g'?pieces?.grams(food):null;
+  // A complete restaurant menu is a catalog serving, not an editable single
+  // item weight; older custom piece overrides stay stored but are not applied.
+  let pieceGrams=unit==='g'?(food.portionUnit==='menü'?Number(food.pieceGrams):pieces?.grams(food)):null;
   const isMenu=food.portionUnit==='menü'&&pieceGrams!=null;
   const pieceChoice=pieceGrams!=null?(isMenu?null:document.createElement('select')):null;
   if(isMenu){
