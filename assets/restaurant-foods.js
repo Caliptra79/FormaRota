@@ -72,7 +72,7 @@ for(const [id,label,portion] of [['paprika-parmesan','Paprika Parmesan',56],['or
    label+' tenders menü;'+label+' '+count+'lü;'+label+' menu;'+label+' tenders',
    {menu:true,estimate:true,note:'Ana menü (yaklaşık '+weight+' g) için tavuk '+(portion*count)+
     ' g, coleslaw 100 g, pesto-cheddar fusilli 36 g, patates 95 g, ketçap 20 g, mayonez 20 g hesaba katıldı. '+
-    'Gurme sos (30 g) ve içecek DAHİL DEĞİL; ayrı ekle. Porsiyon, pişirme ve soslar son kaloriyi önemli ölçüde değiştirir. '+
+    'Gurme sos (30 g) ve içecek varsayılan hesaba DAHİL DEĞİL; seçiciyle aynı menü kaydına eklenebilir. Porsiyon, pişirme ve soslar son kaloriyi önemli ölçüde değiştirir. '+
     'Makroların bir bölümü tahminidir; resmî menü besin değeri değildir.'});
   foods.push(menu);
  }
