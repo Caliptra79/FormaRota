@@ -46,6 +46,7 @@ function renderCards(){
  guide.append(el('strong','','Dört ekipman · Evde Full Body'));
  guide.append(el('p','home-cal-hint','Uzun loop bantlar (10/20/30/40 kg), kapı ankrajı, geniş egzersiz matı ve isteğe bağlı şınav barları. Şınav barları, başlangıçtaki yüksek yüzeyde eğimli şınavın yerine geçmez.'));
  guide.append(el('p','home-cal-tip','Kapı ankrajını kapalı ve güvenli kapıya, kapının açılma yönüne ters taraftan kur; her sette bağlantıyı kontrol et. Bantların kg değerleri nominaldir: gerçek gerilim esneme mesafesine göre değişir.'));
+ root.FormaRotaHomeMedia?.renderSetup(guide);
  frag.append(guide);
  const sections=[['Temel Full Body',E.MOVES.slice(0,10)],['Kalistenik · Core / ABS',E.MOVES.slice(10)]];
  for(const [heading,moves] of sections){
@@ -57,6 +58,7 @@ function renderCards(){
    const low=move.id==='dead-bug'?move.low+'–'+move.high+' / taraf':move.low+'–'+move.high+(move.kind==='seconds'?' sn':' tekrar');
    card.append(el('p','home-cal-hint',low+' · '+move.tool));
    card.append(el('p','home-cal-tip',move.tip));
+   root.FormaRotaHomeMedia?.attach(card,move);
    const prev=lastPerformance(move.id);
    if(prev)card.append(el('p','home-cal-previous','Önceki: '+prev.text+'. '+prev.advice));
    if(active){
