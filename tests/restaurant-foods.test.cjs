@@ -5,7 +5,7 @@ const foods=require('../assets/restaurant-foods.js');
 const by=id=>foods.find(f=>f.id==='restaurant-doyuyo-'+id);
 test('Doyuyo offline catalog is searchable with product names and aliases',()=>{
  const html=src('index.html'),sw=src('sw.js');
- assert.ok(html.includes('<script src="./assets/restaurant-foods.js"></script>'));
+ assert.ok(html.includes('<script src="./assets/restaurant-foods.js?fr=110"></script>'));
  assert.ok(html.includes('.concat(window.FormaRotaRestaurantFoods||[])'));
  assert.ok(html.includes("startsWith('restaurant-')&&food.note"));
  assert.ok(sw.includes("'./assets/restaurant-foods.js'"));
