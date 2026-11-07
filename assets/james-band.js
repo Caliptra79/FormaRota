@@ -38,7 +38,7 @@ function renderMoves(){
   card.append(el('p','james-band-recommendation','Öneri: '+bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar · '+preview.targetSets+' set'),guide);
   if(r.previous)card.append(el('p','james-band-previous','Önceki tamamlanan seans: '+r.previous));
   const jamesSource=m.source.includes('undersunfitness.com')||m.source.includes('youtube.com/watch?v=W3t7r5_MGUw');
-  card.append(link(m.source,jamesSource?'James Grage / Undersun kaynağını aç':'Tamamlayıcı teknik kaynağını aç'));
+  card.append(link(m.source,m.source.includes('fithub.com.tr')?'James Grage röportajında hareketi incele':jamesSource?'Undersun / James Grage kaynak bağlantısı':'Tamamlayıcı teknik kaynağını aç'));
   if(['front-lunge','one-arm-row','pallof'].includes(id))card.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
   const media=el('div','james-band-media');
   const placeholder=el('p','james-band-gif-wait','Hareket GIF’i bekleniyor · Dosya adı: assets/band-gifs/'+id+'.gif');
