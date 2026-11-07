@@ -79,16 +79,16 @@ function refreshOverview(){
    const scheduled=w.planned.includes(date);
    const kind=done?'done':partial?'partial':
     activity==='basket'||activity==='basket-abs'?'ball':
-    activity==='abs'?'abs':activity==='home'?'planned':activity==='volleyball'?'ball':activity==='other'?'other':
+    activity==='abs'?'abs':activity==='home'||activity==='band'?'planned':activity==='volleyball'?'ball':activity==='other'?'other':
     scheduled?'planned':'rest';
    const label={
     rest:'Yürüyüş',full:'Full Body',abs:'Karın / ABS',
-    basket:'Basketbol','basket-abs':'Basketbol + ABS',volleyball:'Voleybol',home:'Evde Full Body + Core',
+    basket:'Basketbol','basket-abs':'Basketbol + ABS',volleyball:'Voleybol',home:'Evde Full Body + Core',band:'James Grage · Direnç Bandı',
     'full-abs':'Full Body + ABS',other:'Diğer etkinlik'
    }[activity]||'Yürüyüş';
    const status=done?'✓':partial?'◐':
     activity==='basket'||activity==='basket-abs'?'🏀':
-    activity==='abs'?'💪':activity==='home'?'🏠':activity==='volleyball'?'🏐':activity==='other'?'✦':
+    activity==='abs'?'💪':activity==='home'?'🏠':activity==='band'?'🟠':activity==='volleyball'?'🏐':activity==='other'?'✦':
     scheduled?'●':'·';
    const el=text('div','coach-day coach-'+kind);
    el.title=date+' · '+(done?'Tam Full Body kaydedildi':partial?'Yarım seans kaydedildi':'Plan: '+label);
