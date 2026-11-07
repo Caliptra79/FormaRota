@@ -33,3 +33,13 @@ test('optional GIF cache errors do not prevent core offline installation',async(
  assert.ok(s.events.includes('activate-requested'));
  assert.ok(s.stored.includes('./assets/trainer-adapter.js'));
 });
+
+test('bundled home movement GIFs are mandatory for offline installation',async()=>{
+ const ok=simulate();
+ await ok.installation;
+ for(const id of ['incline-pushup','band-triceps','tuck-hollow'])
+  assert.ok(ok.stored.includes('./assets/home-gifs/'+id+'.gif'));
+ const bad=simulate(['./assets/home-gifs/band-row.gif']);
+ await assert.rejects(bad.installation,/Offline asset cannot be installed/);
+ assert.equal(bad.events.includes('activate-requested'),false);
+});
