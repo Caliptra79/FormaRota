@@ -320,6 +320,7 @@
   }
   body.append(top,name,hint,units,table);
   if(move.kind==='seconds')body.append(element('p','abs-timer-tip','Plank süresini kronometreyle ölçüp sıradaki sete aktarabilir veya saniyeyi elle girebilirsin.'));
+  root.FormaRotaTechnique?.attach(body,'abs',move.id);
   card.append(figure,body);return card;
  }
  function renderCards(){

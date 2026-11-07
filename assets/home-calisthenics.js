@@ -59,6 +59,7 @@ function renderCards(){
    card.append(el('p','home-cal-hint',low+' · '+move.tool));
    card.append(el('p','home-cal-tip',move.tip));
    root.FormaRotaHomeMedia?.attach(card,move);
+    root.FormaRotaTechnique?.attach(card,'home',move.id);
    const prev=lastPerformance(move.id);
    if(prev)card.append(el('p','home-cal-previous','Önceki: '+prev.text+'. '+prev.advice));
    if(active){
