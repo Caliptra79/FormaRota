@@ -109,7 +109,7 @@ test('meal bottom sheet restores focus on close and hides when leaving meal rout
 test('scripts parse, offline shell bundles both Luxe assets, and original workout GIF list remains',()=>{
  new vm.Script(code);
  for(const m of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
- assert.ok(html.includes('<script defer src="./assets/luxe-ui.js"></script>'));
+ assert.ok(html.includes('<script defer src="./assets/luxe-ui.js?fr=108"></script>'));
  assert.ok(html.includes('<link rel="stylesheet" href="./assets/luxe-ui.css"/>'));
  assert.ok(sw.includes("'./assets/luxe-ui.css'"));
  assert.ok(sw.includes("'./assets/luxe-ui.js'"));

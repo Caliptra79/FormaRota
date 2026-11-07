@@ -1,0 +1,82 @@
+/* FormaRota Colorburst OLED: three vivid offline palettes with true-black surfaces.
+   Scope to the three new themes; the existing 10 palettes remain unchanged. */
+html[data-theme="oled-cyberpop"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#150d20;--panel2:#241634;--control:#1b1229;
+ --text:#fff8ff;--muted:#d3bfdc;--border:#64426d;--accent:#ff66d1;--onaccent:#220516;
+ --danger:#ff8496;--warn:#ffe17b;--chart-protein:#40f5dd;--chart-weight:#c997ff;
+ --svg-ink:#d1bfdc;--info-bg:#10242a;--info-fg:#b5fff1;--info-border:#246270;
+ --warning-bg:#2d1d20;--warning-border:#7b495a;--art-bg:#1b1230;
+ --fit-bg:#281334;--fit-border:#76436c;--fit-banner:#28172c;--fit-banner-border:#754676;
+ --luxe-coral:#ff7eaa;--luxe-violet:#b68cff;--luxe-blue:#43eaff;
+ --luxe-mint:#53ffdf;--luxe-amber:#ffe26a;
+ --studio-bg:#25122f;--studio-bg-deep:#080510;--studio-ink:#fff8ff;
+ --studio-ink-muted:#d6c3e1;--studio-pop:#ff66d1;--studio-pop-2:#43eaff;
+ --studio-sun:#ffe26a;--studio-rim:#79426c;
+ --burst-a:#ff66d1;--burst-b:#43eaff;--burst-c:#ffe26a;
+}
+html[data-theme="oled-aurora"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#091c22;--panel2:#122b32;--control:#0d2429;
+ --text:#f0fffe;--muted:#b4d8d9;--border:#2f6772;--accent:#45f5da;--onaccent:#052621;
+ --danger:#ff8dab;--warn:#fce187;--chart-protein:#70faad;--chart-weight:#b28aff;
+ --svg-ink:#b3d7d8;--info-bg:#102b28;--info-fg:#baffed;--info-border:#34766b;
+ --warning-bg:#282419;--warning-border:#71643f;--art-bg:#0b2530;
+ --fit-bg:#102e31;--fit-border:#2e6d70;--fit-banner:#102c26;--fit-banner-border:#387b66;
+ --luxe-coral:#ff7cb9;--luxe-violet:#b08dff;--luxe-blue:#55ccff;
+ --luxe-mint:#45f5da;--luxe-amber:#d8ff70;
+ --studio-bg:#102d37;--studio-bg-deep:#021013;--studio-ink:#f0fffe;
+ --studio-ink-muted:#b9dfe0;--studio-pop:#45f5da;--studio-pop-2:#b08dff;
+ --studio-sun:#d8ff70;--studio-rim:#386c74;
+ --burst-a:#45f5da;--burst-b:#b08dff;--burst-c:#d8ff70;
+}
+html[data-theme="oled-ultraviolet"]{
+ color-scheme:dark;
+ --bg:#000000;--panel:#181027;--panel2:#291b3d;--control:#21132f;
+ --text:#fbf6ff;--muted:#d3c5e5;--border:#65518b;--accent:#c28bff;--onaccent:#1d0635;
+ --danger:#ff8da4;--warn:#ffd478;--chart-protein:#51dfff;--chart-weight:#f385ff;
+ --svg-ink:#d1c2e2;--info-bg:#1c2439;--info-fg:#c9eaff;--info-border:#3f5d83;
+ --warning-bg:#302020;--warning-border:#845162;--art-bg:#1d1730;
+ --fit-bg:#231731;--fit-border:#6d4c87;--fit-banner:#26162e;--fit-banner-border:#75478b;
+ --luxe-coral:#ff71c5;--luxe-violet:#c28bff;--luxe-blue:#5ea9ff;
+ --luxe-mint:#64f5db;--luxe-amber:#ffd477;
+ --studio-bg:#241637;--studio-bg-deep:#08040f;--studio-ink:#fbf6ff;
+ --studio-ink-muted:#d5c4e7;--studio-pop:#c28bff;--studio-pop-2:#5ea9ff;
+ --studio-sun:#ff71c5;--studio-rim:#70518e;
+ --burst-a:#c28bff;--burst-b:#5ea9ff;--burst-c:#ff71c5;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) :is(
+ #homePanel.oled-home,#workoutProgramChooser,#frRankProgress,#fitExercisePanel,#preferencesPanel
+){
+ background:
+  radial-gradient(ellipse at 96% 6%,color-mix(in srgb,var(--burst-a) 18%,transparent),transparent 42%),
+  radial-gradient(ellipse at 5% 95%,color-mix(in srgb,var(--burst-b) 12%,transparent),transparent 48%),
+  var(--panel)!important;
+ border-color:color-mix(in srgb,var(--burst-a) 40%,var(--border))!important;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) :is(
+ .oled-calorie-card,.oled-quick-card,.oled-daily-card,.oled-week,.home-cal-move
+){
+ border-color:color-mix(in srgb,var(--burst-b) 36%,var(--border))!important;
+ box-shadow:inset 0 1px 0 color-mix(in srgb,var(--burst-a) 15%,transparent),0 8px 27px #0005;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) :is(
+ .fr-rank-track span,.progress span,.fit-progress span,#homeKcalBar
+){
+ background:linear-gradient(90deg,var(--burst-b),var(--burst-a),var(--burst-c))!important;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) #workoutProgramChooser button[aria-pressed="true"]{
+ border-color:var(--burst-a)!important;
+ background:color-mix(in srgb,var(--burst-a) 16%,var(--panel2))!important;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--burst-b) 38%,transparent),0 0 16px color-mix(in srgb,var(--burst-a) 17%,transparent)!important;
+ color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) .oled-overline{
+ color:var(--burst-b)!important;
+}
+html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) :is(button,input,select,textarea,summary):focus-visible{
+ outline:2px solid var(--burst-b)!important;outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){
+ html:is([data-theme="oled-cyberpop"],[data-theme="oled-aurora"],[data-theme="oled-ultraviolet"]) *{transition-duration:.01ms!important}
+}
