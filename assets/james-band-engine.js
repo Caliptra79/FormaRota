@@ -15,7 +15,7 @@ const move=(id,tr,group,tip,mistake,source=GUIDE,band='10',low=8,high=12)=>Objec
  id,tr,group,tip,mistake,source,band,low,high
 });
 const MOVES=Object.freeze([
- move('band-squat','Bantla squat','Bacak · kalça','Bandin ustune saglam bas, kalcayi kontrollu geriye gonder ve tum ayagi yerde tut.','Dizleri ice dusurme, belini yuvarlama ve kalkarken bandin seni yana cekmesine izin verme.',VIDEO+'&t=57s'),
+ move('band-squat','Bantla Overhead Squat','Bacak · kalça','Bandın üzerine iki ayağınla sağlam bas; bandı baş üzerinde gergin tut, karın bölgeni sık ve kontrollü çömel.','Dizleri içeri düşürme, beli yuvarlama, kolları öne kaçırma veya bant gerginliğini kontrolsüz bırakma.',VIDEO+'&t=57s'),
  move('bent-row','Bent-over row','Sirt','Kalca menteşesiyle one egil, govdeyi sabit tut ve dirsekleri kalcaya dogru cek.','Belden silkelenme; omuzlari kulaklara cekme veya bandi birakip geri sektirme.',VIDEO+'&t=455s'),
  move('wrap-chest','Wraparound chest press','Göğüs','Bandı sırtın arkasından geçir, omuzları dengeli tut; kolları kontrollü öne it.','Omuzları öne fırlatma, bandı koltuk altından kaydırma veya beli aşırı çukurlaştırma.','https://torokhtiy.com/blogs/guides/resistance-band-chest-exercises'),
  move('shoulder-press','Standing band shoulder press','Omuz','Banda saglam bas, karin bolgesini siki tut ve elleri kontrollu yukariya it.','Belini fazla cukurlastirma, kaburgalari ileri firlatma.',VIDEO+'&t=170s'),
