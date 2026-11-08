@@ -336,3 +336,33 @@ html[data-theme] #jamesBandPanel .james-band-showcase .james-band-meter-inner>st
 html[data-theme] #jamesBandPanel .james-band-showcase h2 em{
  color:#ff9854!important;-webkit-text-fill-color:#ff9854!important;
 }
+
+/* Independent band calibration and rest controls; all ten themes. */
+#jamesBandPanel .james-band-calibration-badge{
+ grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;
+ border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border));
+ background:color-mix(in srgb,var(--accent) 11%,var(--panel));
+ color:var(--text);padding:5px 9px;border-radius:99px;
+ font-size:.67rem;font-weight:850;letter-spacing:.045em;
+}
+#jamesBandPanel .james-band-calibration-badge.calibrated{
+ border-color:color-mix(in srgb,var(--luxe-mint,#39bb96) 40%,var(--border));
+ background:color-mix(in srgb,var(--luxe-mint,#39bb96) 12%,var(--panel));
+}
+#jamesBandPanel .james-band-rest-bar{
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:12px;padding:15px;margin:13px 0;
+ background:color-mix(in srgb,var(--accent) 8%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--accent) 28%,var(--border));
+ border-radius:16px;min-width:0;
+}
+#jamesBandPanel .james-band-rest-readout{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+#jamesBandPanel .james-band-rest-readout>span{font-size:.64rem;letter-spacing:.13em;color:var(--accent);font-weight:850}
+#jamesBandPanel .james-band-rest-readout>strong{font-size:clamp(1.5rem,4vw,2rem);font-variant-numeric:tabular-nums;line-height:1.1;color:var(--text)!important}
+#jamesBandPanel .james-band-rest-readout>small{font-size:.76rem;color:var(--muted);line-height:1.4}
+#jamesBandPanel .james-band-rest-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#jamesBandPanel .james-band-rest-actions button{border-radius:11px!important;min-height:44px;font-size:.79rem}
+@media(max-width:450px){
+ #jamesBandPanel .james-band-rest-actions{width:100%}
+ #jamesBandPanel .james-band-rest-actions button{flex:1;min-width:0}
+}

@@ -19,6 +19,59 @@ function select(options,value,description){
  field.value=value;return field;
 }
 function link(href,label){const a=el('a','james-band-source',label);a.href=href;a.target='_blank';a.rel='noopener noreferrer';return a;}
+
+const SOUND_KEY='formarota-james-band-sound-v1';
+let soundEnabled=read(SOUND_KEY,true)!==false;
+let audioCtx=null,restEnd=0,restLabel='Henüz dinlenme başlatılmadı.',restAlarmed=false;
+const clock=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function unlockAudio(){
+ if(!soundEnabled)return;
+ const Audio=root.AudioContext||root.webkitAudioContext;
+ if(!Audio)return;
+ try{
+  if(!audioCtx)audioCtx=new Audio();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+ }catch{}
+}
+function chime(){
+ if(!soundEnabled||doc.visibilityState==='hidden')return;
+ if(!audioCtx||audioCtx.state!=='running')return;
+ try{
+  [660,880].forEach((frequency,i)=>{
+   const start=audioCtx.currentTime+i*.18;
+   const oscillator=audioCtx.createOscillator(),gain=audioCtx.createGain();
+   oscillator.type='sine';oscillator.frequency.value=frequency;
+   gain.gain.setValueAtTime(.0001,start);
+   gain.gain.exponentialRampToValueAtTime(.06,start+.02);
+   gain.gain.exponentialRampToValueAtTime(.0001,start+.16);
+   oscillator.connect(gain);gain.connect(audioCtx.destination);
+   oscillator.start(start);oscillator.stop(start+.18);
+  });
+ }catch{}
+ try{root.navigator?.vibrate?.([90,50,90])}catch{}
+}
+function updateRest(){
+ const remaining=restEnd?Math.max(0,Math.ceil((restEnd-Date.now())/1000)):0;
+ if(restEnd&&remaining===0){
+  restEnd=0;restLabel='✓ Dinlenme bitti. Sonraki sete hazırsın.';
+  if(!restAlarmed){restAlarmed=true;chime();}
+ }
+ const time=$('jamesBandRestRemaining');
+ if(time)time.textContent=remaining?clock(remaining):'Hazır';
+ const note=$('jamesBandRestStatus');if(note)note.textContent=remaining?restLabel:restLabel;
+ const skip=$('jamesBandRestSkip');if(skip)skip.disabled=!remaining;
+ const toggle=$('jamesBandSoundToggle');
+ if(toggle){toggle.textContent=soundEnabled?'🔊 Ses açık':'🔇 Ses kapalı';toggle.setAttribute('aria-pressed',String(soundEnabled));}
+}
+function stopRest(message){
+ restEnd=0;restAlarmed=true;restLabel=message||'Dinlenme durduruldu.';updateRest();
+}
+function beginRest(seconds,nextName){
+ if(!Number.isFinite(seconds)||seconds<=0)return;
+ restEnd=Date.now()+seconds*1000;restLabel=nextName||'Sonraki sete hazırlan.';
+ restAlarmed=false;updateRest();
+}
+
 function renderMoves(){
  const host=$('jamesBandMoves');if(!host)return;
  const s=current(),h=history(),preview=s||E.create(today(),h);
@@ -29,7 +82,7 @@ function renderMoves(){
   return wrapper;
  };
  ids.forEach((id,index)=>{
-  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id];
+  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id],cal=E.calibration(id,h);
   if(!m||!r||!g)return;
   const savedSets=Array.isArray(s?.items?.[id])?s.items[id]:[];
   const savedCount=savedSets.filter(x=>E.validSet(m,x)).length;
@@ -44,7 +97,8 @@ function renderMoves(){
   const dots=el('div','james-band-dots');
   dots.setAttribute('aria-label',savedCount+' / '+target+' set tamamlandı');
   for(let i=0;i<target;i++)dots.append(el('span','james-band-dot'+(E.validSet(m,savedSets[i])?' done':'')));
-  mast.append(eyebrow,count,dots);
+  const calibrationBadge=el('span','james-band-calibration-badge'+(cal.ready?' calibrated':''),cal.phase==='none'?'BANT YOK':cal.ready?'✓ KALİBRE':cal.phase==='trial'?'DENEME '+cal.trials+'/2':cal.phase==='adjust'?'DİRENCİ AYARLA':'DOĞRULAMA');
+  mast.append(eyebrow,count,dots,calibrationBadge);
   const layout=el('div','james-band-card-layout');
   const media=el('div','james-band-media');
   const src='./assets/band-gifs/'+id+'.webp';
@@ -65,9 +119,10 @@ function renderMoves(){
   facts.append(el('span','',g.seconds+' sn / set'));
   body.append(heading,facts);
   const advice=el('div','james-band-coach-card');
-  advice.append(el('span','james-band-coach-kicker','✦ KOÇLUK ÖNERİSİ'));
-  advice.append(el('strong','',bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar'));
-  advice.append(el('p','james-band-advice',r.advice));
+  advice.append(el('span','james-band-coach-kicker',cal.ready?'✦ KALİBRE EDİLMİŞ ÖNERİ':'✦ AKILLI BANT KALİBRASYONU'));
+  advice.append(el('strong','',bandName(cal.band)+' · '+r.aim+'–'+m.high+' tekrar'));
+  advice.append(el('p','james-band-advice',cal.advice));
+  if(cal.ready)advice.append(el('p','james-band-advice',r.advice));
   body.append(advice);
   if(r.previous)body.append(el('p','james-band-previous','◷ Önceki tamamlanan seans: '+r.previous));
   const settable=el('div','james-band-settable');
@@ -85,8 +140,9 @@ function renderMoves(){
     reps.setAttribute('aria-label',m.tr+' '+(i+1)+'. set tekrar');
     if(saved)reps.value=saved.reps;
     const bandOptions=(m.band==='none'?['none']:E.BAND_LEVELS.filter(b=>b!=='none')).map(b=>[b,bandName(b)]);
-    const band=select(bandOptions,saved?.band||r.band,m.tr+' '+(i+1)+'. set bant');
-    const grip=select([['relaxed','Uzun tutuş'],['normal','Normal tutuş'],['short','Kısa tutuş']],saved?.grip||r.grip,m.tr+' bant tutuşu');
+    const earlier=savedSets.slice(0,i).reverse().find(x=>E.validSet(m,x));
+    const band=select(bandOptions,saved?.band||earlier?.band||cal.band,m.tr+' '+(i+1)+'. set bant');
+    const grip=select([['relaxed','Uzun tutuş'],['normal','Normal tutuş'],['short','Kısa tutuş']],saved?.grip||earlier?.grip||cal.grip,m.tr+' bant tutuşu');
     if(m.band==='none'){band.disabled=true;grip.disabled=true;}
     const rir=select([[0,'0 tekrar kaldı'],[1,'1 tekrar kaldı'],[2,'2 tekrar kaldı'],[3,'3 tekrar kaldı'],[4,'4 tekrar kaldı'],[5,'5+ tekrar kaldı']],String(saved?.rir??2),m.tr+' '+(i+1)+'. set tekrar rezervi');
     const form=select([['good','Form temiz'],['unsure','Formdan emin değilim'],['poor','Form bozuldu']],saved?.form||'good',m.tr+' '+(i+1)+'. set teknik');
@@ -119,8 +175,14 @@ function saveSet(id,index,form){
  if(!s||!m||!E.PLANS[s.variant].includes(id)||index<0||index>=s.targetSets)return;
  const record={done:true,reps:form.reps===''?null:Number(form.reps),band:form.band,grip:form.grip,rir:Number(form.rir),form:form.form,doneAt:new Date().toISOString()};
  if(!E.validSet(m,record)){status('Set için geçerli tekrar (1–60), bant, tutuş, form ve tekrar rezervi gir.');return}
+ const wasSaved=E.validSet(m,s.items?.[id]?.[index]);
  const next=JSON.parse(JSON.stringify(s));next.items[id][index]=record;
  if(!write(CURRENT,next))return;
+ if(!wasSaved){
+  const upcoming=E.movesOf(next).find(x=>next.items[x.id]?.some(v=>!E.validSet(x,v)));
+  if(upcoming){unlockAudio();beginRest(E.GUIDANCE[id]?.rest||75,upcoming.id===id?'Sonraki sete hazırlan.':'Sıradaki hareket: '+upcoming.tr);}
+  else stopRest('✓ Tüm setler kaydedildi. Antrenmanı tamamlayabilirsin.');
+ }
  render();status(m.tr+' · '+(index+1)+'. set kaydedildi ✓');
  root.FormaRotaOLEDHome?.schedule?.();
 }
@@ -128,6 +190,7 @@ function start(){
  if(current()){status('Bir bant antrenmanın zaten açık.');return}
  const s=E.create(today(),history());
  if(!write(CURRENT,s))return;
+ unlockAudio();stopRest('İlk setten sonra dinlenme sayacı başlayacak.');
  render();status('Bant antrenmanın başladı. Gerçek setlerini tek tek kaydet.');
  root.FormaRotaOLEDHome?.schedule?.();
 }
@@ -140,6 +203,7 @@ function finish(full){
  const done={...s,status:full?'finished':'stopped',endedAt:new Date().toISOString()};
  if(!write(HISTORY,[...history(),done]))return;
  try{root.localStorage.removeItem(CURRENT)}catch{}
+ stopRest('Antrenman kaydedildi.');
  render();status(full?'Bant antrenmanın kaydedildi ✓':'Yarım seans saklandı.');
  root.FormaRotaOLEDHome?.schedule?.();
  root.FormaRotaABS?.refresh?.();
@@ -168,13 +232,19 @@ function render(){
  if($('jamesBandStart'))$('jamesBandStart').disabled=Boolean(s);
  if($('jamesBandFinish'))$('jamesBandFinish').disabled=!s||!E.complete(s);
  if($('jamesBandStop'))$('jamesBandStop').disabled=!s||valid===0;
- renderMoves();renderHistory();
+ renderMoves();renderHistory();updateRest();
 }
 function init(){
  if(!$('jamesBandPanel'))return;
  $('jamesBandStart')?.addEventListener('click',start);
  $('jamesBandFinish')?.addEventListener('click',()=>finish(true));
  $('jamesBandStop')?.addEventListener('click',()=>finish(false));
+ $('jamesBandSoundToggle')?.addEventListener('click',()=>{
+  soundEnabled=!soundEnabled;write(SOUND_KEY,soundEnabled);
+  if(soundEnabled)unlockAudio();updateRest();
+ });
+ $('jamesBandRestSkip')?.addEventListener('click',()=>stopRest('Dinlenme atlandı. Sonraki sete geçebilirsin.'));
+ root.setInterval?.(updateRest,500);
  root.addEventListener?.('pageshow',render);
  render();
  root.navigator?.serviceWorker?.ready?.then(reg=>reg.active?.postMessage({type:'CACHE_BAND_IMAGES'})).catch(()=>{});

@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':asset==='james-band.css'?'118':'117')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr=119'),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':asset==='james-band.css'?'118':'117')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr=119'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v118-shell/);
+ assert.match(sw,/formarota-solo-v119-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -140,4 +140,41 @@ test('Band Studio has an accessible progress hero, visible set tracking and resp
  assert.ok(css.includes('#jamesBandPanel .james-band-image'), 'images remain aspect-ratio preserved');
  assert.ok(html.includes('Bant güvenliği ve program kaynakları'), 'full safety notes remain accessible');
  assert.ok(css.includes('-webkit-text-fill-color:#fff!important'), 'dark hero stays legible in light and OLED themes');
+});
+
+test('exercise-specific calibration learns without unsafe automatic band jumps',()=>{
+ const m=E.MOVES.find(x=>x.id==='bent-row');
+ const fresh=E.calibration(m.id,[]);
+ assert.equal(fresh.phase,'trial');assert.equal(fresh.band,'10');
+ assert.equal(E.calibration('band-crunch',[]).phase,'none');
+ const a=filled(E.create(DATE,[]),10,'good',2);
+ const b=filled(E.create(DATE,[]),10,'good',3);
+ assert.equal(E.calibration('band-squat',[a]).ready,false);
+ const learned=E.calibration('band-squat',[a,b]);
+ assert.equal(learned.ready,true);
+ assert.equal(learned.band,'10');assert.equal(learned.grip,'normal');
+ const hard=filled(E.create(DATE,[]),7,'poor',0);
+ for(const x of hard.items['band-squat']){x.band='20';x.grip='short';}
+ assert.equal(E.calibration('band-squat',[hard]).band,'10');
+ assert.equal(E.calibration('band-squat',[hard]).grip,'relaxed');
+ const easy=filled(E.create(DATE,[]),12,'good',5);
+ const c=E.calibration('band-squat',[easy]);
+ assert.equal(c.band,'10','easy single trial must not automatically advance to 20 kg');
+ assert.match(c.advice,/20 kg/);
+ const stopped=E.create(DATE,[]);stopped.status='stopped';stopped.items['band-squat'][0]={done:true,reps:10,band:'10',grip:'normal',rir:2,form:'good'};
+ const partial=E.calibration('band-squat',[stopped]);
+ assert.equal(partial.trials,1);assert.equal(partial.ready,false);
+ assert.equal(E.calibration('missing',[]),null);
+});
+test('band rest notification uses local timer, accessible mute, no changes to gym timers',()=>{
+ const js=read('assets/james-band.js'),css=read('assets/james-band.css');
+ for(const id of ['jamesBandRestRemaining','jamesBandRestStatus','jamesBandSoundToggle','jamesBandRestSkip'])
+  assert.ok(html.includes('id="'+id+'"'),id);
+ for(const part of ['E.calibration(id,h)','cal.advice','earlier?.band||cal.band',
+ 'beginRest(E.GUIDANCE[id]?.rest||75','soundEnabled=!soundEnabled','root.AudioContext||root.webkitAudioContext',
+ "root.setInterval?.(updateRest,500)","if(!wasSaved)","stopRest('Antrenman kaydedildi.')" ])
+  assert.ok(js.includes(part),part);
+ assert.ok(js.includes("doc.visibilityState==='hidden'"));
+ assert.ok(js.includes("meter.setAttribute('aria-valuenow'"));
+ assert.ok(css.includes('.james-band-rest-bar')&&css.includes('.james-band-calibration-badge'));
 });

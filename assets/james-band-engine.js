@@ -88,6 +88,46 @@ function create(date,history=[]){
   variant,stage:stage(history),targetSets,status:'running',startedAt:new Date().toISOString(),
   items:Object.fromEntries(PLANS[variant].map(id=>[id,Array(targetSets).fill(null)]))};
 }
+
+/* Exercise-level calibration is inferred from actual completed sets in
+ * finished or stopped A/B sessions. No extra data fields or migrations. */
+function calibration(id,history){
+ const m=IDS.get(id);
+ if(!m)return null;
+ if(m.band==='none')return {phase:'none',trials:0,band:'none',grip:'normal',ready:true,advice:'Bu hareket bantsız yapılır; temiz teknik ve kontrollü tekrarları takip et.'};
+ const examples=(Array.isArray(history)?history:[])
+  .filter(s=>s?.program==='james-band-v1'&&['finished','stopped'].includes(s.status)&&iso(s.date)&&Array.isArray(s.items?.[id]))
+  .slice().sort((a,b)=>String(a.endedAt||a.date).localeCompare(String(b.endedAt||b.date)))
+  .map(s=>{
+   const sets=s.items[id].filter(x=>validSet(m,x));
+   if(!sets.length)return null;
+   const last=sets.at(-1);
+   return {sets,band:last.band,grip:last.grip,full:sets.length===s.targetSets,
+    uniform:sets.every(x=>x.band===last.band&&x.grip===last.grip)};
+  }).filter(Boolean);
+ const last=examples.at(-1);
+ if(!last)return {phase:'trial',trials:0,band:m.band,grip:'normal',ready:false,
+  advice:'İlk deneme: 10 kg nominal bantla kontrollü dene. 8–12 tekrarda 2–3 temiz tekrar yedek kalmalı; zor gelirse gerilimi azalt.'};
+ const clean=x=>x?.full&&x.uniform&&x.sets.every(s=>s.form==='good'&&s.rir>=2&&s.rir<=3&&s.reps>=m.low&&s.reps<=m.high);
+ const prev=examples.at(-2);
+ const ready=Boolean(clean(last)&&clean(prev)&&last.band===prev.band&&last.grip===prev.grip);
+ const tooHard=last.sets.some(x=>x.form!=='good'||x.rir<2||x.reps<m.low);
+ const tooEasy=last.sets.every(x=>x.form==='good'&&x.rir>=4&&x.reps>=m.high);
+ const level=BAND_LEVELS.indexOf(last.band);
+ // Never auto-jump upwards from 10 to 20 kg. A lower band is only
+ // suggested when the previous choice was too hard.
+ const band=tooHard&&level>1?BAND_LEVELS[level-1]:last.band;
+ const grip=tooHard?'relaxed':last.grip;
+ let advice='';
+ if(tooHard)advice='Önce daha hafif direnci veya uzun tutuşu dene; form bozuluyor ya da 2 tekrar yedek kalmıyorsa ağırlığı artırma.';
+ else if(tooEasy)advice='Bu direnç kolay görünüyor. Önce aynı bantta tutuşu çok az kısaltarak dene; doğrudan 20 kg banda geçme.';
+ else if(ready)advice='İki ayrı seansta form, tekrar ve yedek tekrar aralığı uyumlu. Bu bant ve tutuş başlangıç referansın olarak kalabilir.';
+ else if(last.uniform&&clean(last))advice='İlk ölçüm uygun görünüyor. Aynı bant ve tutuşla bir seans daha doğrula; farklı hareketlerin bantları farklı olabilir.';
+ else advice='Bant ve tutuşu tekrar dene; birden fazla temiz sette 2–3 tekrar yedek bırakacak düzeyi bul.';
+ return {phase:ready?'ready':tooHard||tooEasy?'adjust':examples.length<2?'trial':'checking',
+  trials:Math.min(examples.length,2),band,grip,ready,advice};
+}
+
 function recommend(id,h){
  const m=IDS.get(id);if(!m)return null;
  const records=list(h).filter(s=>Array.isArray(s.items[id])).slice(-2);
@@ -126,7 +166,7 @@ function validateBackup(data){
    s.items[m.id].every(x=>x===null||validSet(m,x)))&&
   (s.status!=='finished'||complete(s)));
 }
-const api=Object.freeze({MOVES,PLANS,GUIDANCE,estimateSession,BAND_LEVELS,GRIPS,FORMS,GUIDE,PROGRESS,validSet,movesOf,count,complete,finished,stage,create,recommend,validateBackup});
+const api=Object.freeze({MOVES,PLANS,GUIDANCE,estimateSession,BAND_LEVELS,GRIPS,FORMS,GUIDE,PROGRESS,validSet,movesOf,count,complete,finished,stage,create,calibration,recommend,validateBackup});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.FormaRotaBandEngine=api;
 })(typeof window!=='undefined'?window:globalThis);
