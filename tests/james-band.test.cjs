@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':'115')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band.js'?'116':'115')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':'115')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band.js'?'116':'115')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v115-shell/);
+ assert.match(sw,/formarota-solo-v116-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -109,4 +109,18 @@ test('offline shell loads scripts and optionally caches 12 supplied band picture
  assert.ok(sw.includes("const BAND_IMAGES="));
  assert.equal((sw.match(/'band-squat'/g)||[]).length,1);
  assert.ok(sw.includes("if(response.ok)await gifCache.put(path,response)"));
+});
+
+
+test('James band images do not stall behind hidden lazy-loading and report real failures only',()=>{
+ const js=read('assets/james-band.js');
+ assert.ok(js.includes("image.loading='eager'"),'image requests start without waiting for visible lazy images');
+ assert.ok(!js.includes("image.loading='lazy'"),'no lazy-loaded hidden image');
+ assert.ok(!js.includes("image.hidden=true;\n  const enlarge"),'image not hidden before fetch');
+ assert.ok(js.includes("image.style.opacity='0'"));
+ assert.ok(js.includes("image.addEventListener('load'"));
+ assert.ok(js.includes("image.addEventListener('error'"));
+ assert.ok(js.indexOf("Hareket görseli yükleniyor")<js.indexOf("image.addEventListener('error'"));
+ assert.ok(js.includes("placeholder.textContent='Hareket görseli yüklenemedi"));
+ assert.ok(sw.includes("const BAND_IMAGES="));
 });

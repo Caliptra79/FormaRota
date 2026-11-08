@@ -44,12 +44,14 @@ function renderMoves(){
   if(['front-lunge','one-arm-row','pallof'].includes(id))card.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
   const media=el('div','james-band-media');
   const src='./assets/band-gifs/'+id+'.webp';
-  const placeholder=el('p','james-band-image-wait','Hareket görseli yüklenemedi · '+id+'.webp');
-  const image=el('img','james-band-image');image.loading='lazy';image.decoding='async';
-  image.alt=m.tr+' başlangıç ve bitiş hareket görseli';image.hidden=true;
+  // Do not combine loading="lazy" with hidden images: they may never load.
+  // Show the image box while loading; report a failure only on a real error.
+  const placeholder=el('p','james-band-image-wait','Hareket görseli yükleniyor…');
+  const image=el('img','james-band-image');image.loading='eager';image.decoding='async';
+  image.alt=m.tr+' başlangıç ve bitiş hareket görseli';image.style.opacity='0';
   const enlarge=link(src,'Görseli büyüt');enlarge.className='james-band-image-link';enlarge.hidden=true;
-  image.addEventListener('load',()=>{image.hidden=false;placeholder.hidden=true;enlarge.hidden=false;});
-  image.addEventListener('error',()=>{image.hidden=true;placeholder.hidden=false;enlarge.hidden=true;});
+  image.addEventListener('load',()=>{image.style.opacity='1';placeholder.hidden=true;enlarge.hidden=false;});
+  image.addEventListener('error',()=>{image.hidden=true;placeholder.textContent='Hareket görseli yüklenemedi · '+id+'.webp';placeholder.hidden=false;enlarge.hidden=true;});
   image.src=src;
   media.append(placeholder,image,enlarge);card.append(media);
   if(s){
