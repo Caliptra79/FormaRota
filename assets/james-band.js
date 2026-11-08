@@ -21,7 +21,10 @@ function select(options,value,description){
 function link(href,label){const a=el('a','james-band-source',label);a.href=href;a.target='_blank';a.rel='noopener noreferrer';return a;}
 
 const SOUND_KEY='formarota-james-band-sound-v1';
+const SOUND_VOLUME_KEY='formarota-james-band-volume-v1';
 let soundEnabled=read(SOUND_KEY,true)!==false;
+let soundVolume=Number(read(SOUND_VOLUME_KEY,2));
+if(![1,2,3].includes(soundVolume))soundVolume=2;
 let audioCtx=null,restEnd=0,restLabel='Henüz dinlenme başlatılmadı.',restAlarmed=false;
 const clock=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
 function unlockAudio(){
@@ -34,21 +37,33 @@ function unlockAudio(){
  }catch{}
 }
 function chime(){
- if(!soundEnabled||doc.visibilityState==='hidden')return;
- if(!audioCtx||audioCtx.state!=='running')return;
+ if(!soundEnabled||doc.visibilityState==='hidden')return false;
+ if(!audioCtx||audioCtx.state!=='running')return false;
  try{
-  [660,880].forEach((frequency,i)=>{
-   const start=audioCtx.currentTime+i*.18;
+  // Original offline three-note alert. Triangle wave is clearer on phone
+  // speakers; configurable envelope avoids clipping at strong volume.
+  const peak=({1:.065,2:.115,3:.16})[soundVolume]||.115;
+  [659.25,783.99,1046.5].forEach((frequency,i)=>{
+   const start=audioCtx.currentTime+i*.21;
    const oscillator=audioCtx.createOscillator(),gain=audioCtx.createGain();
-   oscillator.type='sine';oscillator.frequency.value=frequency;
+   oscillator.type='triangle';oscillator.frequency.value=frequency;
    gain.gain.setValueAtTime(.0001,start);
-   gain.gain.exponentialRampToValueAtTime(.06,start+.02);
-   gain.gain.exponentialRampToValueAtTime(.0001,start+.16);
+   gain.gain.exponentialRampToValueAtTime(peak,start+.025);
+   gain.gain.exponentialRampToValueAtTime(.0001,start+.19);
    oscillator.connect(gain);gain.connect(audioCtx.destination);
-   oscillator.start(start);oscillator.stop(start+.18);
+   oscillator.start(start);oscillator.stop(start+.20);
   });
- }catch{}
+ }catch{return false}
  try{root.navigator?.vibrate?.([90,50,90])}catch{}
+ return true;
+}
+function previewChime(){
+ if(!soundEnabled){status('Ses kapalı; önce sesi aç.');return}
+ unlockAudio();
+ if(!audioCtx){status('Bu tarayıcı sesli uyarıyı desteklemiyor.');return}
+ const play=()=>status(chime()?'♪ Ses denemesi çalındı.':'Tarayıcı sesi başlatamadı. Tekrar dene.');
+ if(audioCtx.state==='running')play();
+ else audioCtx.resume().then(play).catch(()=>status('Ses izni alınamadı; cihazın ses ayarlarını kontrol et.'));
 }
 function updateRest(){
  const remaining=restEnd?Math.max(0,Math.ceil((restEnd-Date.now())/1000)):0;
@@ -62,6 +77,7 @@ function updateRest(){
  const skip=$('jamesBandRestSkip');if(skip)skip.disabled=!remaining;
  const toggle=$('jamesBandSoundToggle');
  if(toggle){toggle.textContent=soundEnabled?'🔊 Ses açık':'🔇 Ses kapalı';toggle.setAttribute('aria-pressed',String(soundEnabled));}
+ const volume=$('jamesBandSoundVolume');if(volume)volume.value=String(soundVolume);
 }
 function stopRest(message){
  restEnd=0;restAlarmed=true;restLabel=message||'Dinlenme durduruldu.';updateRest();
@@ -246,6 +262,12 @@ function init(){
   soundEnabled=!soundEnabled;write(SOUND_KEY,soundEnabled);
   if(soundEnabled)unlockAudio();updateRest();
  });
+ $('jamesBandSoundVolume')?.addEventListener('change',()=>{
+  const value=Number($('jamesBandSoundVolume').value);
+  if(![1,2,3].includes(value))return;
+  soundVolume=value;write(SOUND_VOLUME_KEY,value);updateRest();
+ });
+ $('jamesBandSoundPreview')?.addEventListener('click',previewChime);
  $('jamesBandRestSkip')?.addEventListener('click',()=>stopRest('Dinlenme atlandı. Sonraki sete geçebilirsin.'));
  root.setInterval?.(updateRest,500);
  root.addEventListener?.('pageshow',render);

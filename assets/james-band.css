@@ -366,3 +366,19 @@ html[data-theme] #jamesBandPanel .james-band-showcase h2 em{
  #jamesBandPanel .james-band-rest-actions{width:100%}
  #jamesBandPanel .james-band-rest-actions button{flex:1;min-width:0}
 }
+
+/* Band sound controls are sized for touch and harmonize with existing rest UI. */
+#jamesBandPanel .james-band-volume-label{
+ display:flex;flex-direction:column;gap:4px;min-width:105px;
+ font-size:.68rem;font-weight:760;color:var(--muted)
+}
+#jamesBandPanel #jamesBandSoundVolume{
+ width:100%;min-height:44px;padding:8px 10px;border-radius:10px;
+ border:1px solid var(--border);background:var(--panel2);color:var(--text);
+ font-size:16px
+}
+#jamesBandPanel .james-band-rest-actions{align-items:flex-end}
+@media(max-width:450px){
+ #jamesBandPanel .james-band-volume-label{flex:1;min-width:120px}
+ #jamesBandPanel #jamesBandSoundPreview{min-width:118px}
+}
