@@ -170,7 +170,7 @@ test('band rest notification uses local timer, accessible mute, no changes to gy
  const js=read('assets/james-band.js'),css=read('assets/james-band.css');
  for(const id of ['jamesBandRestRemaining','jamesBandRestStatus','jamesBandSoundToggle','jamesBandRestSkip'])
   assert.ok(html.includes('id="'+id+'"'),id);
- for(const part of ['E.calibration(id,h)','cal.advice','earlier?.band||cal.band',
+ for(const part of ['E.calibration(id,live?[...h,live]:h)','cal.advice','earlier?.band||cal.band',
  'beginRest(E.GUIDANCE[id]?.rest||75','soundEnabled=!soundEnabled','root.AudioContext||root.webkitAudioContext',
  "root.setInterval?.(updateRest,500)","if(!wasSaved)","stopRest('Antrenman kaydedildi.')" ])
   assert.ok(js.includes(part),part);
