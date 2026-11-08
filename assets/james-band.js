@@ -21,58 +21,96 @@ function select(options,value,description){
 function link(href,label){const a=el('a','james-band-source',label);a.href=href;a.target='_blank';a.rel='noopener noreferrer';return a;}
 function renderMoves(){
  const host=$('jamesBandMoves');if(!host)return;
- const s=current(),h=history(),preview=s||E.create(today(),h),variant=preview.variant;
- const ids=E.PLANS[variant],frag=doc.createDocumentFragment();
+ const s=current(),h=history(),preview=s||E.create(today(),h);
+ const ids=E.PLANS[preview.variant],frag=doc.createDocumentFragment();
+ const field=(name,control)=>{
+  const wrapper=el('label','james-band-field');
+  wrapper.append(el('span','',name),control);
+  return wrapper;
+ };
  ids.forEach((id,index)=>{
   const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id];
-  if(!m)return;
-  const card=el('article','james-band-move');card.dataset.exercise=id;
-  const title=el('div','james-band-title');
-  title.append(el('strong','',(index+1)+'. '+m.tr),el('small','',m.group));
-  card.append(title);
-  const content=el('div','james-band-instructions');
-  content.append(el('p','',m.tip));
-  const warning=el('p','james-band-warning','Dikkat: '+m.mistake);
-  content.append(warning);card.append(content);
-  card.append(el('p','james-band-setup','Bant ve sabitleme: '+g.anchor));
-  card.append(el('p','james-band-timing','Tempo: '+g.tempo+' · Yaklaşık '+g.seconds+' sn/set'+(g.eachSide?' (iki taraf toplam)':'')+' · Set arası '+g.rest+' sn dinlenme'));
-  const guide=el('p','james-band-advice',r.advice);
-  card.append(el('p','james-band-recommendation','Öneri: '+bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar · '+preview.targetSets+' set'),guide);
-  if(r.previous)card.append(el('p','james-band-previous','Önceki tamamlanan seans: '+r.previous));
-  const jamesSource=m.source.includes('undersunfitness.com')||m.source.includes('youtube.com/watch?v=W3t7r5_MGUw');
-  card.append(link(m.source,m.source.includes('fithub.com.tr')?'James Grage röportajında hareketi incele':jamesSource?'Undersun / James Grage kaynak bağlantısı':'Tamamlayıcı teknik kaynağını aç'));
-  if(['front-lunge','one-arm-row','pallof'].includes(id))card.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
+  if(!m||!r||!g)return;
+  const savedSets=Array.isArray(s?.items?.[id])?s.items[id]:[];
+  const savedCount=savedSets.filter(x=>E.validSet(m,x)).length;
+  const target=preview.targetSets;
+  const card=el('article','james-band-move');
+  card.dataset.exercise=id;
+  card.dataset.group=/Bacak|kalça|Arka bacak|Baldır/i.test(m.group)?'legs':/Sirt|Sırt/i.test(m.group)?'back':/Göğüs/i.test(m.group)?'chest':/Omuz/i.test(m.group)?'shoulders':/Karın|Core/i.test(m.group)?'core':'arms';
+  card.dataset.complete=s&&savedCount===target?'true':'false';
+  const mast=el('div','james-band-mast');
+  const eyebrow=el('span','james-band-move-kicker','HAREKET '+String(index+1).padStart(2,'0')+' / 08');
+  const count=el('span','james-band-move-count',savedCount+' / '+target+' SET');
+  const dots=el('div','james-band-dots');
+  dots.setAttribute('aria-label',savedCount+' / '+target+' set tamamlandı');
+  for(let i=0;i<target;i++)dots.append(el('span','james-band-dot'+(E.validSet(m,savedSets[i])?' done':'')));
+  mast.append(eyebrow,count,dots);
+  const layout=el('div','james-band-card-layout');
   const media=el('div','james-band-media');
   const src='./assets/band-gifs/'+id+'.webp';
-  // Do not combine loading="lazy" with hidden images: they may never load.
-  // Show the image box while loading; report a failure only on a real error.
   const placeholder=el('p','james-band-image-wait','Hareket görseli yükleniyor…');
   const image=el('img','james-band-image');image.loading='eager';image.decoding='async';
   image.alt=m.tr+' başlangıç ve bitiş hareket görseli';image.style.opacity='0';
-  const enlarge=link(src,'Görseli büyüt');enlarge.className='james-band-image-link';enlarge.hidden=true;
+  const enlarge=link(src,'Görseli büyüt ↗');enlarge.className='james-band-image-link';enlarge.hidden=true;
   image.addEventListener('load',()=>{image.style.opacity='1';placeholder.hidden=true;enlarge.hidden=false;});
   image.addEventListener('error',()=>{image.hidden=true;placeholder.textContent='Hareket görseli yüklenemedi · '+id+'.webp';placeholder.hidden=false;enlarge.hidden=true;});
   image.src=src;
-  media.append(placeholder,image,enlarge);card.append(media);
+  media.append(placeholder,image,enlarge);
+  const body=el('div','james-band-body');
+  const heading=el('div','james-band-title');
+  heading.append(el('strong','',m.tr),el('span','james-band-muscle',m.group));
+  const facts=el('div','james-band-facts');
+  facts.append(el('span','',target+' set × '+m.low+'–'+m.high+' tekrar'));
+  facts.append(el('span','',g.rest+' sn dinlenme'));
+  facts.append(el('span','',g.seconds+' sn / set'));
+  body.append(heading,facts);
+  const advice=el('div','james-band-coach-card');
+  advice.append(el('span','james-band-coach-kicker','✦ KOÇLUK ÖNERİSİ'));
+  advice.append(el('strong','',bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar'));
+  advice.append(el('p','james-band-advice',r.advice));
+  body.append(advice);
+  if(r.previous)body.append(el('p','james-band-previous','◷ Önceki tamamlanan seans: '+r.previous));
+  const settable=el('div','james-band-settable');
+  const setHeading=el('div','james-band-settable-head');
+  setHeading.append(el('strong','','SET TAKİBİ'),el('span','',savedCount+' / '+target+' tamamlandı'));
+  settable.append(setHeading);
   if(s){
    for(let i=0;i<s.targetSets;i++){
-    const saved=s.items?.[id]?.[i],line=el('div','james-band-set');
-    const label=el('span','james-band-set-number',(i+1)+'. set');
+    const saved=savedSets[i],line=el('div','james-band-set'+(E.validSet(m,saved)?' done':''));
+    const lineHeading=el('div','james-band-set-top');
+    lineHeading.append(el('strong','james-band-set-number',(i+1)+'. SET'));
+    lineHeading.append(el('span','james-band-set-state',saved?'✓ Kaydedildi':'Henüz kaydedilmedi'));
+    const fields=el('div','james-band-set-fields');
     const reps=el('input');reps.type='number';reps.min='1';reps.max='60';reps.step='1';reps.inputMode='numeric';reps.placeholder='Tekrar';
     reps.setAttribute('aria-label',m.tr+' '+(i+1)+'. set tekrar');
     if(saved)reps.value=saved.reps;
     const bandOptions=(m.band==='none'?['none']:E.BAND_LEVELS.filter(b=>b!=='none')).map(b=>[b,bandName(b)]);
     const band=select(bandOptions,saved?.band||r.band,m.tr+' '+(i+1)+'. set bant');
-    const grip=select([['relaxed','Uzun tutuş (daha az gerilim)'],['normal','Normal tutuş'],['short','Kısa tutuş (daha fazla gerilim)']],saved?.grip||r.grip,m.tr+' bant tutuşu');
+    const grip=select([['relaxed','Uzun tutuş'],['normal','Normal tutuş'],['short','Kısa tutuş']],saved?.grip||r.grip,m.tr+' bant tutuşu');
     if(m.band==='none'){band.disabled=true;grip.disabled=true;}
     const rir=select([[0,'0 tekrar kaldı'],[1,'1 tekrar kaldı'],[2,'2 tekrar kaldı'],[3,'3 tekrar kaldı'],[4,'4 tekrar kaldı'],[5,'5+ tekrar kaldı']],String(saved?.rir??2),m.tr+' '+(i+1)+'. set tekrar rezervi');
     const form=select([['good','Form temiz'],['unsure','Formdan emin değilim'],['poor','Form bozuldu']],saved?.form||'good',m.tr+' '+(i+1)+'. set teknik');
-    const save=el('button','secondary',saved?'Düzelt':'Seti kaydet');save.type='button';
+    const save=el('button','james-band-save'+(saved?' is-edit':'') ,saved?'Düzelt':'✓ Seti kaydet');save.type='button';
     save.addEventListener('click',()=>saveSet(id,i,{reps:reps.value,band:band.value,grip:grip.value,rir:rir.value,form:form.value}));
-    line.append(label,reps,band,grip,rir,form,save);card.append(line);
+    fields.append(field('Tekrar',reps),field('Bant',band),field('Tutuş',grip),field('Yedek tekrar',rir),field('Form',form),save);
+    line.append(lineHeading,fields);settable.append(line);
    }
+  }else{
+   settable.append(el('p','james-band-locked','▶ Antrenmana başladığında set kayıt alanları açılacak.'));
   }
-  frag.append(card);
+  body.append(settable);
+  const technique=el('details','james-band-technique');
+  const summary=el('summary','','Teknik, bant kurulumu ve dikkat edilmesi gerekenler');
+  const techBody=el('div','james-band-technique-body');
+  techBody.append(el('p','',m.tip));
+  techBody.append(el('p','james-band-setup','Bant ve sabitleme: '+g.anchor));
+  techBody.append(el('p','james-band-timing','Tempo: '+g.tempo+' · Yaklaşık '+g.seconds+' sn/set'+(g.eachSide?' (iki taraf toplam)':'')+' · Set arası '+g.rest+' sn dinlenme'));
+  techBody.append(el('p','james-band-warning','Dikkat: '+m.mistake));
+  if(g.eachSide)techBody.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
+  const jamesSource=m.source.includes('undersunfitness.com')||m.source.includes('youtube.com/watch?v=W3t7r5_MGUw');
+  techBody.append(link(m.source,m.source.includes('fithub.com.tr')?'James Grage röportajında hareketi incele':jamesSource?'Undersun / James Grage kaynak bağlantısı':'Tamamlayıcı teknik kaynağını aç'));
+  technique.append(summary,techBody);body.append(technique);
+  layout.append(media,body);card.append(mast,layout);frag.append(card);
  });
  host.replaceChildren(frag);
 }
@@ -115,9 +153,18 @@ function renderHistory(){
 }
 function render(){
  const s=current(),h=history(),preview=s||E.create(today(),h),valid=s?E.count(s):0,expected=E.PLANS[preview.variant].length*preview.targetSets;
- const progress=$('jamesBandProgress');if(progress)progress.textContent='Seviye '+E.stage(h)+' · Full Body '+preview.variant+' · '+valid+'/'+expected+' set';
+ const progress=$('jamesBandProgress');if(progress)progress.textContent='Seviye '+E.stage(h)+' · '+valid+'/'+expected+' set';
+ const meter=$('jamesBandMeter');
+ if(meter){meter.style.setProperty('--james-progress',Math.round(valid/expected*100)+'%');meter.setAttribute('aria-valuemax',String(expected));meter.setAttribute('aria-valuenow',String(valid));}
+ if($('jamesBandMeterValue'))$('jamesBandMeterValue').textContent=String(valid);
+ if($('jamesBandMeterTotal'))$('jamesBandMeterTotal').textContent='/ '+expected+' SET';
+ if($('jamesBandMeterNote'))$('jamesBandMeterNote').textContent=valid?Math.round(valid/expected*100)+'% tamamlandı · Ritmini koru!':'İlk setini kaydet, gelişimini gör.';
+ if($('jamesBandHeroState'))$('jamesBandHeroState').textContent=s?'● Antrenman devam ediyor':'● Sonraki rota hazır';
+ if($('jamesBandHeroPlan'))$('jamesBandHeroPlan').textContent='FULL BODY '+preview.variant;
+ if($('jamesBandHeroSets'))$('jamesBandHeroSets').textContent=String(preview.targetSets);
  const estimate=E.estimateSession(preview);
- const info=$('jamesBandInfo');if(info)info.textContent='Plan '+preview.variant+' · '+preview.targetSets+' set · 8 hareket · Tahmini '+estimate.minutes+' dk (5 dk ısınma + 3 dk soğuma dahil). DOMYOS 10/20/30/40 kg değerleri bandın iki kat uzamasındaki nominal dirençtir; sabit kaldırılan ağırlık değildir. Her seans öncesi banttaki aşınmayı ve sabitlemeyi kontrol et. '+(s?'Seansın kayıtlı; kaldığın yerden devam edebilirsin.':'Gelişim tamamlanan seanslara ve temiz tekrarlara göre güncellenir.');
+ if($('jamesBandHeroTime'))$('jamesBandHeroTime').textContent=estimate.minutes+' dk';
+ const info=$('jamesBandInfo');if(info)info.textContent=(s?'Seansın kayıtlı; kaldığın yerden devam edebilirsin.':'Antrenmanı başlattığında set alanları açılır.')+' Yaklaşık '+estimate.minutes+' dk · 5 dk ısınma + 3 dk soğuma dahil.';
  if($('jamesBandStart'))$('jamesBandStart').disabled=Boolean(s);
  if($('jamesBandFinish'))$('jamesBandFinish').disabled=!s||!E.complete(s);
  if($('jamesBandStop'))$('jamesBandStop').disabled=!s||valid===0;

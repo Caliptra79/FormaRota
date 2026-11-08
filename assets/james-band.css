@@ -58,3 +58,272 @@ html[data-theme] #jamesBandPanel h3{color:var(--text)!important;-webkit-text-fil
 
 .james-band-setup,.james-band-timing{margin:7px 0;padding:8px 10px;border-radius:9px;background:var(--panel2);font-size:.83rem;line-height:1.5;color:var(--text)}
 .james-band-timing{background:transparent;border:1px solid var(--border)}
+
+
+/* Band Studio — visual parity with Full Body, without changing workout storage. */
+html[data-theme] #fitnessRoot>#jamesBandPanel{
+ padding:clamp(10px,2.5vw,21px)!important;
+ border-radius:24px!important;
+ min-width:0;overflow:hidden;
+ box-shadow:var(--luxe-elev,0 12px 30px rgba(0,0,0,.1))!important
+}
+#jamesBandPanel .james-band-showcase{
+ position:relative;isolation:isolate;overflow:hidden;
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,225px);align-items:center;
+ gap:clamp(18px,3vw,32px);padding:clamp(22px,4.5vw,35px);
+ border:1px solid rgba(255,255,255,.16);border-radius:22px;
+ background:radial-gradient(ellipse 60% 95% at 100% 0%,rgba(255,131,51,.18),transparent 80%),
+ linear-gradient(130deg,#111827,#1a2333 58%,#10151d);
+ color:#f8fafc;box-shadow:0 14px 30px rgba(0,0,0,.18)
+}
+#jamesBandPanel .james-band-showcase:after{
+ content:"";position:absolute;width:290px;height:290px;border-radius:50%;
+ right:-160px;top:-165px;box-shadow:0 0 95px rgba(255,121,37,.22);pointer-events:none
+}
+#jamesBandPanel .james-band-overline{
+ display:inline-flex;align-items:center;gap:9px;font-size:.71rem;font-weight:850;
+ letter-spacing:.16em;color:#ffbd8b
+}
+#jamesBandPanel .james-band-live-dot{
+ width:8px;height:8px;border-radius:99px;background:#ff914d;box-shadow:0 0 0 4px rgba(255,145,77,.13)
+}
+html[data-theme] #jamesBandPanel .james-band-showcase h2{
+ color:#fff!important;font-size:clamp(2.2rem,5.8vw,3.75rem)!important;
+ font-weight:900;letter-spacing:-.065em;line-height:1.01;margin:19px 0 12px
+}
+#jamesBandPanel .james-band-showcase h2 em{font-style:normal;color:#ff9854}
+#jamesBandPanel .james-band-showcase-copy>p{color:#c5cfde;max-width:37ch;font-size:.93rem;line-height:1.54;margin:0 0 15px}
+#jamesBandPanel .james-band-hero-state{
+ display:inline-flex;align-items:center;min-height:34px;border:1px solid rgba(255,255,255,.22);
+ padding:7px 12px;background:rgba(255,255,255,.08);border-radius:99px;
+ font-size:.78rem;font-weight:760;color:#f8fafc
+}
+#jamesBandPanel .james-band-meter-group{display:flex;flex-direction:column;align-items:center;gap:11px;min-width:0}
+#jamesBandPanel .james-band-meter{
+ --james-progress:0%;width:156px;height:156px;flex:none;padding:9px;border-radius:50%;
+ background:conic-gradient(#ff9854 var(--james-progress),rgba(255,255,255,.14) 0);
+ box-shadow:0 0 0 1px rgba(255,255,255,.13),0 0 38px rgba(255,137,52,.08)
+}
+#jamesBandPanel .james-band-meter-inner{
+ width:100%;height:100%;border-radius:50%;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:2px;background:#141c2a
+}
+#jamesBandPanel .james-band-meter-inner>span{font-size:1.28rem}
+#jamesBandPanel .james-band-meter-inner>strong{font-size:2.55rem;line-height:1;font-weight:900;font-variant-numeric:tabular-nums;color:#fff}
+#jamesBandPanel .james-band-meter-inner>small{font-size:.66rem;letter-spacing:.1em;font-weight:800;color:#b9c6d5}
+#jamesBandPanel .james-band-meter-note{color:#d9e2ed;font-size:.77rem;text-align:center;line-height:1.35}
+#jamesBandPanel .james-band-overview{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:13px 4px;
+ border-bottom:1px solid var(--border);margin-bottom:17px
+}
+#jamesBandPanel .james-band-overview>div{
+ display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;
+ padding:11px 6px;border-right:1px solid var(--border);text-align:center
+}
+#jamesBandPanel .james-band-overview>div:last-child{border-right:0}
+#jamesBandPanel .james-band-overview small{font-size:.64rem;letter-spacing:.075em;font-weight:750;color:var(--muted)}
+#jamesBandPanel .james-band-overview strong{font-size:clamp(.92rem,2.2vw,1.13rem);line-height:1.25;color:var(--text)}
+#jamesBandPanel .james-band-headline{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px
+}
+html[data-theme] #jamesBandPanel .james-band-headline h3,
+html[data-theme] #jamesBandPanel .james-band-library-heading h3{
+ font-size:clamp(1.2rem,3vw,1.54rem)!important;letter-spacing:-.04em;font-weight:850;margin:0;line-height:1.2
+}
+#jamesBandPanel #jamesBandProgress{
+ font-variant-numeric:tabular-nums;white-space:nowrap;
+ background:color-mix(in srgb,var(--accent) 11%,var(--panel2));
+ border:1px solid color-mix(in srgb,var(--accent) 34%,var(--border));
+ border-radius:99px;padding:7px 11px
+}
+#jamesBandPanel .james-band-intro{margin:0 0 16px;color:var(--muted);line-height:1.5;font-size:.87rem}
+#jamesBandPanel .james-band-toolbar{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+#jamesBandPanel .james-band-toolbar button{min-width:0;min-height:48px;border-radius:13px!important;font-weight:800;font-size:clamp(.78rem,1.5vw,.9rem);white-space:normal;line-height:1.35}
+#jamesBandPanel .james-band-session-note{font-size:.8rem;color:var(--muted);margin:9px 2px 13px;line-height:1.55}
+#jamesBandPanel .james-band-status{
+ min-height:38px;display:flex;align-items:center;
+ border:1px solid color-mix(in srgb,var(--accent) 20%,var(--border));
+ border-left:3px solid var(--accent);font-weight:680;font-size:.8rem
+}
+#jamesBandPanel .james-band-library-heading{margin:26px 0 16px}
+#jamesBandPanel #jamesBandMoves{display:grid;grid-template-columns:minmax(0,1fr);gap:17px}
+html[data-theme] #jamesBandPanel .james-band-move{
+ --band-muscle:var(--accent);
+ position:relative;margin:0;min-width:0;padding:clamp(13px,2.2vw,18px)!important;
+ display:block;border:1px solid var(--border)!important;
+ border-left:4px solid var(--band-muscle)!important;border-radius:20px!important;
+ background:var(--panel2)!important;box-shadow:none!important
+}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="legs"]{--band-muscle:var(--luxe-mint,#39bb96)}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="back"]{--band-muscle:var(--luxe-blue,#63a4ed)}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="chest"]{--band-muscle:var(--luxe-coral,#f48f8a)}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="shoulders"]{--band-muscle:var(--luxe-violet,#b194ee)}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="arms"]{--band-muscle:var(--luxe-amber,#ffaf54)}
+html[data-theme] #jamesBandPanel .james-band-move[data-group="core"]{--band-muscle:var(--luxe-blue,#63a4ed)}
+html[data-theme] #jamesBandPanel .james-band-move[data-complete="true"]{
+ border-color:color-mix(in srgb,var(--luxe-mint,#39bb96) 48%,var(--border))!important;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--luxe-mint,#39bb96) 10%,var(--panel2)),var(--panel2) 80%)!important
+}
+#jamesBandPanel .james-band-mast{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;
+ border-bottom:1px solid var(--border);padding:0 1px 12px;margin-bottom:14px
+}
+#jamesBandPanel .james-band-move-kicker{
+ color:var(--band-muscle);font-size:.7rem;letter-spacing:.13em;font-weight:850
+}
+#jamesBandPanel .james-band-move-count{
+ font-size:.72rem;color:var(--text);font-weight:780;font-variant-numeric:tabular-nums;
+ border:1px solid color-mix(in srgb,var(--band-muscle) 24%,var(--border));
+ background:color-mix(in srgb,var(--band-muscle) 9%,var(--panel));
+ border-radius:99px;padding:6px 10px
+}
+#jamesBandPanel .james-band-dots{grid-column:1 / -1;display:flex;gap:6px;min-height:6px}
+#jamesBandPanel .james-band-dot{
+ height:7px;flex:1;border-radius:99px;
+ background:color-mix(in srgb,var(--band-muscle) 16%,var(--border))
+}
+#jamesBandPanel .james-band-dot.done{background:var(--band-muscle)}
+#jamesBandPanel .james-band-card-layout{
+ display:grid;grid-template-columns:minmax(220px,.82fr) minmax(0,1.18fr);
+ gap:clamp(14px,2vw,24px);align-items:start;min-width:0
+}
+#jamesBandPanel .james-band-media{
+ display:flex;flex-direction:column;gap:9px;justify-content:flex-start;
+ border:1px solid color-mix(in srgb,var(--border) 78%,var(--band-muscle));
+ background:color-mix(in srgb,var(--panel) 85%,var(--bg));
+ padding:9px;border-radius:16px;margin:0;min-height:0;min-width:0
+}
+#jamesBandPanel .james-band-image{
+ display:block;width:100%;height:auto;aspect-ratio:1672/941;object-fit:contain;
+ border-radius:10px;transition:opacity .18s ease
+}
+#jamesBandPanel .james-band-image-link{
+ align-self:center;display:inline-flex;align-items:center;justify-content:center;
+ min-height:36px;padding:6px 12px;border:1px solid var(--border);
+ border-radius:99px;text-decoration:none;color:var(--accent);font-size:.76rem;font-weight:850
+}
+#jamesBandPanel .james-band-image-link[hidden],
+#jamesBandPanel .james-band-image-wait[hidden],
+#jamesBandPanel .james-band-image[hidden]{display:none!important}
+#jamesBandPanel .james-band-body{min-width:0;display:flex;flex-direction:column;gap:11px}
+#jamesBandPanel .james-band-title{display:flex;flex-direction:column;gap:6px;min-width:0}
+html[data-theme] #jamesBandPanel .james-band-title strong{
+ font-size:clamp(1.2rem,3vw,1.53rem);letter-spacing:-.04em;line-height:1.2;font-weight:850
+}
+#jamesBandPanel .james-band-muscle{
+ display:inline-flex;align-self:start;color:var(--text);
+ border:1px solid color-mix(in srgb,var(--band-muscle) 36%,var(--border));
+ border-radius:9px;background:color-mix(in srgb,var(--band-muscle) 12%,var(--panel));
+ padding:5px 9px;font-size:.71rem;font-weight:800
+}
+#jamesBandPanel .james-band-facts{display:flex;flex-wrap:wrap;gap:7px;line-height:1.4}
+#jamesBandPanel .james-band-facts span{
+ display:inline-flex;padding:6px 9px;border-radius:9px;font-size:.72rem;font-weight:780;
+ border:1px solid var(--border);background:var(--panel);color:var(--text)
+}
+#jamesBandPanel .james-band-coach-card{
+ display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+ padding:11px 13px;border-radius:13px;
+ border:1px solid color-mix(in srgb,var(--accent) 24%,var(--border));
+ border-left:3px solid var(--accent);
+ background:color-mix(in srgb,var(--accent) 7%,var(--panel))
+}
+#jamesBandPanel .james-band-coach-kicker{font-size:.63rem;font-weight:850;letter-spacing:.09em;color:var(--accent)}
+#jamesBandPanel .james-band-coach-card strong{font-size:.93rem;line-height:1.4;color:var(--text)}
+#jamesBandPanel .james-band-coach-card p{font-size:.79rem;line-height:1.5;color:var(--muted);margin:0}
+#jamesBandPanel .james-band-previous{font-size:.75rem;margin:0;color:var(--muted)}
+#jamesBandPanel .james-band-settable{border-top:1px solid var(--border);padding-top:12px;margin-top:2px}
+#jamesBandPanel .james-band-settable-head{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ margin-bottom:10px;font-size:.7rem;letter-spacing:.055em
+}
+#jamesBandPanel .james-band-settable-head span{color:var(--muted);font-variant-numeric:tabular-nums}
+#jamesBandPanel .james-band-set{
+ display:block;padding:12px;margin:8px 0;min-width:0;
+ border:1px solid var(--border);border-radius:13px;background:var(--panel)
+}
+#jamesBandPanel .james-band-set.done{
+ background:color-mix(in srgb,var(--luxe-mint,#39bb96) 8%,var(--panel));
+ border-color:color-mix(in srgb,var(--luxe-mint,#39bb96) 34%,var(--border))
+}
+#jamesBandPanel .james-band-set-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+#jamesBandPanel .james-band-set-number{font-size:.76rem;color:var(--text);font-weight:850}
+#jamesBandPanel .james-band-set-state{font-size:.69rem;color:var(--muted)}
+#jamesBandPanel .james-band-set.done .james-band-set-state{color:var(--luxe-mint,#39bb96);font-weight:850}
+#jamesBandPanel .james-band-set-fields{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end
+}
+#jamesBandPanel .james-band-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+#jamesBandPanel .james-band-field>span{font-size:.68rem;font-weight:750;color:var(--muted)}
+#jamesBandPanel .james-band-field :is(input,select),
+#jamesBandPanel .james-band-set-fields>button{
+ width:100%;min-width:0;min-height:44px;border-radius:10px;
+ font-size:16px;padding:8px;border:1px solid var(--border);
+ background:var(--panel2);color:var(--text)
+}
+#jamesBandPanel .james-band-set-fields>button{
+ background:var(--accent);color:var(--bg);border-color:var(--accent);
+ font-size:.83rem;font-weight:850;white-space:normal
+}
+#jamesBandPanel .james-band-set-fields>button.is-edit{
+ background:var(--panel2);color:var(--text);border-color:var(--border)
+}
+#jamesBandPanel .james-band-field :is(input,select):disabled{opacity:.6}
+#jamesBandPanel .james-band-locked{
+ color:var(--muted);font-size:.8rem;line-height:1.5;margin:3px 0
+}
+#jamesBandPanel .james-band-technique,
+#jamesBandPanel .james-band-safety{
+ border:1px solid var(--border);border-radius:13px;
+ background:var(--panel);font-size:.8rem;color:var(--text);min-width:0
+}
+#jamesBandPanel .james-band-technique>summary,
+#jamesBandPanel .james-band-safety>summary{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:13px;min-height:45px;cursor:pointer;list-style:none;font-weight:800
+}
+#jamesBandPanel .james-band-technique>summary::-webkit-details-marker,
+#jamesBandPanel .james-band-safety>summary::-webkit-details-marker{display:none}
+#jamesBandPanel .james-band-technique>summary:after,
+#jamesBandPanel .james-band-safety>summary:after{content:"+";font-size:1.05rem;font-weight:900;color:var(--accent)}
+#jamesBandPanel .james-band-technique[open]>summary:after,
+#jamesBandPanel .james-band-safety[open]>summary:after{content:"−"}
+#jamesBandPanel .james-band-technique-body,
+#jamesBandPanel .james-band-safety p{line-height:1.55}
+#jamesBandPanel .james-band-technique-body{padding:0 13px 13px;overflow-wrap:anywhere}
+#jamesBandPanel .james-band-technique-body p{margin:8px 0}
+#jamesBandPanel .james-band-safety{padding:0 14px 13px;margin:23px 0 2px;background:var(--panel2)}
+#jamesBandPanel .james-band-safety p{margin:8px 0}
+#jamesBandPanel .james-band-safety a,
+#jamesBandPanel .james-band-technique a{display:inline-block;min-height:36px;color:var(--accent);font-weight:780}
+#jamesBandPanel :is(button,input,select,summary,a):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:900px){
+ #jamesBandPanel .james-band-card-layout{grid-template-columns:minmax(0,1fr)}
+ #jamesBandPanel .james-band-media{max-width:620px;width:100%;margin-inline:auto}
+}
+@media(max-width:720px){
+ #jamesBandPanel .james-band-showcase{grid-template-columns:minmax(0,1fr) 122px;gap:13px;padding:19px}
+ #jamesBandPanel .james-band-meter{width:118px;height:118px;padding:7px}
+ #jamesBandPanel .james-band-meter-inner>strong{font-size:2rem}
+ #jamesBandPanel .james-band-meter-note{font-size:.68rem}
+ #jamesBandPanel .james-band-toolbar{grid-template-columns:minmax(0,1fr);gap:8px}
+ #jamesBandPanel .james-band-set-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #jamesBandPanel .james-band-set-fields>button{grid-column:1 / -1}
+ #jamesBandPanel .james-band-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+ #jamesBandPanel .james-band-overview>div:nth-child(2){border-right:0}
+ #jamesBandPanel .james-band-overview>div:nth-child(-n+2){border-bottom:1px solid var(--border)}
+}
+@media(max-width:430px){
+ #jamesBandPanel .james-band-showcase{grid-template-columns:minmax(0,1fr);text-align:left;padding:19px 17px}
+ #jamesBandPanel .james-band-meter-group{align-items:flex-start;flex-direction:row;gap:14px}
+ #jamesBandPanel .james-band-meter{width:105px;height:105px;padding:6px}
+ #jamesBandPanel .james-band-meter-inner>strong{font-size:1.65rem}
+ #jamesBandPanel .james-band-meter-note{align-self:center;text-align:left;max-width:18ch}
+ #jamesBandPanel .james-band-facts span{font-size:.69rem}
+ #jamesBandPanel .james-band-move{padding:11px!important}
+ #jamesBandPanel .james-band-set{padding:9px}
+ #jamesBandPanel .james-band-set-fields{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ #jamesBandPanel .james-band-image{transition:none}
+}

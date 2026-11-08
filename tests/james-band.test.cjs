@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band.js'?'116':'115')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':'117')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band.js'?'116':'115')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':'117')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v116-shell/);
+ assert.match(sw,/formarota-solo-v117-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -123,4 +123,20 @@ test('James band images do not stall behind hidden lazy-loading and report real 
  assert.ok(js.indexOf("Hareket görseli yükleniyor")<js.indexOf("image.addEventListener('error'"));
  assert.ok(js.includes("placeholder.textContent='Hareket görseli yüklenemedi"));
  assert.ok(sw.includes("const BAND_IMAGES="));
+});
+
+test('Band Studio has an accessible progress hero, visible set tracking and responsive workout cards',()=>{
+ const js=read('assets/james-band.js'),css=read('assets/james-band.css');
+ for(const id of ['jamesBandMeter','jamesBandMeterValue','jamesBandHeroPlan','jamesBandHeroSets','jamesBandHeroTime','jamesBandMoves','jamesBandStart','jamesBandFinish'])
+  assert.ok(html.includes('id="'+id+'"'),id);
+ assert.ok(html.includes('role="progressbar"'));
+ for(const klass of ['james-band-card-layout','james-band-media','james-band-move-kicker','james-band-dots','james-band-set-fields','james-band-technique','james-band-coach-card'])
+  assert.ok(js.includes(klass),klass);
+ assert.ok(js.includes("E.validSet(m,x)"),'progress counts only valid saved sets');
+ assert.ok(js.includes("if(s){"),'set entries appear only once a session exists');
+ assert.ok(js.includes("saveSet(id,i,{"),'all set actions remain wired to the same persistence function');
+ assert.ok(js.includes("meter.setAttribute('aria-valuenow'"),'meter reflects stored records');
+ assert.ok(css.includes('@media(max-width:430px)')&&css.includes('@media(max-width:720px)'));
+ assert.ok(css.includes('#jamesBandPanel .james-band-image'), 'images remain aspect-ratio preserved');
+ assert.ok(html.includes('Bant güvenliği ve program kaynakları'), 'full safety notes remain accessible');
 });
