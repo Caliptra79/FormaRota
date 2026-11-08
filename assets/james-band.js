@@ -82,7 +82,10 @@ function renderMoves(){
   return wrapper;
  };
  ids.forEach((id,index)=>{
-  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id],cal=E.calibration(id,h);
+  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id];
+  // Preview currently saved sets as a temporary stopped session; never modify history.
+  const live=s?{...s,status:'stopped',endedAt:new Date().toISOString()}:null;
+  const cal=E.calibration(id,live?[...h,live]:h);
   if(!m||!r||!g)return;
   const savedSets=Array.isArray(s?.items?.[id])?s.items[id]:[];
   const savedCount=savedSets.filter(x=>E.validSet(m,x)).length;

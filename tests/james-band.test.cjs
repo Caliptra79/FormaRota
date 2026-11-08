@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr=119'),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band.js'?'120':'119')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr=119'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band.js'?'120':'119')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v119-shell/);
+ assert.match(sw,/formarota-solo-v120-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -175,6 +175,7 @@ test('band rest notification uses local timer, accessible mute, no changes to gy
  "root.setInterval?.(updateRest,500)","if(!wasSaved)","stopRest('Antrenman kaydedildi.')" ])
   assert.ok(js.includes(part),part);
  assert.ok(js.includes("doc.visibilityState==='hidden'"));
+ assert.ok(js.includes("E.calibration(id,live?[...h,live]:h)"),'calibration updates as the user saves sets');
  assert.ok(js.includes("meter.setAttribute('aria-valuenow'"));
  assert.ok(css.includes('.james-band-rest-bar')&&css.includes('.james-band-calibration-badge'));
 });
