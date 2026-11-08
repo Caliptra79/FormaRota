@@ -41,16 +41,15 @@ function renderMoves(){
   card.append(link(m.source,m.source.includes('fithub.com.tr')?'James Grage röportajında hareketi incele':jamesSource?'Undersun / James Grage kaynak bağlantısı':'Tamamlayıcı teknik kaynağını aç'));
   if(['front-lunge','one-arm-row','pallof'].includes(id))card.append(el('p','james-band-advice','Tekrar sayısı her taraf için geçerlidir; sağ ve solu eşit çalış.'));
   const media=el('div','james-band-media');
-  const placeholder=el('p','james-band-gif-wait','Hareket GIF’i bekleniyor · Dosya adı: assets/band-gifs/'+id+'.gif');
-  media.append(placeholder);
-  // GIFs are not copied from YouTube. User-provided and cleared files can
-  // later be placed here without altering exercise IDs or saved performances.
-  const image=el('img','james-band-gif');image.loading='lazy';image.decoding='async';
-  image.alt=m.tr+' hareket animasyonu';image.hidden=true;
-  image.addEventListener('load',()=>{image.hidden=false;placeholder.hidden=true;});
-  image.addEventListener('error',()=>{image.hidden=true;placeholder.hidden=false;});
-  image.src='./assets/band-gifs/'+id+'.gif';
-  media.append(image);card.append(media);
+  const src='./assets/band-gifs/'+id+'.webp';
+  const placeholder=el('p','james-band-image-wait','Hareket görseli yüklenemedi · '+id+'.webp');
+  const image=el('img','james-band-image');image.loading='lazy';image.decoding='async';
+  image.alt=m.tr+' başlangıç ve bitiş hareket görseli';image.hidden=true;
+  const enlarge=link(src,'Görseli büyüt');enlarge.className='james-band-image-link';enlarge.hidden=true;
+  image.addEventListener('load',()=>{image.hidden=false;placeholder.hidden=true;enlarge.hidden=false;});
+  image.addEventListener('error',()=>{image.hidden=true;placeholder.hidden=false;enlarge.hidden=true;});
+  image.src=src;
+  media.append(placeholder,image,enlarge);card.append(media);
   if(s){
    for(let i=0;i<s.targetSets;i++){
     const saved=s.items?.[id]?.[i],line=el('div','james-band-set');
@@ -125,6 +124,7 @@ function init(){
  $('jamesBandStop')?.addEventListener('click',()=>finish(false));
  root.addEventListener?.('pageshow',render);
  render();
+ root.navigator?.serviceWorker?.ready?.then(reg=>reg.active?.postMessage({type:'CACHE_BAND_IMAGES'})).catch(()=>{});
 }
 if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init,{once:true});else init();
 root.FormaRotaJamesBand=Object.freeze({render,completedOn:date=>history().some(s=>s.date===date&&E.finished(s)),activeOn:date=>current()?.date===date,history});
