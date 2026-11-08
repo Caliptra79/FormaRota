@@ -24,7 +24,7 @@ function renderMoves(){
  const s=current(),h=history(),preview=s||E.create(today(),h),variant=preview.variant;
  const ids=E.PLANS[variant],frag=doc.createDocumentFragment();
  ids.forEach((id,index)=>{
-  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h);
+  const m=E.MOVES.find(x=>x.id===id),r=E.recommend(id,h),g=E.GUIDANCE[id];
   if(!m)return;
   const card=el('article','james-band-move');card.dataset.exercise=id;
   const title=el('div','james-band-title');
@@ -34,6 +34,8 @@ function renderMoves(){
   content.append(el('p','',m.tip));
   const warning=el('p','james-band-warning','Dikkat: '+m.mistake);
   content.append(warning);card.append(content);
+  card.append(el('p','james-band-setup','Bant ve sabitleme: '+g.anchor));
+  card.append(el('p','james-band-timing','Tempo: '+g.tempo+' · Yaklaşık '+g.seconds+' sn/set'+(g.eachSide?' (iki taraf toplam)':'')+' · Set arası '+g.rest+' sn dinlenme'));
   const guide=el('p','james-band-advice',r.advice);
   card.append(el('p','james-band-recommendation','Öneri: '+bandName(r.band)+' · '+r.aim+'–'+m.high+' tekrar · '+preview.targetSets+' set'),guide);
   if(r.previous)card.append(el('p','james-band-previous','Önceki tamamlanan seans: '+r.previous));
@@ -57,9 +59,10 @@ function renderMoves(){
     const reps=el('input');reps.type='number';reps.min='1';reps.max='60';reps.step='1';reps.inputMode='numeric';reps.placeholder='Tekrar';
     reps.setAttribute('aria-label',m.tr+' '+(i+1)+'. set tekrar');
     if(saved)reps.value=saved.reps;
-    const bandOptions=E.BAND_LEVELS.filter(b=>m.band==='none'||b!=='none').map(b=>[b,bandName(b)]);
+    const bandOptions=(m.band==='none'?['none']:E.BAND_LEVELS.filter(b=>b!=='none')).map(b=>[b,bandName(b)]);
     const band=select(bandOptions,saved?.band||r.band,m.tr+' '+(i+1)+'. set bant');
-    const grip=select([['relaxed','Rahat tutuş'],['normal','Normal tutuş'],['short','Kısa tutuş']],saved?.grip||r.grip,m.tr+' bant tutuşu');
+    const grip=select([['relaxed','Uzun tutuş (daha az gerilim)'],['normal','Normal tutuş'],['short','Kısa tutuş (daha fazla gerilim)']],saved?.grip||r.grip,m.tr+' bant tutuşu');
+    if(m.band==='none'){band.disabled=true;grip.disabled=true;}
     const rir=select([[0,'0 tekrar kaldı'],[1,'1 tekrar kaldı'],[2,'2 tekrar kaldı'],[3,'3 tekrar kaldı'],[4,'4 tekrar kaldı'],[5,'5+ tekrar kaldı']],String(saved?.rir??2),m.tr+' '+(i+1)+'. set tekrar rezervi');
     const form=select([['good','Form temiz'],['unsure','Formdan emin değilim'],['poor','Form bozuldu']],saved?.form||'good',m.tr+' '+(i+1)+'. set teknik');
     const save=el('button','secondary',saved?'Düzelt':'Seti kaydet');save.type='button';
@@ -111,7 +114,8 @@ function renderHistory(){
 function render(){
  const s=current(),h=history(),preview=s||E.create(today(),h),valid=s?E.count(s):0,expected=E.PLANS[preview.variant].length*preview.targetSets;
  const progress=$('jamesBandProgress');if(progress)progress.textContent='Seviye '+E.stage(h)+' · Full Body '+preview.variant+' · '+valid+'/'+expected+' set';
- const info=$('jamesBandInfo');if(info)info.textContent='Plan '+preview.variant+' · '+preview.targetSets+' set · 8 hareket. '+(s?'Seansın kayıtlı; kaldığın yerden devam edebilirsin.':'Gelişim tamamlanan seanslara ve temiz tekrarlara göre güncellenir.');
+ const estimate=E.estimateSession(preview);
+ const info=$('jamesBandInfo');if(info)info.textContent='Plan '+preview.variant+' · '+preview.targetSets+' set · 8 hareket · Tahmini '+estimate.minutes+' dk (5 dk ısınma + 3 dk soğuma dahil). DOMYOS 10/20/30/40 kg değerleri bandın iki kat uzamasındaki nominal dirençtir; sabit kaldırılan ağırlık değildir. Her seans öncesi banttaki aşınmayı ve sabitlemeyi kontrol et. '+(s?'Seansın kayıtlı; kaldığın yerden devam edebilirsin.':'Gelişim tamamlanan seanslara ve temiz tekrarlara göre güncellenir.');
  if($('jamesBandStart'))$('jamesBandStart').disabled=Boolean(s);
  if($('jamesBandFinish'))$('jamesBandFinish').disabled=!s||!E.complete(s);
  if($('jamesBandStop'))$('jamesBandStop').disabled=!s||valid===0;

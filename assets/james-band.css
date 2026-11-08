@@ -55,3 +55,6 @@ html[data-theme] #jamesBandPanel h3{color:var(--text)!important;-webkit-text-fil
  .abs-choice-pills small{font-size:.68rem}
  .abs-choice-icon{width:30px;height:30px;border-radius:10px}
 }
+
+.james-band-setup,.james-band-timing{margin:7px 0;padding:8px 10px;border-radius:9px;background:var(--panel2);font-size:.83rem;line-height:1.5;color:var(--text)}
+.james-band-timing{background:transparent;border:1px solid var(--border)}

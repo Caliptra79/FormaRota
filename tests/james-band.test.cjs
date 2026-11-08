@@ -19,6 +19,10 @@ test('James Grage library has named A/B training and a source for every techniqu
  assert.ok(E.MOVES.every(m=>m.id&&m.tr&&m.tip&&m.mistake&&m.source.startsWith('https://')&&m.low<m.high));
  assert.deepEqual(E.BAND_LEVELS,['none','10','20','30','40']);
  assert.ok(E.MOVES.some(m=>m.id==='pallof'));
+ assert.ok(E.MOVES.every(m=>E.GUIDANCE[m.id]&&E.GUIDANCE[m.id].seconds>=30&&E.GUIDANCE[m.id].rest>=45));
+ const initial=E.create(DATE,[]),durationA=E.estimateSession(initial);
+ assert.ok(durationA.minutes>=25&&durationA.minutes<=50);
+ assert.ok(E.estimateSession({...initial,variant:'B'}).minutes>durationA.minutes);
  assert.ok(E.MOVES.some(m=>m.id==='bent-row'));
  assert.equal(E.MOVES.find(m=>m.id==='band-squat').tr,'Bantla Overhead Squat');
 });
@@ -55,6 +59,8 @@ test('conservative repetition and band progression uses good technique and repor
  r=E.recommend('band-squat',[first,b,a,b2,a2]);
  assert.equal(r.band,'10','a high performance must not silently change resistance');
  assert.equal(r.canTryBand,'20');
+ const crunchHistory=[filled(E.create(DATE,[]),15,'good',4),filled(E.create(DATE,[]),15,'good',4)];
+ assert.equal(E.recommend('band-crunch',crunchHistory).canTryBand,null,'bantsız crunch için bant önerilmez');
  assert.match(r.advice,/deneme setinde/);
  a2.items['band-squat'][0].form='poor';
  r=E.recommend('band-squat',[first,b,a,b2,a2]);
@@ -89,14 +95,16 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'113':'114')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':'115')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'113':'114')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':'115')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v114-shell/);
+ assert.match(sw,/formarota-solo-v115-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
+ assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
+ assert.ok(read('assets/james-band.js').includes('Bant ve sabitleme: '));
  assert.ok(read('assets/james-band.js').includes("CACHE_BAND_IMAGES"));
  assert.ok(sw.includes("const BAND_IMAGES="));
  assert.equal((sw.match(/'band-squat'/g)||[]).length,1);

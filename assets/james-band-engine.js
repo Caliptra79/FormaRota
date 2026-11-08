@@ -29,6 +29,31 @@ const MOVES=Object.freeze([
  move('pallof','Pallof press','Core · denge','Bandi gogus hizasinda saglam sabitle, iki elinle ileri uzat; iki yonde de calis.','Govdenin ankraja dogru donmesine izin verme.',GUIDE,'10',8,12),
  move('staggered-curl','Staggered-stance curl','Biceps','Bir ayak hafif önde; sabit duruşla dirsekleri yerinde tut.','Kalça ve sırtı sallayarak bandı çekme.',GRAGE_INTERVIEW)
 ]);
+
+/* Approximate training guide for user's DOMYOS long closed-loop 10/20/30/40 kg bands.
+ * Brand kg ratings are measured at 2x extension, not fixed lifted mass. */
+const guide=(anchor,seconds,rest,tempo,eachSide=false)=>Object.freeze({anchor,seconds,rest,tempo,eachSide});
+const GUIDANCE=Object.freeze({
+ "band-squat":guide("Uzun kapalı halka; iki ayağın altında, eller baş üzerinde. Bantın kaymadığını kontrol et.",45,90,"2 sn kontrollü iniş · 1–2 sn kalkış",false),
+ "bent-row":guide("Uzun kapalı halka; iki ayağın altında, iki elle tut. Kalçadan öne eğil.",40,75,"1–2 sn çekiş · 2 sn dönüş",false),
+ "wrap-chest":guide("Uzun kapalı halkayı sırtın arkasından geçir; iki elle öne it. Boyun ve koltuk altına kaydırma.",40,75,"1–2 sn itiş · 2 sn dönüş",false),
+ "shoulder-press":guide("Uzun kapalı halka; iki ayağın altında ve iki elde, omuz seviyesinden baş üzerine it.",45,90,"1–2 sn itiş · 2 sn dönüş",false),
+ "biceps-curl":guide("Uzun kapalı halka; iki ayağın altında, iki elde; dirsekler gövdeye yakın.",40,75,"1–2 sn kaldırış · 2 sn iniş",false),
+ "overhead-triceps":guide("Uzun kapalı halka; arkadaki ayağın altında, iki el başın arkasında. Yüze geri kaçma riskine dikkat et.",45,75,"1–2 sn açış · 2 sn dönüş",false),
+ "calf-raise":guide("Uzun kapalı halka; iki ayağın altında, iki elle omuz seviyesinde.",45,60,"1–2 sn yükseliş · 1 sn bekleme · 2 sn iniş",false),
+ "band-crunch":guide("Bant kullanılmaz; mat üzerinde dizler bükülü, sırtüstü.",35,60,"1–2 sn sıkışma · 2 sn iniş",false),
+ "front-lunge":guide("Uzun kapalı halka; öndeki ayağın altında, iki el omuz hizasında. Sağ ve sol ayrı çalış.",80,90,"2 sn iniş · 1–2 sn kalkış",true),
+ "band-rdl":guide("Uzun kapalı halka; iki ayağın altında, iki elde, dizler hafif bükülü.",45,90,"2–3 sn kalçadan eğilme · 1–2 sn doğrulma",false),
+ "one-arm-row":guide("Uzun kapalı halka; öndeki ayağın altında, tek elle kalçaya doğru çek. Sağ ve sol ayrı çalış.",80,75,"1–2 sn çekiş · 2 sn dönüş",true),
+ "staggered-curl":guide("Uzun kapalı halka; öndeki ayağın altında, iki elde, ayaklar kademeli.",45,75,"1–2 sn kaldırış · 2 sn iniş",false),
+ "pallof":guide("Uzun kapalı halka; göğüs hizasında güvenli sabitleme noktasında, sağ ve sol ayrı çalış.",80,75,"1–2 sn uzatış · 2 sn dönüş",true),
+});
+function estimateSession(s){
+ const n=[2,3].includes(s?.targetSets)?s.targetSets:2,moves=movesOf(s);
+ if(!moves.length)return null;
+ const exerciseSeconds=moves.reduce((total,m)=>{const g=GUIDANCE[m.id];return total+n*g.seconds+(n-1)*g.rest;},0);
+ return {minutes:Math.round((exerciseSeconds+(moves.length-1)*35+8*60)/60),warmupMinutes:5,cooldownMinutes:3};
+}
 const IDS=new Map(MOVES.map(m=>[m.id,m]));
 const PLANS=Object.freeze({
  A:Object.freeze(['band-squat','bent-row','wrap-chest','shoulder-press','biceps-curl','overhead-triceps','calf-raise','band-crunch']),
@@ -75,7 +100,7 @@ function recommend(id,h){
  const cleanTwice=achieved&&records.length===2&&records.every(s=>
   s.items[id]?.length===s.targetSets&&s.items[id].every(x=>
    validSet(m,x)&&x.band===band&&x.form==='good'&&x.rir>=3&&x.reps>=m.high));
- const nextBand=BAND_LEVELS[BAND_LEVELS.indexOf(band)+1];
+ const nextBand=band==='none'?null:BAND_LEVELS[BAND_LEVELS.indexOf(band)+1];
  let aim=m.low;
  if(safe)aim=Math.max(m.low,Math.min(m.high,Math.min(...sets.map(x=>x.reps))+(good&&!achieved?1:0)));
  let advice='Ilk seans: hafif gerilimle dene. Sonunda 2–3 temiz tekrar gucun kalsin.';
@@ -101,7 +126,7 @@ function validateBackup(data){
    s.items[m.id].every(x=>x===null||validSet(m,x)))&&
   (s.status!=='finished'||complete(s)));
 }
-const api=Object.freeze({MOVES,PLANS,BAND_LEVELS,GRIPS,FORMS,GUIDE,PROGRESS,validSet,movesOf,count,complete,finished,stage,create,recommend,validateBackup});
+const api=Object.freeze({MOVES,PLANS,GUIDANCE,estimateSession,BAND_LEVELS,GRIPS,FORMS,GUIDE,PROGRESS,validSet,movesOf,count,complete,finished,stage,create,recommend,validateBackup});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.FormaRotaBandEngine=api;
 })(typeof window!=='undefined'?window:globalThis);
