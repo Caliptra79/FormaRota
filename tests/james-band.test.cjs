@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':'117')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'115':asset==='james-band.css'?'118':'117')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':'117')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'115':asset==='james-band.css'?'118':'117')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v117-shell/);
+ assert.match(sw,/formarota-solo-v118-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -139,4 +139,5 @@ test('Band Studio has an accessible progress hero, visible set tracking and resp
  assert.ok(css.includes('@media(max-width:430px)')&&css.includes('@media(max-width:720px)'));
  assert.ok(css.includes('#jamesBandPanel .james-band-image'), 'images remain aspect-ratio preserved');
  assert.ok(html.includes('Bant güvenliği ve program kaynakları'), 'full safety notes remain accessible');
+ assert.ok(css.includes('-webkit-text-fill-color:#fff!important'), 'dark hero stays legible in light and OLED themes');
 });

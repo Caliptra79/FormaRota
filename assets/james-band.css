@@ -327,3 +327,12 @@ html[data-theme] #jamesBandPanel .james-band-title strong{
 @media(prefers-reduced-motion:reduce){
  #jamesBandPanel .james-band-image{transition:none}
 }
+
+/* Hero always uses a dark canvas; override the legacy global strong/h2 theme fill. */
+html[data-theme] #jamesBandPanel .james-band-showcase h2,
+html[data-theme] #jamesBandPanel .james-band-showcase .james-band-meter-inner>strong{
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html[data-theme] #jamesBandPanel .james-band-showcase h2 em{
+ color:#ff9854!important;-webkit-text-fill-color:#ff9854!important;
+}
