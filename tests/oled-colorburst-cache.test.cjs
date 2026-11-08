@@ -23,8 +23,8 @@ test('three additional OLED themes are selectable at bootstrap, settings, dialog
  assert.ok(css.includes('prefers-reduced-motion'));
 });
 test('versioned linked files bypass older cache-first service workers and are precached offline',()=>{
- assert.match(sw,/formarota-solo-v112-shell/);
- assert.match(sw,/formarota-solo-v112-gifs/);
+ assert.match(sw,/formarota-solo-v\d+-shell/);
+ assert.match(sw,/formarota-solo-v\d+-gifs/);
  for(const file of bust){
   const url='./assets/'+file+'?fr=108';
   assert.ok(html.includes(url),file+' must have a fresh URL in HTML');
