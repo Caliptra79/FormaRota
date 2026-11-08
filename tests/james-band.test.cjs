@@ -20,6 +20,7 @@ test('James Grage library has named A/B training and a source for every techniqu
  assert.deepEqual(E.BAND_LEVELS,['none','10','20','30','40']);
  assert.ok(E.MOVES.some(m=>m.id==='pallof'));
  assert.ok(E.MOVES.some(m=>m.id==='bent-row'));
+ assert.equal(E.MOVES.find(m=>m.id==='band-squat').tr,'Bantla Overhead Squat');
 });
 test('separate A/B sessions progress on completed performances, not elapsed months',()=>{
  const h=[];let s=E.create(DATE,h);
@@ -88,12 +89,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads all new scripts but deliberately ships no unsupplied GIF',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr=112'),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'113':'112')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr=112'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'113':'112')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v112-shell/);
+ assert.match(sw,/formarota-solo-v113-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes('GIF’i bekleniyor'));
  assert.ok(!sw.includes("'./assets/band-gifs/"),'unprovided GIFs must not break offline install');
