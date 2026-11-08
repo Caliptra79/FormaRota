@@ -87,15 +87,18 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
  assert.ok(read('assets/coach-engine-v35.js').includes("'home','band'"));
  assert.ok(read('assets/coach-ui-v33.js').includes("band:'James Grage · Direnç Bandı'"));
 });
-test('offline shell loads all new scripts but deliberately ships no unsupplied GIF',()=>{
+test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'113':'112')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'113':'114')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'113':'112')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'113':'114')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v113-shell/);
+ assert.match(sw,/formarota-solo-v114-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
- assert.ok(read('assets/james-band.js').includes('GIF’i bekleniyor'));
- assert.ok(!sw.includes("'./assets/band-gifs/"),'unprovided GIFs must not break offline install');
+ assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
+ assert.ok(read('assets/james-band.js').includes("CACHE_BAND_IMAGES"));
+ assert.ok(sw.includes("const BAND_IMAGES="));
+ assert.equal((sw.match(/'band-squat'/g)||[]).length,1);
+ assert.ok(sw.includes("if(response.ok)await gifCache.put(path,response)"));
 });
