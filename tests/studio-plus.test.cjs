@@ -3,6 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 const engine=require('../assets/studio-plus-engine.js');
+const BandEngine=require('../assets/james-band-engine.js');
 const ui=read('assets/studio-plus.js'),css=read('assets/studio-plus.css');
 const html=read('index.html'),sw=read('sw.js');
 const moves=['lat','row','incline','pec','lateral','rear','push','overhead','zottman','legpress','extension','legcurl','calf'];
@@ -161,4 +162,21 @@ test('all seven themes have non-looping ambient polish, reduce-motion, and offli
  for(const match of html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)){
   assert.doesNotThrow(()=>new vm.Script(match[1]));
  }
+});
+
+test('weekly studio includes valid resistance-band workouts without double-counting same day',()=>{
+ const sample=(date,status='finished')=>({date,status,program:'james-band-v1',variant:'A',stage:1,targetSets:2,items:
+ Object.fromEntries(BandEngine.PLANS.A.map(id=>[id,Array.from({length:2},()=>({
+ done:true,reps:10,band:id==='band-crunch'?'none':'10',grip:'normal',rir:2,form:'good'}))]))});
+ const w=engine.week({asOf:new Date(2026,9,29,12),moveIds:moves,sessions:[session('2026-10-27')],
+ absCompletedDates:['2026-10-28'],bandSessions:[sample('2026-10-27'),sample('2026-10-27'),sample('2026-10-28'),sample('2026-10-29','stopped'),sample('2026-10-30')]});
+ assert.equal(engine.bandSession(sample('2026-10-27')),true);
+ assert.equal(engine.bandSession(sample('2026-10-27','stopped')),false);
+ assert.equal(w.bandWorkoutDays,2);
+ assert.equal(w.workoutDays,2);
+ assert.equal(w.fullWorkoutDays,1);
+ assert.equal(w.daily[1].bandWorkout,true);
+ assert.equal(w.daily[3].bandWorkout,false);
+ assert.ok(ui.includes("bandSessions:read('formarota-james-band-history-v1',[])"));
+ assert.ok(ui.includes('data.workoutDays'));
 });

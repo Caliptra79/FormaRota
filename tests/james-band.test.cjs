@@ -95,12 +95,12 @@ test('fourth program is in fitness, weekly planner and home today choices',()=>{
 });
 test('offline shell loads scripts and optionally caches 12 supplied band pictures',()=>{
  for(const asset of ['james-band-engine.js','james-band.js','james-band.css']){
-  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'119':'121')),asset);
+  assert.ok(html.includes('./assets/'+asset+'?fr='+(asset==='james-band-engine.js'?'119':'122')),asset);
   assert.ok(sw.includes("'./assets/"+asset+"'"),asset);
-  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'119':'121')+"'"),asset);
+  assert.ok(sw.includes("'./assets/"+asset+"?fr="+(asset==='james-band-engine.js'?'119':'122')+"'"),asset);
   if(asset.endsWith('.js'))assert.doesNotThrow(()=>new vm.Script(read('assets/'+asset)));
  }
- assert.match(sw,/formarota-solo-v121-shell/);
+ assert.match(sw,/formarota-solo-v122-shell/);
  assert.ok(read('assets/james-band.js').includes("assets/band-gifs/"));
  assert.ok(read('assets/james-band.js').includes("id+'.webp'"));
  assert.ok(read('assets/james-band.js').includes('E.estimateSession(preview)'));
@@ -191,4 +191,12 @@ test('band rest has an audible offline melody, volume presets and a manual previ
  assert.ok(js.includes("if(!soundEnabled||doc.visibilityState==='hidden')return false"));
  assert.ok(js.includes("if(audioCtx.state==='running')play()"));
  assert.ok(js.includes("else audioCtx.resume().then(play)"));
+});
+
+test('band rest sound layout fits phone with fixed two-column controls',()=>{
+ const css=read('assets/james-band.css'),js=read('assets/james-band.js');
+ assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;width:100%'));
+ assert.ok(css.includes('@media(max-width:360px)'));
+ assert.ok(css.includes('#jamesBandPanel .james-band-rest-actions>button'));
+ assert.ok(js.includes('root.FormaRotaStudioPlus?.refresh?.()'));
 });

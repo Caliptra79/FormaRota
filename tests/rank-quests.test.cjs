@@ -43,3 +43,26 @@ test('Rank 2 does not write XP or change backup schema',()=>{
  assert.ok(html.includes('function collectBackup(){return{version:7'));
  assert.match(read('sw.js'),/formarota-solo-v\d+-shell/);
 });
+
+const BandEngine=require('../assets/james-band-engine.js');
+function bandSample(date,status='finished',variant='A'){
+ return {id:'band-'+date,date,program:'james-band-v1',status,variant,stage:1,targetSets:2,
+ items:Object.fromEntries(BandEngine.PLANS[variant].map(id=>[id,Array.from({length:2},()=>({
+ done:true,reps:10,band:id==='band-crunch'?'none':'10',grip:'normal',rir:2,form:'good'
+ }))]))};
+}
+test('completed resistance-band A/B sessions count for rank missions by distinct date',()=>{
+ assert.equal(Q.finishedBand(bandSample('2026-11-06')),true);
+ assert.equal(Q.finishedBand(bandSample('2026-11-06','finished','B')),true);
+ assert.equal(Q.finishedBand(bandSample('2026-11-06','stopped')),false);
+ const bad=bandSample('2026-11-06');bad.items['band-squat'][0].reps=0;
+ assert.equal(Q.finishedBand(bad),false);
+ const date='2026-11-07';
+ const a=Q.analyze({band:[bandSample('2026-11-03'),bandSample('2026-11-05'),
+ bandSample('2026-11-05'),bandSample('2026-11-06','stopped'),bandSample('2026-11-08')]},date);
+ assert.equal(a.missions.find(x=>x.id==='workout').value,2);
+ const mixed=Q.analyze({full:[gym('2026-11-03')],band:[bandSample('2026-11-03'),bandSample('2026-11-06')]},date);
+ assert.equal(mixed.missions.find(x=>x.id==='workout').value,2);
+ assert.ok(read('assets/rank-system.js').includes("['formarota-james-band-history-v1','band']"));
+ assert.ok(read('assets/rank-system.js').includes('if((r.full||r.band)&&full<3)'));
+});

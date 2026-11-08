@@ -32,6 +32,7 @@
    );
   });
  }
+ function bandSession(s){return scope.FormaRotaBandEngine?.finished?.(s)===true;}
  function progress(current,goal){
   const value=Math.max(0,n(current)??0);
   const target=n(goal);
@@ -44,7 +45,7 @@
   return moveIds.reduce((count,id)=>count+(Array.isArray(session.items?.[id])?
    session.items[id].filter(row=>row?.done===true&&n(row.weight)!==null&&n(row.weight)>=0&&n(row.weight)<=1500&&integer(row.reps,1,100)).length:0),0);
  }
- function week({asOf=new Date(),logs=[],sessions=[],absCompletedDates=[],weights=[],water={},walk={},moveIds=[]}={}){
+ function week({asOf=new Date(),logs=[],sessions=[],absCompletedDates=[],bandSessions=[],weights=[],water={},walk={},moveIds=[]}={}){
   const selected=daysOfWeek(asOf);
   const today=localISO(asOf);
   const visible=selected.filter(date=>date<=today);
@@ -53,13 +54,15 @@
   const allSessions=Array.isArray(sessions)?sessions:[];
   const fullDates=new Set(allSessions.filter(row=>daySet.has(row?.date)&&fullSession(row,moveIds)).map(row=>row.date));
   const absDates=new Set((Array.isArray(absCompletedDates)?absCompletedDates:[]).filter(date=>daySet.has(date)));
+  const bandDates=new Set((Array.isArray(bandSessions)?bandSessions:[]).filter(row=>daySet.has(row?.date)&&bandSession(row)).map(row=>row.date));
+  const workoutDates=new Set([...fullDates,...absDates,...bandDates]);
   const daily=selected.map(date=>{
    const meals=recordRows.filter(row=>row.date===date);
    const isFuture=date>today;
    const waterMl=Math.max(0,n(water?.[date])??0);
    const walkKm=Math.max(0,n(walk?.[date])??0);
-   return {date,future:isFuture,loggedMeals:meals.length,fullWorkout:fullDates.has(date),absWorkout:absDates.has(date),
-    waterMl,walkKm,active:!isFuture&&(meals.length>0||fullDates.has(date)||absDates.has(date)||waterMl>0||walkKm>0)};
+   return {date,future:isFuture,loggedMeals:meals.length,fullWorkout:fullDates.has(date),absWorkout:absDates.has(date),bandWorkout:bandDates.has(date),
+    waterMl,walkKm,active:!isFuture&&(meals.length>0||workoutDates.has(date)||waterMl>0||walkKm>0)};
   });
   const registered=new Set(recordRows.map(row=>row.date));
   // A logged day may contain only a snack. Never call this a complete day's intake.
@@ -82,7 +85,7 @@
   }
   return {
    dates:selected,daily,daysRecorded:activeCount,daysActive:daily.filter(x=>x.active).length,
-   fullWorkoutDays:fullDates.size,
+   fullWorkoutDays:fullDates.size,bandWorkoutDays:bandDates.size,workoutDays:workoutDates.size,
    avgKcal:activeCount?Math.round(sum('kcal')/activeCount):null,
    avgProtein:activeCount?Math.round(sum('protein')/activeCount*10)/10:null,
    waterTotal:Math.round(daily.filter(x=>!x.future).reduce((t,x)=>t+x.waterMl,0)),
@@ -90,10 +93,10 @@
    weightDelta:difference,weightPoints:uniqueWeights.length,
    streak,
    // Observed activity streak is not a streak of hitting calorie goals.
-   award:fullDates.size>=2?'Antrenman istikrarı':streak>=3?'Üç günlük takip':null
+   award:workoutDates.size>=2?'Antrenman istikrarı':streak>=3?'Üç günlük takip':null
   };
  }
- const api=Object.freeze({progress,fullSession,workoutSets,week,daysOfWeek,localISO});
+ const api=Object.freeze({progress,fullSession,bandSession,workoutSets,week,daysOfWeek,localISO});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  scope.FormaRotaStudioPlusMetrics=api;
 })(typeof window!=='undefined'?window:globalThis);

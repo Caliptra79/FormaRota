@@ -5,6 +5,7 @@
 'use strict';
 const HOME=['incline-pushup','band-row','band-pulldown','squat','band-rdl','band-shoulder','band-lateral','band-curl','band-triceps','glute-bridge','dead-bug','pallof-press','tuck-hollow'];
 const ABS=['floor-crunch','reverse-crunch','heel-touch','plank'];
+const BAND_PLANS={A:['band-squat','bent-row','wrap-chest','shoulder-press','biceps-curl','overhead-triceps','calf-raise','band-crunch'],B:['front-lunge','band-rdl','one-arm-row','wrap-chest','shoulder-press','staggered-curl','overhead-triceps','band-crunch']};
 const iso=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T12:00:00Z'));
 function dateOf(row){for(const k of ['date','endedAt','completedAt','finishedAt']){const s=row?.[k];if(typeof s==='string'&&iso(s.slice(0,10)))return s.slice(0,10)}return null}
 function shift(d,n){const t=new Date(d+'T12:00:00Z');t.setUTCDate(t.getUTCDate()+n);return t.toISOString().slice(0,10)}
@@ -17,6 +18,18 @@ function finishedAbs(r){return r?.status==='finished'&&ABS.every(id=>Array.isArr
 function finishedHome(r){return r?.status==='finished'&&r.program==='home-calisthenics-v1'&&[2,3].includes(r.targetSets)&&
  HOME.every(id=>Array.isArray(r.items?.[id])&&r.items[id].length===r.targetSets&&
  r.items[id].every(s=>s?.done===true&&Number.isInteger(Number(s.reps??s.seconds))&&Number(s.reps??s.seconds)>0))}
+function finishedBand(r){
+ const ids=BAND_PLANS[r?.variant];
+ if(r?.program!=='james-band-v1'||r.status!=='finished'||!ids||![2,3].includes(r.targetSets))return false;
+ if(!r.items||typeof r.items!=='object'||Array.isArray(r.items)||Object.keys(r.items).length!==8)return false;
+ return ids.every(id=>Array.isArray(r.items[id])&&r.items[id].length===r.targetSets&&r.items[id].every(s=>
+  s?.done===true&&Number.isInteger(Number(s.reps))&&Number(s.reps)>=1&&Number(s.reps)<=60&&
+  Number.isInteger(Number(s.rir))&&Number(s.rir)>=0&&Number(s.rir)<=5&&
+  ['none','10','20','30','40'].includes(s.band)&&
+  (id==='band-crunch'?s.band==='none':s.band!=='none')&&
+  ['relaxed','normal','short'].includes(s.grip)&&['good','unsure','poor'].includes(s.form)
+ ));
+}
 function calcPRs(rows,limit){
  const sessions=(Array.isArray(rows)?rows:[]).filter(r=>{const d=dateOf(r);return d&&d<=limit&&finishedGym(r)}).sort((a,b)=>
  (dateOf(a)||'').localeCompare(dateOf(b)||'')||String(a.endedAt||a.id||'').localeCompare(String(b.endedAt||b.id||'')));
@@ -43,7 +56,7 @@ function analyze(input={},date=today()){
  for(const item of (Array.isArray(input.foods)?input.foods:[]))if(valid(item?.date)&&Number(item.amount)>0)at(item.date).food=true;
  const walks=input.walks&&typeof input.walks==='object'&&!Array.isArray(input.walks)?input.walks:{};
  for(const [d,k] of Object.entries(walks))if(valid(d)&&Number.isFinite(Number(k))&&Number(k)>=5)at(d).walk=true;
- const types=[['full',input.full,finishedGym],['abs',input.abs,finishedAbs],['home',input.home,finishedHome]];
+ const types=[['full',input.full,finishedGym],['abs',input.abs,finishedAbs],['home',input.home,finishedHome],['band',input.band,finishedBand]];
  let homeCompleted=0;
  for(const [kind,records,finished] of types)for(const row of (Array.isArray(records)?records:[])){
   const d=dateOf(row);if(!valid(d)||!finished(row))continue;
@@ -67,7 +80,7 @@ function analyze(input={},date=today()){
  return {week:week(date),missions,stats:{homeCompleted,longestStreak,currentStreak,
   prCount:calcPRs(input.full,date),perfectWeeks},complete:missions.filter(m=>m.done).length};
 }
-const api=Object.freeze({analyze,finishedHome,finishedGym,finishedAbs,calcPRs});
+const api=Object.freeze({analyze,finishedHome,finishedGym,finishedAbs,finishedBand,calcPRs});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.FormaRotaRankQuests=api;
 })(typeof window!=='undefined'?window:globalThis);

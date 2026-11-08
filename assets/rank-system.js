@@ -25,22 +25,22 @@ function snapshotGoals(){
   read('formarota-deficit-plan-v1',{}))?.maintenance:null;
  return {...g,sex:profile?.sex,maintenance};
 }
-function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='full')return row.items&&typeof row.items==='object'&&Object.keys(row.items).length>=13&&Object.values(row.items).reduce((n,sets)=>n+(Array.isArray(sets)?sets.filter(v=>v&&v.done===true).length:0),0)>=39;return true}
+function isCompleted(row,type){if(!row||row.status!=='finished')return false;if(type==='band')return window.FormaRotaRankQuests?.finishedBand?.(row)===true;if(type==='full')return row.items&&typeof row.items==='object'&&Object.keys(row.items).length>=13&&Object.values(row.items).reduce((n,sets)=>n+(Array.isArray(sets)?sets.filter(v=>v&&v.done===true).length:0),0)>=39;return true}
 function tally(){
- const days=new Map(),entry=d=>{if(!days.has(d))days.set(d,{food:[],walk:0,water:0,full:0,abs:0});return days.get(d)};
+ const days=new Map(),entry=d=>{if(!days.has(d))days.set(d,{food:[],walk:0,water:0,full:0,abs:0,band:0});return days.get(d)};
  const foods=read('kocluk-food-log-v2',[]);if(Array.isArray(foods))foods.forEach(x=>{if(iso(x?.date)&&Number(x.amount)>0)entry(x.date).food.push(x)});
  for(const [key,col] of [['formarota-walks-v1','walk'],['formarota-water-v1','water']]){const obj=read(key,{});if(obj&&typeof obj==='object'&&!Array.isArray(obj))for(const [d,n] of Object.entries(obj))if(iso(d))entry(d)[col]=Math.max(0,Number(n)||0)}
- for(const [key,col] of [['kocluk-fitness-history-v1','full'],['formarota-abs-history-v1','abs']]){const rows=read(key,[]);if(Array.isArray(rows))rows.forEach(x=>{const d=day(x);if(d&&isCompleted(x,col))entry(d)[col]++})}
+ for(const [key,col] of [['kocluk-fitness-history-v1','full'],['formarota-abs-history-v1','abs'],['formarota-james-band-history-v1','band']]){const rows=read(key,[]);if(Array.isArray(rows))rows.forEach(x=>{const d=day(x);if(d&&isCompleted(x,col))entry(d)[col]++})}
  const weeks=new Map();days.forEach((v,d)=>{const w=week(d);if(!weeks.has(w))weeks.set(w,[]);weeks.get(w).push(v)});
  const categories={Fitness:0,Beslenme:0,Aktivite:0,Düzenlilik:0};
  const goals=snapshotGoals();
  weeks.forEach(rows=>{let full=0,abs=0,active=0;for(const r of rows){
-  if(r.food.length||r.full||r.abs||r.walk)active++;
+  if(r.food.length||r.full||r.abs||r.band||r.walk)active++;
   if(r.food.length){categories.Beslenme+=25;
    if(window.FormaRotaNutritionRewards?.evaluate?.(r.food,goals)?.balanced)categories.Beslenme+=15}
   if(r.walk>=5)categories.Aktivite+=25;
   if(r.water>=waterTarget())categories.Aktivite+=10;
-  if(r.full&&full<3){categories.Fitness+=80;full++}
+  if((r.full||r.band)&&full<3){categories.Fitness+=80;full++}
   if(r.abs&&abs<3){categories.Fitness+=35;abs++}
  }if(active>=5)categories.Düzenlilik+=60});
  const xp=Object.values(categories).reduce((a,b)=>a+b,0);let t=tiers[0],next=null;
@@ -150,11 +150,11 @@ const ACHIEVEMENTS=[
 ];
 const BADGE_TIERS={bronze:'🥉 Bronze',silver:'🥈 Silver',gold:'🥇 Gold',diamond:'💎 Diamond',legendary:'👑 Legendary'};
 function historySummary(){
- const foods=read('kocluk-food-log-v2',[]),walks=read('formarota-walks-v1',{}),full=read('kocluk-fitness-history-v1',[]),abs=read('formarota-abs-history-v1',[]);
+ const foods=read('kocluk-food-log-v2',[]),walks=read('formarota-walks-v1',{}),full=read('kocluk-fitness-history-v1',[]),abs=read('formarota-abs-history-v1',[]),band=read('formarota-james-band-history-v1',[]);
  const dayMap=new Map(),get=d=>{if(!dayMap.has(d))dayMap.set(d,{food:false,foodRecords:[],walk:0,workouts:0,kcal:0,protein:0});return dayMap.get(d)};
  if(Array.isArray(foods))for(const x of foods){if(!iso(x?.date)||!(Number(x.amount)>0))continue;const v=get(x.date);v.food=true;v.foodRecords.push(x);v.kcal+=Math.max(0,Number(x.kcal)||0);v.protein+=Math.max(0,Number(x.protein)||0)}
  if(walks&&typeof walks==='object'&&!Array.isArray(walks))for(const [d,n] of Object.entries(walks))if(iso(d))get(d).walk=Math.max(0,Number(n)||0);
- for(const [rows,type] of [[full,'full'],[abs,'abs']])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&isCompleted(x,type))get(d).workouts++}
+ for(const [rows,type] of [[full,'full'],[abs,'abs'],[band,'band']])if(Array.isArray(rows))for(const x of rows){const d=day(x);if(d&&isCompleted(x,type))get(d).workouts++}
  const weeks=new Map();dayMap.forEach((v,d)=>{const key=week(d);if(!weeks.has(key))weeks.set(key,{workouts:0,walk:0,foodDays:0,activeDays:0,protein:0,proteinDays:0});const w=weeks.get(key);w.workouts+=v.workouts;w.walk+=v.walk;if(v.food){w.foodDays++;w.protein+=v.protein;w.proteinDays++}if(v.food||v.walk>0||v.workouts>0)w.activeDays++});
  const stats={workouts:0,km:0,foodDays:0,balancedFoodDays:0,activeWeeks:0};const goals=snapshotGoals();dayMap.forEach(v=>{stats.workouts+=v.workouts;stats.km+=v.walk;if(v.food){stats.foodDays++;if(window.FormaRotaNutritionRewards?.evaluate?.(v.foodRecords,goals)?.balanced)stats.balancedFoodDays++}});weeks.forEach(w=>{if(w.activeDays>=3)stats.activeWeeks++});
  return {stats,weeks};
@@ -200,7 +200,7 @@ function render(){
  const questData=window.FormaRotaRankQuests?.analyze?.({
   foods:read('kocluk-food-log-v2',[]),walks:read('formarota-walks-v1',{}),
   full:read('kocluk-fitness-history-v1',[]),abs:read('formarota-abs-history-v1',[]),
-  home:read('formarota-home-history-v1',[])
+  home:read('formarota-home-history-v1',[]),band:read('formarota-james-band-history-v1',[])
  })||null;
  detail.insertAdjacentHTML('beforeend',questMarkup(questData)+achievementMarkup({...progress.stats,...(questData?.stats||{})})+graphMarkup(progress.weeks));
 }

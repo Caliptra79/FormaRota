@@ -203,6 +203,7 @@ function saveSet(id,index,form){
   else stopRest('✓ Tüm setler kaydedildi. Antrenmanı tamamlayabilirsin.');
  }
  render();status(m.tr+' · '+(index+1)+'. set kaydedildi ✓');
+ root.FormaRotaStudioPlus?.refresh?.();
  root.FormaRotaOLEDHome?.schedule?.();
 }
 function start(){
@@ -224,6 +225,7 @@ function finish(full){
  try{root.localStorage.removeItem(CURRENT)}catch{}
  stopRest('Antrenman kaydedildi.');
  render();status(full?'Bant antrenmanın kaydedildi ✓':'Yarım seans saklandı.');
+ root.FormaRotaStudioPlus?.refresh?.();
  root.FormaRotaOLEDHome?.schedule?.();
  root.FormaRotaABS?.refresh?.();
 }

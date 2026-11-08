@@ -55,11 +55,16 @@
   const absHistory=read('formarota-abs-history-v1',[]);
   const absDone=Array.isArray(absHistory)&&root.FormaRotaABSEngine?.completedDates?.(absHistory)?.has(today);
   const absProgress=absDone?12:safeNumber(abs?.count);
+  const bandEngine=root.FormaRotaBandEngine,bandHistory=read('formarota-james-band-history-v1',[]);
+  const bandCurrent=read('formarota-james-band-current-v1',null);
+  const bandComplete=Array.isArray(bandHistory)&&bandHistory.some(x=>x?.date===today&&bandEngine?.finished?.(x));
+  const bandTarget=8*(bandCurrent?.targetSets===3?3:bandEngine?.create?.(today,bandHistory)?.targetSets===3?3:2);
+  const bandProgress=bandComplete?bandTarget:bandCurrent?.date===today?(bandEngine?.count?.(bandCurrent)||0):0;
   return [
    metrics.progress(total('protein'),safeNumber(byId('goalProtein')?.value,160)||160),
    metrics.progress(safeNumber(safeMap(read(key.water,{}))[today]),safeNumber(byId('waterGoal')?.value,2500)||2500),
    metrics.progress(safeNumber(safeMap(read(key.walk,{}))[today]),5),
-   abs?.selected==='abs'?metrics.progress(absProgress,12):metrics.progress(fullProgress,39)
+   abs?.selected==='abs'?metrics.progress(absProgress,12):abs?.selected==='band'?metrics.progress(bandProgress,bandTarget):metrics.progress(fullProgress,39)
   ];
  }
  function buildRing(config,measurement){
@@ -85,12 +90,12 @@
  function renderRings(){
   const host=byId('spProgressRings');if(!host)return;
   const progress=nutritionToday();
-  const absSelected=root.FormaRotaABS?.selectedProgress?.()?.selected==='abs';
-  const signature=day()+'|'+String(absSelected)+'|'+progress.map(x=>x.value+':'+x.goal).join('|');
+  const workoutChoice=root.FormaRotaABS?.selectedProgress?.()?.selected;
+  const signature=day()+'|'+String(workoutChoice)+'|'+progress.map(x=>x.value+':'+x.goal).join('|');
   if(signature===lastRingSignature&&host.childElementCount===4)return;
   lastRingSignature=signature;
   const fragment=doc.createDocumentFragment();
-  progress.forEach((measure,i)=>fragment.append(buildRing(i===3&&absSelected?{...ringConfig[i],name:'ABS'}:ringConfig[i],measure)));
+  progress.forEach((measure,i)=>fragment.append(buildRing(i===3&&['abs','band'].includes(workoutChoice)?{...ringConfig[i],name:workoutChoice==='band'?'Direnç Bandı':'ABS'}:ringConfig[i],measure)));
   host.replaceChildren(fragment);
  }
  function weeklyData(){
@@ -98,6 +103,7 @@
    asOf:new Date(),
    logs:read(key.logs,[]),sessions:read(key.history,[]),
    absCompletedDates:[...(root.FormaRotaABSEngine?.completedDates?.(read('formarota-abs-history-v1',[]))||new Set())],
+   bandSessions:read('formarota-james-band-history-v1',[]),
    weights:read(key.weights,[]),
    water:safeMap(read(key.water,{})),walk:safeMap(read(key.walk,{})),
    moveIds:workoutIds()
@@ -110,7 +116,7 @@
    const tile=el('div','sp-week-day'+(d.active?' active':'')+(d.future?' future':''));
    const activity=d.future?'Gelecek gün':[
     d.loggedMeals?'Beslenme kaydı':'',
-    d.fullWorkout?'Tam Full Body':'',d.absWorkout?'ABS tamamlandı':'',
+    d.fullWorkout?'Tam Full Body':'',d.absWorkout?'ABS tamamlandı':'',d.bandWorkout?'Direnç bandı tamamlandı':'',
     d.waterMl>0?'Su kaydı':'',
     d.walkKm>0?'Yürüyüş kaydı':''
    ].filter(Boolean).join(', ')||'Kayıt yok';
@@ -118,7 +124,7 @@
    tile.setAttribute('aria-label',d.date+' '+activity);
    tile.append(el('span','sp-day-name',labels[i]));
    const marks=el('div','sp-day-marks');
-   for(const [yes,cls] of [[d.loggedMeals>0,'food'],[d.fullWorkout||d.absWorkout,'fitness'],[d.walkKm>0,'walk']]){
+   for(const [yes,cls] of [[d.loggedMeals>0,'food'],[d.fullWorkout||d.absWorkout||d.bandWorkout,'fitness'],[d.walkKm>0,'walk']]){
     const dot=el('i','sp-day-mark'+(yes?' on '+cls:''));dot.setAttribute('aria-hidden','true');marks.append(dot);
    }
    tile.append(marks);
@@ -155,8 +161,8 @@
      data.daysRecorded+' kayıtlı gün ortalaması · tam gün olmayabilir','coral'),
     infoCard('⚡','Protein',data.avgProtein===null?'—':fmt(data.avgProtein)+' g',
      'Kayıtlı '+data.daysRecorded+' günün ortalaması','violet'),
-    infoCard('🏋️','Tam Full Body',String(data.fullWorkoutDays),
-     '39 geçerli setli farklı gün','mint'),
+    infoCard('🏋️','Antrenman',String(data.workoutDays),
+     'Gym, ABS ve bant · farklı günler','mint'),
     infoCard('⚖','Kilo farkı',data.weightDelta===null?'—':(data.weightDelta>0?'+':'')+fmt(data.weightDelta)+' kg',
      data.weightDelta===null?'En az iki farklı tarihte tartı gerekir':'Bu haftanın ilk ve son tartısı','blue')
    );
@@ -173,7 +179,7 @@
    const title=el('div','sp-week-teaser-head');
    title.append(el('strong','','✦ Bu haftan'),
     el('span','',data.daysActive+'/7 etkin gün'));
-   const subtitle=el('div','sp-week-teaser-sub','Tam Full Body: '+data.fullWorkoutDays+' gün · Öğün kaydı: '+data.daysRecorded+' gün');
+   const subtitle=el('div','sp-week-teaser-sub','Antrenman: '+data.workoutDays+' gün (bant '+data.bandWorkoutDays+') · Öğün kaydı: '+data.daysRecorded+' gün');
    const btn=el('button','sp-week-open','Hikâyeyi aç ↗');btn.type='button';
    btn.addEventListener('click',()=>{
     if(typeof root.showView==='function')root.showView('insights');

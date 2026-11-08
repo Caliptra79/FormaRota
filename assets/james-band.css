@@ -382,3 +382,13 @@ html[data-theme] #jamesBandPanel .james-band-showcase h2 em{
  #jamesBandPanel .james-band-volume-label{flex:1;min-width:120px}
  #jamesBandPanel #jamesBandSoundPreview{min-width:118px}
 }
+
+/* Sound controls: stable two-column grid on phone, tablet and desktop. */
+#jamesBandPanel .james-band-rest-bar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);align-items:center;gap:14px;min-width:0}
+#jamesBandPanel .james-band-rest-readout{min-width:0;width:100%;flex:none}
+#jamesBandPanel .james-band-rest-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;width:100%;min-width:0;gap:9px}
+#jamesBandPanel .james-band-rest-actions>button{width:100%;max-width:100%;min-width:0!important;min-height:44px;padding:9px 6px!important;margin:0;white-space:normal;overflow-wrap:anywhere;line-height:1.3;text-align:center;box-sizing:border-box;flex:none}
+#jamesBandPanel .james-band-volume-label,#jamesBandPanel #jamesBandSoundVolume{width:100%;max-width:100%;min-width:0!important;box-sizing:border-box;flex:none}
+#jamesBandPanel #jamesBandSoundPreview{min-width:0!important}
+@media(max-width:790px){#jamesBandPanel .james-band-rest-bar{grid-template-columns:minmax(0,1fr)}#jamesBandPanel .james-band-rest-actions{width:100%}}
+@media(max-width:360px){#jamesBandPanel .james-band-rest-bar{padding:11px;gap:11px}#jamesBandPanel .james-band-rest-actions{gap:7px}#jamesBandPanel .james-band-rest-actions>button{font-size:.73rem;padding:8px 4px!important}}
